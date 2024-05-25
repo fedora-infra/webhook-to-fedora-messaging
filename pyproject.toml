@@ -1,0 +1,145 @@
+[tool.poetry]
+name = "webhook-to-fedora-messaging"
+version = "0.1.0"
+description = "Webhook to Fedora Messaging"
+
+license = "GPL-3.0-or-later"
+
+authors = [
+  "Fedora Infrastructure <admin@fedoraproject.org>"
+]
+
+readme = "README.md"
+keywords = ["fedora"]
+repository = "http://github.com/fedora-infra/webhook-to-fedora-messaging"
+homepage = "http://github.com/fedora-infra/webhook-to-fedora-messaging"
+documentation = "https://webhook-to-fedora-messaging.readthedocs.io"
+
+include = [
+    { path = "tox.ini", format = "sdist" },
+    { path = "tests", format = "sdist" },
+    { path = "docs", format = "sdist" },
+    { path = "*.example", format = "sdist" },
+
+]
+
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic-settings = "^2.0.2"
+
+sqlalchemy-helpers = ">=0.12.1"
+
+
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=7.0.0"
+pytest-cov = ">=4.0.0"
+black = ">=23.10.0"
+ruff = ">=0.1.1"
+coverage = {extras = ["toml"], version = ">=7.0.0"}
+diff-cover = ">=8.0.0"
+sphinx = ">=4.0"
+myst-parser = ">=0.16"
+liccheck = ">=0.6"
+pre-commit = ">=2.13"
+sphinxcontrib-napoleon = "*"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "S", "B", "RUF"]
+ignore = ["RUF012"]
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+order-by-type = false
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "E501"]
+"webhook_to_fedora_messaging/__init__.py" = ["F401"]
+"changelog.d/get-authors.py" = ["S602", "S603", "S607"]
+
+[tool.coverage.run]
+branch = true
+source = ["webhook_to_fedora_messaging"]
+
+[tool.coverage.paths]
+source = ["webhook_to_fedora_messaging"]
+
+[tool.coverage.report]
+fail_under = 100
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    # Don't complain if tests don't hit defensive assertion code
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]
+omit = [
+    "webhook_to_fedora_messaging/__init__.py",
+    "webhook_to_fedora_messaging/migrations/env.py",
+    "tests/*",
+]
+
+
+[tool.towncrier]
+package = "webhook-to-fedora-messaging"
+filename = "docs/release_notes.md"
+directory = "changelog.d"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+template = "changelog.d/_template.md"
+title_format = "## Version [{version}](http://github.com/fedora-infra/webhook-to-fedora-messaging/tree/{version}) - {project_date}"
+issue_format = "{issue}"
+
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removed"
+name = "Removed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecated"
+name = "Deprecated"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
