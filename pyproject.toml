@@ -3,14 +3,17 @@ name = "webhook-to-fedora-messaging"
 version = "0.1.0"
 description = "Webhook to Fedora Messaging"
 
-license = "GPL-3.0-or-later"
+license = "AGPL-3.0-or-later"
 
 authors = [
   "Fedora Infrastructure <admin@fedoraproject.org>"
 ]
+keywords = [
+  "fedora", 
+  "amqp"
+]
 
 readme = "README.md"
-keywords = ["fedora"]
 repository = "http://github.com/fedora-infra/webhook-to-fedora-messaging"
 homepage = "http://github.com/fedora-infra/webhook-to-fedora-messaging"
 documentation = "https://webhook-to-fedora-messaging.readthedocs.io"
@@ -20,27 +23,30 @@ include = [
     { path = "tests", format = "sdist" },
     { path = "docs", format = "sdist" },
     { path = "*.example", format = "sdist" },
-
 ]
 
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: POSIX :: Linux",
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Information Technology",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Framework :: Flask",
+    "Topic :: System :: Networking",
+    "Topic :: System :: Monitoring",
 ]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 pydantic-settings = "^2.0.2"
-
 sqlalchemy-helpers = ">=0.12.1"
-
-
-
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.0.0"
@@ -54,8 +60,6 @@ myst-parser = ">=0.16"
 liccheck = ">=0.6"
 pre-commit = ">=2.13"
 sphinxcontrib-napoleon = "*"
-
-
 
 [build-system]
 requires = ["poetry-core"]
@@ -102,7 +106,6 @@ omit = [
     "webhook_to_fedora_messaging/migrations/env.py",
     "tests/*",
 ]
-
 
 [tool.towncrier]
 package = "webhook-to-fedora-messaging"
