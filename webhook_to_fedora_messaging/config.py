@@ -4,13 +4,15 @@
 
 from functools import cache
 from pathlib import Path
-
+import os
 from pydantic import BaseModel, ConfigDict, DirectoryPath
 from pydantic_settings import BaseSettings
 
 
 DEFAULT_CONFIG_FILE = _config_file = "/etc/webhook-to-fedora-messaging/webhook-to-fedora-messaging.cfg"
 TOP_DIR = Path(__file__).parent
+TEMPLATE = os.path.join(TOP_DIR, "fedmsg/conf/template_conf.toml")
+CONF_PATH = os.path.join(TOP_DIR, "fedmsg/conf/conf.toml") 
 
 
 class SQLAlchemyModel(BaseModel):
