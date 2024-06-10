@@ -7,9 +7,12 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, DirectoryPath
 from pydantic_settings import BaseSettings
+from webhook_to_fedora_messaging import defaults
+
+from os.path import exists
 
 
-DEFAULT_CONFIG_FILE = _config_file = "/etc/webhook-to-fedora-messaging/webhook-to-fedora-messaging.cfg"
+projconf = None
 TOP_DIR = Path(__file__).parent
 
 
@@ -36,10 +39,17 @@ class Config(BaseSettings):
 
 @cache
 def get_config() -> Config:
-    return Config(_env_file=_config_file)
+    return Config(_env_file=config_file)
 
 
-def set_config_file(path: str) -> None:
-    global _config_file
-    _config_file = path
+def set_config(path: str) -> None:
+    if exists(path):
+        defaults.config_file = path
+        defaults.config = Config(_env_file=defaults.config_file)
+        print(defaults.config, defaults.config_file)
+
+
+def setconfig_file(path: str) -> None:
+    global config_file
+    config_file = path
     get_config.cache_clear()
