@@ -47,6 +47,7 @@ classifiers = [
 python = "^3.9"
 pydantic-settings = "^2.0.2"
 sqlalchemy-helpers = ">=0.12.1"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.0.0"
