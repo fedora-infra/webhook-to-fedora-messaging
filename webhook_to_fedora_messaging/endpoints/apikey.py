@@ -48,6 +48,10 @@ def list_apikey():
 @apikey_endpoint.route("/apikey", methods=["GET"])
 @exclude_from_val
 def lookup_apikey():
+    
+    if not validate_request(request, fields=['uuid']):
+        return bad_request()
+    
     session = db.Session()
     apikey = session.query(APIKey).filter(APIKey.id == request.json['apikey_uuid']).first()
     
@@ -74,7 +78,7 @@ def revoke_service():
 
 @apikey_endpoint.before_request
 def validate():
-    if not validate_request():
+    if not validate_request(request):
         return bad_request()
 
 
