@@ -9,7 +9,7 @@ import tomllib
 from webhook_to_fedora_messaging.exceptions import ConfigError
 
 
-def get_config():
+def get_config() -> dict:
     path = environ["W2FM_APPCONFIG"]
     try:
         with open(path, "rb") as file:

@@ -12,7 +12,7 @@ class Service(Base, UUIDCreatableMixin, CreatableMixin):
     __tablename__ = "services"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), unique=False, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=False, nullable=False)
     name = Column(UnicodeText, nullable=False)
     type = Column(UnicodeText, nullable=False)
     desc = Column(UnicodeText, nullable=False)

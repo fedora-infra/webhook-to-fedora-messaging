@@ -4,24 +4,11 @@
 
 
 from sqlalchemy import Column, UnicodeText
-from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql.expression import FunctionElement
 from sqlalchemy.types import DateTime as SQLDateTime
+from datetime import datetime, UTC
+from functools import partial
 
 from uuid import uuid4
-
-
-class utcnow(FunctionElement):
-    """
-    Current timestamp in UTC for SQL expressions
-    """
-    type = SQLDateTime
-    inherit_cache = True
-
-
-@compiles(utcnow, "postgresql")
-def _postgresql_utcnow(element, compiler, **kwargs):
-    return "(NOW() AT TIME ZONE 'utc')"
 
 
 class UUIDCreatableMixin:
@@ -37,4 +24,4 @@ class CreatableMixin:
     An SQLAlchemy mixin to store the time when an entity was created
     """
 
-    creation_date = Column("creation_date", SQLDateTime, nullable=False, server_default=utcnow())
+    creation_date = Column("creation_date", SQLDateTime, nullable=False, default=partial(datetime.now, tz=UTC))

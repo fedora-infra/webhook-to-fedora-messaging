@@ -1,5 +1,6 @@
 [flaskapp]
 DEBUG = true
+SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/w2fm.db"
 TESTING = true
 PROPAGATE_EXCEPTIONS = ""
 SECRET_KEY = "PLEASE-CHANGE-THIS-BEFORE-STARTING"
@@ -22,13 +23,6 @@ EXPLAIN_TEMPLATE_LOADING = false
 PREFERRED_URL_SCHEME = "http"
 TEMPLATES_AUTO_RELOAD = ""
 MAX_COOKIE_SIZE = ""
-
-  [flaskapp.database]
-  HOST = "localhost"
-  PORT = 5432
-  USERNAME = "root"
-  PASSWORD = "password"
-  NAME = "database"
 
   [flaskapp.logsconf]
   version = 1

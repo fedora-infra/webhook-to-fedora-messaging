@@ -7,8 +7,9 @@ import logging
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from webhook_to_fedora_messaging.config import get_config
+from webhook_to_fedora_messaging.main import create_app
 from webhook_to_fedora_messaging.database import Base
+from sqlalchemy_helpers.flask_ext import get_url_from_app
 
 
 # this is the Alembic Config object, which provides
@@ -29,6 +30,9 @@ logger = logging.getLogger("alembic.env")
 # my_important_option = alembic_config.get_main_option("my_important_option")
 # ... etc.
 
+url = str(get_url_from_app(create_app))
+alembic_config.set_main_option("sqlalchemy.url", url)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -42,7 +46,6 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = str(get_config().database.sqlalchemy.url)
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -73,8 +76,8 @@ def run_migrations_online():
                 logger.info("No changes in schema detected.")
 
     connectable = engine_from_config(
-        get_config().database.sqlalchemy.model_dump(),
-        prefix="",
+        alembic_config.get_section(alembic_config.config_ini_section),
+        prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 

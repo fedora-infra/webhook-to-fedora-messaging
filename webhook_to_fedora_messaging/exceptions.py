@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import logging
-
 
 class ConfigError(Exception):
     def __init__(self, text):
