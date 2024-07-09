@@ -1,6 +1,7 @@
 [flaskapp]
 DEBUG = true
 SECRET_KEY = "vagrant-env"
+FASJSON_URL = "https://fasjson.tinystage.test/fasjson"
 SQLALCHEMY_DATABASE_URI = "sqlite:////home/vagrant/w2fm.db"
 
   [flaskapp.logsconf]

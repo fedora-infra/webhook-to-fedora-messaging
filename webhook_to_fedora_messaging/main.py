@@ -14,6 +14,7 @@ from .config import get_config
 from .config.defaults import LOGGER_CONFIG
 from logging.config import dictConfig
 from .endpoints.user import user_endpoint
+from .endpoints.message import message_endpoint
 from .endpoints.service import service_endpoint
 from webhook_to_fedora_messaging.exceptions import ConfigError
 import logging
@@ -32,6 +33,7 @@ def create_app():
 
     app.register_blueprint(user_endpoint, url_prefix="/user")
     app.register_blueprint(service_endpoint, url_prefix="/service")
+    app.register_blueprint(message_endpoint, url_prefix="/message")
 
     # Then load the variables up from the custom configuration file
     try:

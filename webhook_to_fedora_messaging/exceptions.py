@@ -9,3 +9,7 @@ class ConfigError(Exception):
 
     def __str__(self):
         return self.text
+    
+class SignatureMatchError(Exception):
+    pass
+
