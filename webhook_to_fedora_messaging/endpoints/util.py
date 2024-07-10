@@ -1,4 +1,5 @@
-from flask import Response, Request
+from flask import Response, Request, request, abort
+from functools import wraps
 
 
 def not_found() -> Response:
@@ -21,14 +22,18 @@ def conflict(data: dict) -> Response:
     return Response(data, status=409, mimetype='application/json')
 
 
-def validate_request(request: Request, fields=['username']):
-    return all(field in request for field in fields)
-
-
 def unprocessable_entity() -> Response:
     return Response("{'message: 'Unprocessable Entity'}", status=429, mimetype="application/json")
 
 
-def exclude_from_val(func):
-    func._exclude_from_validation = True
-    return func
+def validate_request(fields: list = None):
+    fields = fields or ["username"]
+    def decorator(view):
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            if all(field in request.json for field in fields):
+                return view(*args, **kwargs)
+            else:
+                abort(429, "Missing fields")
+        return wrapper
+    return decorator
