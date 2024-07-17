@@ -1,15 +1,14 @@
-from flask import Blueprint, Flask, request, Response, Request
+from flask import request, Blueprint
 from ..database import db
 from ..models.user import User
 from sqlalchemy_helpers import get_or_create
-from .util import success, bad_request, conflict, created, not_found, validate_request, unprocessable_entity
+from .util import validate_request
 
 
-app = Flask(__name__)
-user_endpoint = Blueprint("user_endpoint", __name__)
+user_endpoint = Blueprint("user_endpoint", __name__, url_prefix="/user")
 
 
-@user_endpoint.route("/user", methods=["POST"])
+@user_endpoint.route("/", methods=["POST"])
 @validate_request
 def create_user():
     """Used for creating a new user by sending a post request to /user/ path.
@@ -18,15 +17,15 @@ def create_user():
             username: Username of the user
             
     """
-    session = db.Session()
-    user, is_created = get_or_create(session, User, username=request.json['username'])
+    user, is_created = get_or_create(db.session, User, username=request.json['username'])
+    db.session.commit()
     if not is_created:
-        return conflict({'message': 'User Already Exists'})
+        return {'message': 'User Already Exists'}, 409
     else:
-        return created({'message': 'Created', 'uuid': user.id})
+        return {'uuid': user.id}, 201
         
-    
-@user_endpoint.route("/user/search", methods=["GET"])
+
+@user_endpoint.route("/search", methods=["GET"])
 @validate_request
 def get_user():
     """Used for retrieving a user by sending a get request to /user/search path.
@@ -35,15 +34,14 @@ def get_user():
             username: Username of the user
             
     """
-    session = db.Session()
-    users = session.query(User).filter(User.username.like(request.json['username'])).all()
+    users = db.session.query(User).filter(User.username.like(request.json['username'])).all()
     if users is None or users == []:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     else:
-        return success({'user_list': users})
+        return {'user_list': [{'uuid': user.id, 'username': user.username} for user in users]}, 200
     
-    
-@user_endpoint.route("/user", methods=["GET"])
+
+@user_endpoint.route("/", methods=["GET"])
 @validate_request
 def lookup_user():
     """Used for searching a user by sending a get request to /user/ path.
@@ -51,10 +49,8 @@ def lookup_user():
         Request Body:
             username: Username of the user
     """
-    session = db.Session()
-
-    user = session.query(User).filter(User.username == request.json['username']).first()
+    user = db.session.query(User).filter(User.username == request.json['username']).first()
     if user is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     else:
-        return success({'uuid': user.id, 'username': user.username})
+        return {'uuid': user.id, 'username': user.username}, 200

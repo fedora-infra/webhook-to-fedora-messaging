@@ -14,20 +14,24 @@ from .config import get_config
 from .config.defaults import LOGGER_CONFIG
 from logging.config import dictConfig
 from .endpoints.user import user_endpoint
+from .endpoints.service import service_endpoint
 from webhook_to_fedora_messaging.exceptions import ConfigError
 import logging
 
 
 def create_app():
     # Instantiate a barebones Flask application
-    main = Flask(
+    app = Flask(
 	    "webhook_to_fedora_messaging"
     )
     # First attempt loading the defaults from the Defaults object
-    main.config.from_object(
+    app.config.from_object(
         "webhook_to_fedora_messaging.config.defaults.Defaults"
     )
     dictConfig(LOGGER_CONFIG)
+
+    app.register_blueprint(user_endpoint, url_prefix="/user")
+    app.register_blueprint(service_endpoint, url_prefix="/service")
 
     # Then load the variables up from the custom configuration file
     try:
@@ -36,9 +40,8 @@ def create_app():
         logging.error(f"Exiting - Reason - {str(expt)}")
         raise
 
-    main.config.from_mapping(confdata)
-    db.init_app(main)
+    app.config.from_mapping(confdata)
+    db.init_app(app)
     dictConfig(confdata["logsconf"])
-    main.register_blueprint(user_endpoint)
     
-    return main
+    return app

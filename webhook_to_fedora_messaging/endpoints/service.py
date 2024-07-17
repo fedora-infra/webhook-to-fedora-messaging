@@ -1,58 +1,55 @@
-from flask import Blueprint, Flask, request, Response, Request
+from flask import request, abort, Blueprint
 from ..database import db
 from ..models.service import Service
 from ..models.user import User
 from sqlalchemy_helpers import get_or_create
-from .util import not_found, success, bad_request, created, conflict, validate_request, exclude_from_val, unprocessable_entity
+from .util import validate_request
+import uuid
 
 
-app = Flask(__name__)
-service_endpoint = Blueprint("service_endpoint", __name__)
+service_endpoint = Blueprint("service_endpoint", __name__, url_prefix="/service")
 
 
-@service_endpoint.route("/service", methods=["POST"])
+@service_endpoint.route("/", methods=["POST"])
+@validate_request(['username', 'type', 'desc', 'name'])
 def create_service():
     """
     Used for creating a new service by sending a post request to /service/ path.
-    """
-    if not validate_request(request.json, fields=['username', 'type', 'desc', 'name']):
-        return unprocessable_entity()
-        
-    session = db.Session()
-    body = request.json
-    
-
-    user = session.query(User).filter(User.username == body['username']).first()
+    """ 
+    user = db.session.query(User).filter(User.username == request.json['username']).first()
     if user is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     
-    service, is_created = get_or_create(session, Service, name=body['name'], type=body['type'], desc=body['desc'], user_id=user.id)
-    
+    service, is_created = get_or_create(db.session, Service, name=request.json['name'], type=request.json['type'], desc=request.json['desc'], user_id=user.id)
     if not is_created:
-        return conflict({'message': 'Service Already Exists'})
+        return abort(409, {'message': 'Service Already Exists'})
     else:
-        return created({'message': 'Created', 'uuid': service.id})
+        db.session.commit()
+        return {'message': 'Created', 'uuid': service.id, 'token': service.token}, 201
         
-    
-@service_endpoint.route("/service/search", methods=["GET"])
+        
+@service_endpoint.route("/search", methods=["GET"])
+@validate_request
 def list_services():
     """
     Used for listing all services belong to a user by sending a get request to /service/search path
-    """
-    if not validate_request(request):
-        return unprocessable_entity()
-    
-    session = db.Session()
-    user = session.query(User).filter(User.username.like(request.json['username'])).first()
+    """    
+    user = db.session.query(User).filter(User.username.like(request.json['username'])).first()
     if user is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
+    services = db.session.query(Service).filter(Service.user_id == user.id).all()
+    return {'service_list': [{
+            'id': service.id,
+            'user_id': service.user_id,
+            'name': service.name,
+            'type': service.type,
+            'desc': service.desc,
+            'disabled': service.disabled
+        } for service in services]}, 200
     
-    services = session.query(Service).filter(Service.user_id == user.id).all()
     
-    return success({'service_list': services})
-    
-    
-@service_endpoint.route("/service", methods=["GET"])
+@service_endpoint.route("/", methods=["GET"])
+@validate_request(['service_uuid'])
 def lookup_service():
     """
     Used for retrieving a service by it's uuid by sending a get request
@@ -61,19 +58,15 @@ def lookup_service():
     Request Body:
         service_uuid: Service UUID
     """
-    if not validate_request(request, ['service_uuid']):
-        return unprocessable_entity()
-    
-    session = db.Session()
-    service = session.query(Service).filter(Service.id == request.json['service_uuid']).first()
-    
+    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
     if service is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     else:
-        return success({'uuid': service.id, 'name': service.name, 'type': service.type, 'desc': service.desc})
+        return {'uuid': service.id, 'name': service.name, 'type': service.type, 'desc': service.desc}, 200
     
     
-@service_endpoint.route("/service/revoke", methods=["PUT"])
+@service_endpoint.route("/revoke", methods=["PUT"])
+@validate_request(['username', 'service_uuid'])
 def revoke_service():
     """
     Used for revoking a service by sending a PUT request to /service/revoke path.
@@ -82,25 +75,22 @@ def revoke_service():
         service_uuid: Service UUID
         username: Username of the user that servicce belongs to.
     """
-    if not validate_request(request, fields=['username', 'service_uuid']):
-        return unprocessable_entity()
-    
-    session = db.Session()
-    user = session.query(User).filter(User.username == request.json['username']).first()
+    user = db.session.query(User).filter(User.username == request.json['username']).first()
     if user is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     
-    service = session.query(Service).filter(Service.user_id == user.id).filter(Service.id == request.json['service_uuid']).first()
+    service = db.session.query(Service).filter(Service.user_id == user.id).filter(Service.id == request.json['service_uuid']).first()
     if service is None:
-        return not_found()
-    
-    service.disabled = True
-    session.commit()
+        return {'message': 'Not Found'}, 404
 
-    return success({'uuid': service.id, 'is_valid': not service.disabled})
+    service.disabled = True
+    db.session.commit()
+
+    return {'uuid': service.id, 'is_valid': not service.disabled}, 200
     
     
-@service_endpoint.route("/service", methods=["PUT"])
+@service_endpoint.route("/", methods=["PUT"])
+@validate_request(['service_uuid'])
 def update_service():
     """
     Used for updating a service by sending a PUT request to /service path.
@@ -111,15 +101,23 @@ def update_service():
         mesg_body: Updated message body (optional)
     
     """
-    if not validate_request(request, fields=['uuid', 'name', 'mesg_body']):
-        return unprocessable_entity()
-    
-    session = db.Session()
-    service = session.query(Service).filter(Service.id == request.json['uuid']).first()
+    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
     if service is None:
-        return not_found()
+        return {'message': 'Not Found'}, 404
     
-    service.name = request.json['name'] if request.json['name'] is not None and request.json['name'] != "" else service.name
-    service.desc = request.json['mesg_body'] if request.json['mesg_body'] is not None and request.json['mesg_body'] != "" else service.desc
-    session.commit()
-    return success({'uuid': service.id, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled})
+    service.name = request.json['name'] if "name" in request.json and request.json['name'] != "" else service.name
+    service.desc = request.json['mesg_body'] if "mesg_body" in request.json and request.json['mesg_body'] != "" else service.desc
+    db.session.commit()
+    return {'uuid': service.id, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled}, 200
+
+
+@service_endpoint.route("/token", methods=['POST'])
+@validate_request(['service_uuid'])
+def refresh_token():
+    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
+    if service is None:
+        return {'message': 'Not Found'}, 404
+
+    service.token = uuid.uuid4().hex
+    db.session.commit()
+    return {'uuid': service.id, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled, 'token': service.token}, 200
