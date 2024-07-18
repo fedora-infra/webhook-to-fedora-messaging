@@ -10,7 +10,7 @@ def validate_request(fields=None):
         def wrapper(*args, **kwargs):
             # Check if the request has JSON data
             if not request.is_json:
-                return abort(400, {"error": "Invalid input, JSON required"})
+                return abort(415, {"error": "Invalid input, JSON required"})
             data = request.get_json()
             # Check if all required fields are present
             missing_fields = [field for field in fields if field not in data]
