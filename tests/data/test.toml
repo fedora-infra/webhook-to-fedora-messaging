@@ -1,0 +1,52 @@
+[flaskapp]
+DEBUG = true
+SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/w2fm-test.db"
+TESTING = true
+PROPAGATE_EXCEPTIONS = ""
+SECRET_KEY = "PLEASE-CHANGE-THIS-BEFORE-STARTING"
+PERMANENT_SESSION_LIFETIME = 604800
+USE_X_SENDFILE = false
+APPLICATION_ROOT = "/"
+SESSION_COOKIE_NAME = "user"
+SESSION_COOKIE_DOMAIN = ""
+SESSION_COOKIE_PATH = ""
+SESSION_COOKIE_HTTPONLY = true
+SESSION_COOKIE_SECURE = false
+SESSION_COOKIE_SAMESITE = ""
+SESSION_REFRESH_EACH_REQUEST = true
+SEND_FILE_MAX_AGE_DEFAULT = ""
+TRAP_BAD_REQUEST_ERRORS = ""
+TRAP_HTTP_EXCEPTIONS = false
+EXPLAIN_TEMPLATE_LOADING = false
+PREFERRED_URL_SCHEME = "http"
+TEMPLATES_AUTO_RELOAD = ""
+MAX_COOKIE_SIZE = ""
+
+  [flaskapp.logsconf]
+  version = 1
+  disable_existing_loggers = false
+
+    [flaskapp.logsconf.handlers]
+
+      [flaskapp.logsconf.handlers.wsgi]
+      class = "logging.StreamHandler"
+      stream = "ext://flask.logging.wsgi_errors_stream"
+      level = "INFO"
+      formatter = "default"
+
+    [flaskapp.logsconf.formatters]
+
+      [flaskapp.logsconf.formatters.default]
+      format = "[W2FM] %(asctime)s - %(name)s - %(levelname)s - %(message)s"
+      datefmt = "[%Y-%m-%d %I:%M:%S %z]"
+
+    [flaskapp.logsconf.root]
+    handlers = ["wsgi"]
+    level = "INFO"
+
+    [flaskapp.logsconf.loggers]
+
+      [flaskapp.logsconf.loggers.werkzeug]
+      handlers = ["wsgi"]
+      level = "INFO"
+      propagate = false
