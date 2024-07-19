@@ -31,11 +31,3 @@ import pytest
 def test_user_get(client, data, code):
     response = client.get("/user/search", json=data)
     assert response.status_code == code
-    
-
-@pytest.fixture
-def create_user(client):
-    data = {'username': 'mehmet'}
-    client.post("/user/", json=data)
-    print("created user")
-    
