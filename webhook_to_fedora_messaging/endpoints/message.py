@@ -6,12 +6,14 @@ from fedora_messaging import api
 from webhook_to_fedora_messaging.exceptions import SignatureMatchError
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from .util import validate_request
 
 
 message_endpoint = Blueprint("message_endpoint", __name__)
 
 
 @message_endpoint.route("/<service_uuid>", methods=["POST"])
+@validate_request([])
 def create_msg(service_uuid):
     """
     Used for creating a new message by sending a post request to /message path

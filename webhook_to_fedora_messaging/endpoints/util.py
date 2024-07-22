@@ -3,7 +3,7 @@ from functools import wraps
 
 
 def validate_request(fields=None):
-    fields = fields or ['username']
+    fields = fields if fields is not None else ['username']
 
     def decorator(func):
         @wraps(func)
