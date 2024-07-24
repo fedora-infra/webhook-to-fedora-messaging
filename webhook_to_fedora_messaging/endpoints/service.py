@@ -25,7 +25,7 @@ def create_service():
         return abort(409, {'message': 'Service Already Exists'})
     else:
         db.session.commit()
-        return {'message': 'Created', 'uuid': service.id, 'token': service.token}, 201
+        return {'message': 'Created', 'uuid': service.uuid, 'token': service.token}, 201
         
         
 @service_endpoint.route("/search", methods=["GET"])
@@ -39,8 +39,8 @@ def list_services():
         return {'message': 'Not Found'}, 404
     services = db.session.query(Service).filter(Service.user_id == user.id).all()
     return {'service_list': [{
-            'id': service.id,
-            'user_id': service.user_id,
+            'id': service.uuid,
+            'username': user.username,
             'name': service.name,
             'type': service.type,
             'desc': service.desc,
@@ -58,11 +58,11 @@ def lookup_service():
     Request Body:
         service_uuid: Service UUID
     """
-    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
+    service = db.session.query(Service).filter(Service.uuid == request.json['service_uuid']).first()
     if service is None:
         return {'message': 'Not Found'}, 404
     else:
-        return {'uuid': service.id, 'name': service.name, 'type': service.type, 'desc': service.desc}, 200
+        return {'uuid': service.uuid, 'name': service.name, 'type': service.type, 'desc': service.desc}, 200
     
     
 @service_endpoint.route("/revoke", methods=["PUT"])
@@ -79,14 +79,14 @@ def revoke_service():
     if user is None:
         return {'message': 'Not Found'}, 404
     
-    service = db.session.query(Service).filter(Service.user_id == user.id).filter(Service.id == request.json['service_uuid']).first()
+    service = db.session.query(Service).filter(Service.user_id == user.id).filter(Service.uuid == request.json['service_uuid']).first()
     if service is None:
         return {'message': 'Not Found'}, 404
 
     service.disabled = True
     db.session.commit()
 
-    return {'uuid': service.id, 'is_valid': not service.disabled}, 200
+    return {'uuid': service.uuid, 'is_valid': not service.disabled}, 200
     
     
 @service_endpoint.route("/", methods=["PUT"])
@@ -101,23 +101,23 @@ def update_service():
         mesg_body: Updated message body (optional)
     
     """
-    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
+    service = db.session.query(Service).filter(Service.uuid == request.json['service_uuid']).first()
     if service is None:
         return {'message': 'Not Found'}, 404
     
     service.name = request.json['name'] if "name" in request.json and request.json['name'] != "" else service.name
     service.desc = request.json['mesg_body'] if "mesg_body" in request.json and request.json['mesg_body'] != "" else service.desc
     db.session.commit()
-    return {'uuid': service.id, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled}, 200
+    return {'uuid': service.uuid, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled}, 200
 
 
 @service_endpoint.route("/token", methods=['POST'])
 @validate_request(['service_uuid'])
 def refresh_token():
-    service = db.session.query(Service).filter(Service.id == request.json['service_uuid']).first()
+    service = db.session.query(Service).filter(Service.uuid == request.json['service_uuid']).first()
     if service is None:
         return {'message': 'Not Found'}, 404
 
     service.token = uuid.uuid4().hex
     db.session.commit()
-    return {'uuid': service.id, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled, 'token': service.token}, 200
+    return {'uuid': service.uuid, 'name': service.name, 'mesg_body': service.desc, 'is_valid': not service.disabled, 'token': service.token}, 200

@@ -22,7 +22,7 @@ def create_user():
     if not is_created:
         return {'message': 'User Already Exists'}, 409
     else:
-        return {'uuid': user.id}, 201
+        return {'uuid': user.uuid}, 201
         
 
 @user_endpoint.route("/search", methods=["GET"])
@@ -38,7 +38,7 @@ def get_user():
     if users is None or users == []:
         return {'message': 'Not Found'}, 404
     else:
-        return {'user_list': [{'uuid': user.id, 'username': user.username} for user in users]}, 200
+        return {'user_list': [{'uuid': user.uuid, 'username': user.username} for user in users]}, 200
     
 
 @user_endpoint.route("/", methods=["GET"])
@@ -53,4 +53,4 @@ def lookup_user():
     if user is None:
         return {'message': 'Not Found'}, 404
     else:
-        return {'uuid': user.id, 'username': user.username}, 200
+        return {'uuid': user.uuid, 'username': user.username}, 200
