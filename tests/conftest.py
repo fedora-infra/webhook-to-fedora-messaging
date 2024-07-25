@@ -44,7 +44,9 @@ def create_service(client):
     with client.application.app_context():
         # Setup code to create the object in the database
         user, created = get_or_create(db.session, User, username="mehmet") # Adjust fields as necessary
+
         service, created = get_or_create(db.session, Service, name="GitHub Demo", type="GitHub", desc="description", user_id=user.id)
+
         service.token = "43b901cba25c458a9175ef119a9603bb"
         db.session.commit()
         db.session.refresh(service)

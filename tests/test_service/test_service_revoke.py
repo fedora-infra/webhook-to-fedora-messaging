@@ -1,36 +1,24 @@
 import pytest
 
 
-@pytest.mark.parametrize(
-    "data, code",
-    [
-        pytest.param(
-            {'service_uuid': 1,
-             'username': 'mehmet'},
-            200,
-            id="SERVICE Endpoint - 200 Success",
-        ),
-        pytest.param(
-            {"service_uuid": 2039,
-             'username': "baran"},
-            404,
-            id="SERVICE Endpoint - 404 Not Found",
-        ),
-        pytest.param(
-            {"username": "mehmet",
-             "type": "Github",
-             "desc": "Github Demo"},
-            400,
-            id="SERVICE Endpoint - 400 Bad Request"
-        ),
-        pytest.param(
-            None,
-            415,
-            id="SERVICE Endpoint - 415 Unsupported Media Type"
-        )
-    ]
-)
-@pytest.mark.usefixtures("create_service")
-def test_service_revoke(client, data, code):
+def test_service_revoke(client, create_service):
+    data = {'service_uuid': create_service.uuid, 'username': 'mehmet'}
     response = client.put("/service/revoke", json=data)
-    assert response.status_code == code
+    assert response.status_code == 200
+    
+
+def test_service_revoke_404(client, create_service):
+    data = {'service_uuid': create_service.uuid, 'username': 'not-existent-user'}
+    response = client.put("/service/revoke", json=data)
+    assert response.status_code == 404
+    
+    
+def test_service_revoke_400(client):
+    data = {'username': 'mehmet'}
+    response = client.put("/service/revoke", json=data)
+    assert response.status_code == 400
+    
+    
+def test_service_revoke_415(client):
+    response = client.put("/service/revoke", json=None)
+    assert response.status_code == 415
