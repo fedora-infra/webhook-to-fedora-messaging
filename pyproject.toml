@@ -48,7 +48,8 @@ flask = "^3.0.3"
 webhook-to-fedora-messaging-messages = "^1.0.0"
 fasjson-client = "^1.0.8"
 gunicorn = {version = "^22.0.0", optional = true}
-psycopg2 = {version = "^2.9.9", optional = true}
+fastapi = "^0.111.1"
+asyncpg = {version = "^0.29.0", optional = true}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -65,7 +66,7 @@ pre-commit = ">=2.13"
 sphinxcontrib-napoleon = "*"
 
 [tool.poetry.extras]
-deploy = ["gunicorn", "psycopg2"]
+deploy = ["gunicorn", "asyncpg"]
 
 [build-system]
 requires = ["poetry-core"]
@@ -152,3 +153,6 @@ showcontent = true
 directory = "fixed"
 name = "Fixed"
 showcontent = true
+
+[tool.poetry.scripts]
+w2fm = "webhook_to_fedora_messaging.cli:main"
