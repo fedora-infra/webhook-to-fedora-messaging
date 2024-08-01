@@ -1,16 +1,69 @@
 import uuid
 
 from flask import abort, Blueprint, request
+from flask_openapi3 import APIBlueprint, OpenAPI, Tag, Info
+
+from pydantic import BaseModel, Field
 from sqlalchemy_helpers import get_or_create
 
 from ..database import db
 from ..models.service import Service
 from ..models.user import User
 from .util import validate_request
+from .api_models.service import ServiceCreate, ServiceSearch, ServiceRevoke, ServiceUpdate, RefreshToken
 
 
-service_endpoint = Blueprint("service_endpoint", __name__, url_prefix="/service")
+class Unauthorized(BaseModel):
+    code: int = Field(-1, description="Status Code")
+    message: str = Field("Unauthorized!", description="Exception Information")
 
+
+jwt = {
+    "type": "http",
+    "scheme": "bearer",
+    "bearerFormat": "JWT"
+}
+security_schemes = {"jwt": jwt}
+security = [{"jwt": []}]
+
+tag = Tag(name='book', description="Some Book")
+service_endpoint = APIBlueprint(
+    "/service",
+    __name__,
+    url_prefix="/api/service",
+    abp_tags=[tag],
+    abp_security=security,
+    abp_responses={"401": Unauthorized},
+    doc_ui=True,
+)
+
+
+@service_endpoint.post(
+    "/",
+    responses={201: {"content": {"text/json": {"schema": {"type": "string"}}}}}
+)
+def create_service(service: ServiceCreate):
+    """
+    Used for creating a new service by sending a post request to /service/ path.
+    """
+    user = db.session.query(User).filter(User.username == service.username).first()
+    if user is None:
+        return {"message": "Not Found"}, 404
+
+    service, is_created = get_or_create(
+        db.session,
+        Service,
+        name=service.name,
+        type=service.type,
+        desc=service.desc,
+        user_id=user.id,
+    )
+
+    if not is_created:
+        return abort(409, {"message": "Service Already Exists"})
+    else:
+        db.session.commit()
+        return {"message": "Created", "uuid": service.uuid, "token": service.token}, 201
 
 @service_endpoint.route("/", methods=["POST"])
 @validate_request(["username", "type", "desc", "name"])
