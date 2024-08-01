@@ -9,7 +9,8 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy_helpers.flask_ext import get_url_from_app
 
 from webhook_to_fedora_messaging.database import Base
-from webhook_to_fedora_messaging.main import create_app
+from webhook_to_fedora_messaging import models
+from webhook_to_fedora_messaging.config import standard
 
 
 # this is the Alembic Config object, which provides
@@ -30,7 +31,7 @@ logger = logging.getLogger("alembic.env")
 # my_important_option = alembic_config.get_main_option("my_important_option")
 # ... etc.
 
-url = str(get_url_from_app(create_app))
+url = standard.sync_database_url
 alembic_config.set_main_option("sqlalchemy.url", url)
 
 
