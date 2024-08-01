@@ -33,7 +33,7 @@
 - name: Create or update the database
   command: poetry run flask -A webhook_to_fedora_messaging.main db sync
   environment:
-    W2FM_APPCONFIG: /home/vagrant/config.toml
+    W2FM_CONFIG: /home/vagrant/config.py
     FLASK_DEBUG: 1
   become: yes
   become_user: vagrant
