@@ -22,7 +22,7 @@ class ServiceExternal(ServiceBase):
     type: str
     desc: str
     token: str
-    user_uuid: str
+    user_id: int
     creation_date: datetime
 
 
@@ -34,7 +34,6 @@ class ServiceRequest(BaseModel):
     name: str
     type: str
     desc: Optional[str]
-    user_uuid: str
 
 
 class ServiceUpdate(BaseModel):

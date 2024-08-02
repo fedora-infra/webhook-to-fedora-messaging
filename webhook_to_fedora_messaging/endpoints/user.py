@@ -13,7 +13,7 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-# from webhook_to_fedora_messaging.auth import user
+from webhook_to_fedora_messaging.auth import get_user
 from webhook_to_fedora_messaging.config import logger
 from webhook_to_fedora_messaging.database import get_session
 from webhook_to_fedora_messaging.endpoints.models.user import (
@@ -37,8 +37,8 @@ router = APIRouter(prefix="/users")
 async def create_user(
     body: UserRequest,
     session: AsyncSession = Depends(get_session),  # noqa : B008
+    user: User = Depends(get_user)  # noqa : B008
 ):
-    #  user: User = Depends(user)  # : B008
     """
     Create a user with the requested attributes
     """
