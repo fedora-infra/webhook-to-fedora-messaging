@@ -1,5 +1,6 @@
 from abc import ABC
-from typing import List, Optional
+from datetime import datetime
+from typing import List
 
 from pydantic import BaseModel
 
@@ -13,18 +14,17 @@ class UserBase(BaseModel, ABC):
 
     class Config:
         from_attributes = True
-        orm_mode = True
 
 
 class UserExternal(UserBase):
-    uuid: Optional[str] = ""
-    username: Optional[str] = ""
+    uuid: str
+    username: str
     is_admin: bool = False
-    creation_date: Optional[str]
+    creation_date: datetime
 
 
 class UserInternal(UserExternal):
-    id: Optional[str] = ""
+    id: str
 
 
 class UserRequest(BaseModel):
@@ -35,5 +35,5 @@ class UserResult(APIResult):
     user: UserExternal
 
 
-class UserManyResult(BaseModel):
-    users: List[UserBase] = []
+class UserManyResult(APIResult):
+    users: List[UserExternal] = []

@@ -8,7 +8,7 @@ from functools import partial
 from uuid import uuid4
 
 from sqlalchemy import Column, UnicodeText
-from sqlalchemy.types import DateTime as SQLDateTime
+from sqlalchemy.types import TIMESTAMP
 
 
 class UUIDCreatableMixin:
@@ -25,5 +25,8 @@ class CreatableMixin:
     """
 
     creation_date = Column(
-        "creation_date", SQLDateTime, nullable=False, default=partial(datetime.now, tz=UTC)
+        "creation_date",
+        TIMESTAMP(timezone=True),
+        nullable=False,
+        default=partial(datetime.now, tz=UTC)
     )

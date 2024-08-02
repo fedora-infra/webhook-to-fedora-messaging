@@ -2,5 +2,5 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from .service import Service
-from .user import User
+from .service import Service  # noqa : F401
+from .user import User  # noqa : F401

@@ -8,6 +8,9 @@ Use sqlalchemy-helpers.
 Import the functions we will use in the main code and in migrations.
 """
 
+from collections.abc import AsyncIterator
+
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_helpers import (  # noqa: F401
     Base,
     DatabaseManager,
@@ -16,14 +19,16 @@ from sqlalchemy_helpers import (  # noqa: F401
     is_sqlite,
     update_or_create,
 )
+from sqlalchemy_helpers.fastapi import make_db_session
+
 
 db = None
 
 
-def setup_database():
-    print(Base.metadata.tables)
-    db.sync()
+async def setup_database():
+    await db.sync()
 
 
-def session():
-    return db.Session()
+async def get_session() -> AsyncIterator[AsyncSession]:
+    async for session in make_db_session(db):
+        yield session
