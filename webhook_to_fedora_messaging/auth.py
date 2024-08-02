@@ -3,7 +3,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.orm.session import Session
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_403_FORBIDDEN
 
-from webhook_to_fedora_messaging.database import session
+from webhook_to_fedora_messaging.database import get_session
 
 
 def user_factory(optional: bool = False, **kwargs):
@@ -15,7 +15,7 @@ def user_factory(optional: bool = False, **kwargs):
     security = HTTPBasic(realm="W2FM", **kwargs)
 
     def user_actual(
-        session: Session = Depends(session),  # noqa : B008
+        session: Session = Depends(get_session),  # noqa : B008
         cred: HTTPBasicCredentials = Security(security)  # noqa : B008
     ):
         if not cred:

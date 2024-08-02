@@ -1,8 +1,6 @@
 # The database URL schema using synchronous processing (consisting of username, password and port)
-sync_database_url = "sqlite:////tmp/w2fm-rewrite.db"
-
-# The database URL schema using asynchronous processing (consisting of username, password and port)
-async_database_url = ""
+# database_url = "sqlite:////tmp/w2fm-rewrite.db"
+database_url = "postgresql+asyncpg://w2fm:w2fm@192.168.0.212:5430/w2fm"
 
 # The location of serving the application service
 service_host = "0.0.0.0"  # noqa : S104
