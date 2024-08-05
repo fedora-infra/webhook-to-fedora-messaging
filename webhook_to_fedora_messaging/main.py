@@ -11,13 +11,13 @@ import uvicorn.config
 from fastapi import FastAPI
 
 from webhook_to_fedora_messaging.config import get_config, logger, standard
-from webhook_to_fedora_messaging.endpoints import service, user
+from webhook_to_fedora_messaging.endpoints import message, service, user
 
 
 desc = "Webhook To Fedora Messaging"
 
 tags_metadata = [
-    {"name": "message", "description": "Operations on messages"},
+    {"name": "messages", "description": "Operations on messages"},
     {"name": "services", "description": "Operations on services"},
     {"name": "users", "description": "Operations on users"},
 ]
@@ -33,6 +33,7 @@ PREFIX = "/api/v1"
 
 main.include_router(user.router, prefix=PREFIX)
 main.include_router(service.router, prefix=PREFIX)
+main.include_router(message.router, prefix=PREFIX)
 
 
 @main.on_event("startup")

@@ -1,43 +1,62 @@
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fedora_messaging import api
-from flask import abort, Blueprint
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from starlette.status import HTTP_202_ACCEPTED, HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY
 
+from webhook_to_fedora_messaging.auth import get_user
+from webhook_to_fedora_messaging.database import get_session
+from webhook_to_fedora_messaging.endpoints.models.message import MessageRequest, MessageResult
 from webhook_to_fedora_messaging.exceptions import SignatureMatchError
+from webhook_to_fedora_messaging.models import Service, User
 
-from ..database import db
-from ..models.service import Service
-from .parser.parser import msg_parser
-from .util import validate_request
+from .parser import parser
 
 
-message_endpoint = Blueprint("message_endpoint", __name__)
+router = APIRouter(prefix="/messages")
 
 
-@message_endpoint.route("/<service_uuid>", methods=["POST"])
-@validate_request([])
-def create_msg(service_uuid):
+@router.post(
+    "/{uuid}",
+    status_code=HTTP_202_ACCEPTED,
+    response_model=MessageResult,
+    tags=["messages"],
+)
+async def create_message(
+    uuid: str,
+    body: MessageRequest,
+    request: Request,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    user: User = Depends(get_user),  # noqa : B008
+):
     """
-    Used for creating a new message by sending a post request to /message path
-
-        Request Body:
-        service_uuid: Service related to message.
-
+    Create a message with the requested attributes
     """
+    if uuid.strip() == "":
+        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No service UUID provided")
+    query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
+    result = await session.execute(query)
 
     try:
-        service = db.session.execute(
-            select(Service).where(Service.uuid == service_uuid)
-        ).scalar_one()
-    except NoResultFound:
-        return {"message": "Service UUID Not Found"}, 404
+        service_data = result.scalar_one()
+    except NoResultFound as expt:
+        raise HTTPException(
+            HTTP_400_BAD_REQUEST,
+            f"Service with the requested UUID '{uuid}' was not found"
+        ) from expt
 
     try:
-        msg = msg_parser(service.type, service.token)
-    except SignatureMatchError as e:
-        return abort(400, {"message": str(e)})
-    except ValueError as e:
-        return abort(400, {"message": str(e)})
+        message = parser(service_data, request.headers)
+    except (SignatureMatchError, ValueError, KeyError) as expt:
+        raise HTTPException(
+            HTTP_400_BAD_REQUEST,
+            f"Message could not be dispatched - {expt}"
+        ) from expt
 
-    api.publish(msg)
-    return {"status": "OK", "message_id": msg.id}
+    api.publish(message)
+    return {
+        "action": "post",
+        "uuid": message.id
+    }
