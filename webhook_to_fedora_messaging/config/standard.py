@@ -10,6 +10,9 @@ service_port = 8080
 # Automatically reload if the code is changed
 reload_on_change = False
 
+# FASJSON URL
+fasjson_url = "https://fasjson.fedoraproject.org/v1/"
+
 # The default configuration for service logging
 main_logger_conf = {
     "version": 1,

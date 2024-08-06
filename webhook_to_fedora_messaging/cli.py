@@ -1,13 +1,16 @@
+import logging
 import os
-import sys
 from asyncio import run
 
 import click
 
 from webhook_to_fedora_messaging import __version__
-from webhook_to_fedora_messaging.config import get_config, logger
+from webhook_to_fedora_messaging.config import setup_config, setup_database_manager
 from webhook_to_fedora_messaging.database import setup_database
 from webhook_to_fedora_messaging.main import start_service
+
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -24,10 +27,11 @@ def main(conf=None):
     if conf:
         os.environ["W2FM_CONFIG"] = os.path.abspath(conf)
     try:
-        get_config()
+        setup_config()
     except FileNotFoundError:
-        logger.logger_object.error("Configuration file was not found")
-        sys.exit(1)
+        logger.error("Configuration file was not found")
+        click.Abort()
+    setup_database_manager()
 
 
 @main.command(name="setup", help="Setup the database schema in the specified environment")

@@ -1,10 +1,13 @@
 from abc import ABC
 from datetime import datetime
+from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel
 
-from .common import APIResult
+
+class ServiceType(str, Enum):
+    github = "github"
 
 
 class ServiceBase(BaseModel, ABC):
@@ -19,7 +22,7 @@ class ServiceBase(BaseModel, ABC):
 class ServiceExternal(ServiceBase):
     uuid: str
     name: str
-    type: str
+    type: ServiceType
     desc: str
     token: str
     user_id: int
@@ -30,22 +33,30 @@ class ServiceInternal(ServiceExternal):
     id: str
 
 
-class ServiceRequest(BaseModel):
+class ServiceRequestMain(BaseModel):
     name: str
-    type: str
+    type: ServiceType
     desc: Optional[str]
 
 
-class ServiceUpdate(BaseModel):
+class ServiceRequest(BaseModel):
+    data: ServiceRequestMain
+
+
+class ServiceUpdateMain(BaseModel):
     name: Optional[str] = ""
     type: Optional[str] = ""
     desc: Optional[str] = ""
-    user_uuid: Optional[str] = ""
+    username: Optional[str] = ""
 
 
-class ServiceResult(APIResult):
-    service: ServiceExternal
+class ServiceUpdate(BaseModel):
+    data: ServiceUpdateMain
 
 
-class ServiceManyResult(APIResult):
-    services: List[ServiceExternal] = []
+class ServiceResult(BaseModel):
+    data: ServiceExternal
+
+
+class ServiceManyResult(BaseModel):
+    data: List[ServiceExternal] = []

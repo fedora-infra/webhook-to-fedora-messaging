@@ -3,8 +3,6 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from .common import APIResult
-
 
 class MessageBase(BaseModel, ABC):
     """
@@ -19,9 +17,9 @@ class MessageExternal(MessageBase):
     data: Optional[str]
 
 
-class MessageRequest(BaseModel):
-    data: Optional[str]
+class MessageUUID(BaseModel):
+    uuid: Optional[str]
 
 
-class MessageResult(APIResult):
-    digest: str
+class MessageResult(BaseModel):
+    data: MessageUUID
