@@ -4,8 +4,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-from .common import APIResult
-
 
 class UserBase(BaseModel, ABC):
     """
@@ -27,13 +25,17 @@ class UserInternal(UserExternal):
     id: str
 
 
-class UserRequest(BaseModel):
+class UserRequestMain(BaseModel):
     username: str
 
 
-class UserResult(APIResult):
-    user: UserExternal
+class UserRequest(BaseModel):
+    data: UserRequestMain
 
 
-class UserManyResult(APIResult):
-    users: List[UserExternal] = []
+class UserResult(BaseModel):
+    data: UserExternal
+
+
+class UserManyResult(BaseModel):
+    data: List[UserExternal] = []

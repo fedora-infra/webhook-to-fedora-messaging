@@ -1,3 +1,4 @@
+import logging
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,8 +14,7 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from webhook_to_fedora_messaging.auth import get_user
-from webhook_to_fedora_messaging.config import logger
+from webhook_to_fedora_messaging.auth import user_factory
 from webhook_to_fedora_messaging.database import get_session
 from webhook_to_fedora_messaging.endpoints.models.user import (
     UserExternal,
@@ -25,6 +25,7 @@ from webhook_to_fedora_messaging.endpoints.models.user import (
 from webhook_to_fedora_messaging.models import User
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users")
 
 
@@ -37,25 +38,26 @@ router = APIRouter(prefix="/users")
 async def create_user(
     body: UserRequest,
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user)  # noqa : B008
+    user: User = Depends(user_factory())  # noqa : B008
 ):
     """
     Create a user with the requested attributes
     """
     made_user = User(
-        username=body.username,
+        username=body.data.username,
         uuid=uuid4().hex[0:8]
     )
     session.add(made_user)
     try:
         await session.flush()
     except IntegrityError as expt:
-        logger.logger_object.warning("Uniquness constraint failed - Please try again")
-        logger.logger_object.warning(str(expt))
-        raise HTTPException(HTTP_409_CONFLICT, "Uniquness constraint failed - Please try again") from expt  # noqa : E501
+        logger.exception("Uniqueness constraint failed")
+        raise HTTPException(
+            HTTP_409_CONFLICT,
+            "Uniqueness constraint failed"
+        ) from expt
     return {
-        "action": "post",
-        "user": UserExternal.from_orm(made_user).dict()
+        "data": UserExternal.model_validate(made_user).model_dump()
     }
 
 
@@ -83,8 +85,7 @@ async def get_user(
             f"User with the requested username '{username}' was not found"
         )
     return {
-        "action": "get",
-        "user": UserExternal.from_orm(user_data).dict()
+        "data": UserExternal.model_validate(user_data).model_dump()
     }
 
 
@@ -103,10 +104,8 @@ async def search_user(
     """
     if username.strip() == "":
         raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No lookup string provided")
-    query = select(User).where(User.username.like(f"%{username}%")).options(selectinload("*"))
+    query = select(User).where(User.username.like(f"%{username}%"))
     result = await session.execute(query)
-    user_data = result.scalars().all()
     return {
-        "action": "get",
-        "users": [UserExternal.from_orm(indx).dict() for indx in user_data]
+        "data": [UserExternal.model_validate(user).model_dump() for user in result.scalars().all()]
     }

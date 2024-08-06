@@ -14,7 +14,10 @@ from webhook_to_fedora_messaging import database
 from webhook_to_fedora_messaging.config import standard
 
 
-def get_config() -> dict:
+logger = logging.getLogger(__name__)
+
+
+def setup_config():
     path = os.getenv("W2FM_CONFIG")
     confdict = {}
 
@@ -28,15 +31,18 @@ def get_config() -> dict:
         "reload_on_change",
         "main_logger_conf",
         "wsgi_logger_conf",
+        "fasjson_url",
     )
     for conf in confkeys:
         if conf not in confdict:
             continue
         setattr(standard, conf, confdict[conf])
-
     dictConfig(standard.main_logger_conf)
+    logger.info("Reading the configuration.")
+
+
+def setup_database_manager() -> None:
     database.db = AsyncDatabaseManager(
         standard.database_url,
         Path(__file__).parent.parent.joinpath("migrations").as_posix()
     )
-    logging.info("Reading the configuration again")

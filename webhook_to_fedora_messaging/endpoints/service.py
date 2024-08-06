@@ -1,22 +1,19 @@
+import logging
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_202_ACCEPTED,
-    HTTP_403_FORBIDDEN,
-    HTTP_404_NOT_FOUND,
     HTTP_409_CONFLICT,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from webhook_to_fedora_messaging.auth import get_user
-from webhook_to_fedora_messaging.config import logger
+from webhook_to_fedora_messaging.auth import user_factory
 from webhook_to_fedora_messaging.database import get_session
 from webhook_to_fedora_messaging.endpoints.models.service import (
     ServiceExternal,
@@ -25,10 +22,11 @@ from webhook_to_fedora_messaging.endpoints.models.service import (
     ServiceResult,
     ServiceUpdate,
 )
+from webhook_to_fedora_messaging.endpoints.util import authorized_service_from_uuid
 from webhook_to_fedora_messaging.models import Service, User
-from webhook_to_fedora_messaging.endpoints.util import is_uuid_vacant
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/services")
 
 
@@ -41,40 +39,41 @@ router = APIRouter(prefix="/services")
 async def create_service(
     body: ServiceRequest,
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    user: User = Depends(user_factory()),  # noqa : B008
 ):
     """
     Create a service with the requested attributes
     """
     made_service = Service(
-        name=body.name,
+        name=body.data.name,
         uuid=uuid4().hex[0:8],
-        type=body.type,
-        desc=body.desc,
+        type=body.data.type,
+        desc=body.data.desc,
         user_id=user.id
     )
     session.add(made_service)
     try:
         await session.flush()
     except IntegrityError as expt:
-        logger.logger_object.warning("Uniquness constraint failed - Please try again")
-        logger.logger_object.warning(str(expt))
-        raise HTTPException(HTTP_409_CONFLICT, "Uniquness constraint failed - Please try again") from expt  # noqa : E501
+        logger.exception("Uniqueness constraint failed")
+        raise HTTPException(
+            HTTP_409_CONFLICT,
+            "Uniqueness constraint failed"
+        ) from expt
     return {
-        "action": "post",
-        "service": ServiceExternal.from_orm(made_service).dict()
+        "data": ServiceExternal.model_validate(made_service).model_dump()
     }
 
 
 @router.get(
-    "/list",
+    "",
     status_code=HTTP_200_OK,
     response_model=ServiceManyResult,
     tags=["services"]
 )
 async def list_services(
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    user: User = Depends(user_factory()),  # noqa : B008
 ):
     """
     List all the services associated with a certain user
@@ -82,8 +81,7 @@ async def list_services(
     query = select(Service).where(Service.user_id==user.id)
     service_data = await session.scalars(query)
     return {
-        "action": "get",
-        "services": [ServiceExternal.from_orm(srvc).dict() for srvc in service_data]
+        "data": [ServiceExternal.model_validate(srvc).model_dump() for srvc in service_data]
     }
 
 
@@ -94,33 +92,14 @@ async def list_services(
     tags=["services"]
 )
 async def get_service(
-    uuid: str = Depends(is_uuid_vacant),  # noqa : B008
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
 ):
     """
     Return the service with the specified UUID
     """
-    query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
-    result = await session.execute(query)
-
-    try:
-        service_data = result.scalar_one()
-    except NoResultFound as expt:
-        raise HTTPException(
-            HTTP_404_NOT_FOUND,
-            f"Service with the requested UUID '{uuid}' was not found"
-        ) from expt
-
-    if service_data.user_id != user.id:
-        raise HTTPException(
-            HTTP_403_FORBIDDEN,
-            f"You are not permitted to view the service '{uuid}'"
-        )
-
     return {
-        "action": "get",
-        "service": ServiceExternal.from_orm(service_data).dict()
+        "data": ServiceExternal.model_validate(service).model_dump()
     }
 
 
@@ -131,36 +110,16 @@ async def get_service(
     tags=["services"]
 )
 async def revoke_service(
-    uuid: str = Depends(is_uuid_vacant),  # noqa : B008
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
 ):
     """
     Revoke the service with the specified UUID
     """
-    query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
-    result = await session.execute(query)
-
-    try:
-        service_data = result.scalar_one()
-    except NoResultFound as expt:
-        raise HTTPException(
-            HTTP_404_NOT_FOUND,
-            f"Service with the requested UUID '{uuid}' was not found"
-        ) from expt
-
-    if service_data.user_id != user.id:
-        raise HTTPException(
-            HTTP_403_FORBIDDEN,
-            f"You are not permitted to revoke the service '{uuid}'"
-        )
-
-    service_data.disabled = True
+    service.disabled = True
     await session.flush()
-
     return {
-        "action": "put",
-        "service": ServiceExternal.from_orm(service_data).dict()
+        "data": ServiceExternal.model_validate(service).model_dump()
     }
 
 
@@ -172,38 +131,20 @@ async def revoke_service(
 )
 async def update_service(
     body: ServiceUpdate,
-    uuid: str = Depends(is_uuid_vacant),  # noqa : B008
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
 ):
     """
     Update the service with the specified UUID
     """
-    query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
-    result = await session.execute(query)
-
-    try:
-        service_data = result.scalar_one()
-    except NoResultFound as expt:
-        raise HTTPException(
-            HTTP_404_NOT_FOUND,
-            "Service with the requested UUID '{uuid}' was not found"
-        ) from expt
-
-    if service_data.user_id != user.id:
-        raise HTTPException(
-            HTTP_403_FORBIDDEN,
-            f"You are not permitted to update the service '{uuid}'"
-        )
-
     for attr in ("name", "type", "desc"):
-        data = getattr(body, attr).strip()
+        data = getattr(body.data, attr).strip()
         if not data:
             continue
-        setattr(service_data, attr, data)
+        setattr(service, attr, data)
 
-    if body.user_uuid.strip() != "":
-        query = select(User).filter_by(uuid=body.user_uuid).options()
+    if body.data.username.strip() != "":
+        query = select(User).filter_by(username=body.data.username)
         result = await session.execute(query)
         try:
             user_data = result.scalar_one()
@@ -212,13 +153,12 @@ async def update_service(
                 HTTP_422_UNPROCESSABLE_ENTITY,
                 "Service was attempted to be transferred to a non-existent user"
             ) from expt
-        service_data.user_id = user_data.id
+        service.user_id = user_data.id
 
     await session.flush()
 
     return {
-        "action": "put",
-        "service": ServiceExternal.from_orm(service_data).dict()
+        "data": ServiceExternal.model_validate(service).model_dump()
     }
 
 
@@ -229,34 +169,14 @@ async def update_service(
     tags=["services"]
 )
 async def regenerate_token(
-    uuid: str = Depends(is_uuid_vacant),  # noqa : B008
     session: AsyncSession = Depends(get_session),  # noqa : B008
-    user: User = Depends(get_user),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
 ):
     """
     Regenerate the access token for the service with the requested UUID
     """
-    query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
-    result = await session.execute(query)
-
-    try:
-        service_data = result.scalar_one()
-    except NoResultFound as expt:
-        raise HTTPException(
-            HTTP_404_NOT_FOUND,
-            f"Service with the requested UUID '{uuid}' was not found"
-        ) from expt
-
-    if service_data.user_id != user.id:
-        raise HTTPException(
-            HTTP_403_FORBIDDEN,
-            f"You are not permitted to regenerate the access token for the service '{uuid}'"
-        )
-
-    service_data.token = uuid4().hex
+    service.token = uuid4().hex
     await session.flush()
-
     return {
-        "action": "put",
-        "service": service_data
+        "data": ServiceExternal.model_validate(service).model_dump()
     }
