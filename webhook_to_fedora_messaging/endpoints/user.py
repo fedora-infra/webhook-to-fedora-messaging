@@ -1,59 +1,111 @@
-from flask import Blueprint, request
-from sqlalchemy_helpers import get_or_create
+import logging
+from uuid import uuid4
 
-from ..database import db
-from ..models.user import User
-from .util import validate_request
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_404_NOT_FOUND,
+    HTTP_409_CONFLICT,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
+
+from webhook_to_fedora_messaging.auth import user_factory
+from webhook_to_fedora_messaging.database import get_session
+from webhook_to_fedora_messaging.endpoints.models.user import (
+    UserExternal,
+    UserManyResult,
+    UserRequest,
+    UserResult,
+)
+from webhook_to_fedora_messaging.models import User
 
 
-user_endpoint = Blueprint("user_endpoint", __name__, url_prefix="/user")
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/users")
 
 
-@user_endpoint.route("/", methods=["POST"])
-@validate_request
-def create_user():
-    """Used for creating a new user by sending a post request to /user/ path.
-
-    Request Body:
-        username: Username of the user
-
+@router.post(
+    "",
+    status_code=HTTP_201_CREATED,
+    response_model=UserResult,
+    tags=["users"]
+)
+async def create_user(
+    body: UserRequest,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    user: User = Depends(user_factory())  # noqa : B008
+):
     """
-    user, is_created = get_or_create(db.session, User, username=request.json["username"])
-    db.session.commit()
-    if not is_created:
-        return {"message": "User Already Exists"}, 409
-    else:
-        return {"uuid": user.uuid}, 201
-
-
-@user_endpoint.route("/search", methods=["GET"])
-@validate_request
-def get_user():
-    """Used for retrieving a user by sending a get request to /user/search path.
-
-    Request Body:
-        username: Username of the user
-
+    Create a user with the requested attributes
     """
-    users = db.session.query(User).filter(User.username.like(request.json["username"])).all()
-    if users is None or users == []:
-        return {"message": "Not Found"}, 404
-    else:
-        return {
-            "user_list": [{"uuid": user.uuid, "username": user.username} for user in users]
-        }, 200
+    made_user = User(
+        username=body.data.username,
+        uuid=uuid4().hex[0:8]
+    )
+    session.add(made_user)
+    try:
+        await session.flush()
+    except IntegrityError as expt:
+        logger.exception("Uniqueness constraint failed")
+        raise HTTPException(
+            HTTP_409_CONFLICT,
+            "Uniqueness constraint failed"
+        ) from expt
+    return {
+        "data": UserExternal.model_validate(made_user).model_dump()
+    }
 
 
-@user_endpoint.route("/", methods=["GET"])
-@validate_request
-def lookup_user():
-    """Used for searching a user by sending a get request to /user/ path.
-
-    Request Body:
-        username: Username of the user
+@router.get(
+    "/{username}",
+    status_code=HTTP_200_OK,
+    response_model=UserResult,
+    tags=["users"]
+)
+async def get_user(
+    username: str,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+):
     """
-    user = db.session.query(User).filter(User.username == request.json["username"]).first()
-    if user is None:
-        return {"message": "Not Found"}, 404
-    else:
-        return {"uuid": user.uuid, "username": user.username}, 200
+    Return the user with the specified username
+    """
+    if username.strip() == "":
+        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No lookup string provided")
+    query = select(User).filter_by(username=username).options(selectinload("*"))
+    result = await session.execute(query)
+    user_data = result.scalar_one_or_none()
+    if not user_data:
+        raise HTTPException(
+            HTTP_404_NOT_FOUND,
+            f"User with the requested username '{username}' was not found"
+        )
+    return {
+        "data": UserExternal.model_validate(user_data).model_dump()
+    }
+
+
+@router.get(
+    "/search/{username}",
+    status_code=HTTP_200_OK,
+    response_model=UserManyResult,
+    tags=["users"]
+)
+async def search_user(
+    username: str,
+    session: AsyncSession = Depends(get_session)  # noqa : B008
+):
+    """
+    Return the list of users matching the specified username
+    """
+    if username.strip() == "":
+        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No lookup string provided")
+    query = select(User).where(User.username.like(f"%{username}%"))
+    result = await session.execute(query)
+    return {
+        "data": [UserExternal.model_validate(user).model_dump() for user in result.scalars().all()]
+    }

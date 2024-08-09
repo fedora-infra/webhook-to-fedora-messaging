@@ -1,166 +1,182 @@
-import uuid
+import logging
+from uuid import uuid4
 
-from flask import abort, Blueprint, request
-from sqlalchemy_helpers import get_or_create
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_202_ACCEPTED,
+    HTTP_409_CONFLICT,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
-from ..database import db
-from ..models.service import Service
-from ..models.user import User
-from .util import validate_request
+from webhook_to_fedora_messaging.auth import user_factory
+from webhook_to_fedora_messaging.database import get_session
+from webhook_to_fedora_messaging.endpoints.models.service import (
+    ServiceExternal,
+    ServiceManyResult,
+    ServiceRequest,
+    ServiceResult,
+    ServiceUpdate,
+)
+from webhook_to_fedora_messaging.endpoints.util import authorized_service_from_uuid
+from webhook_to_fedora_messaging.models import Service, User
 
 
-service_endpoint = Blueprint("service_endpoint", __name__, url_prefix="/service")
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/services")
 
 
-@service_endpoint.route("/", methods=["POST"])
-@validate_request(["username", "type", "desc", "name"])
-def create_service():
+@router.post(
+    "",
+    status_code=HTTP_201_CREATED,
+    response_model=ServiceResult,
+    tags=["services"]
+)
+async def create_service(
+    body: ServiceRequest,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    user: User = Depends(user_factory()),  # noqa : B008
+):
     """
-    Used for creating a new service by sending a post request to /service/ path.
+    Create a service with the requested attributes
     """
-    user = db.session.query(User).filter(User.username == request.json["username"]).first()
-    if user is None:
-        return {"message": "Not Found"}, 404
-
-    service, is_created = get_or_create(
-        db.session,
-        Service,
-        name=request.json["name"],
-        type=request.json["type"],
-        desc=request.json["desc"],
-        user_id=user.id,
+    made_service = Service(
+        name=body.data.name,
+        uuid=uuid4().hex[0:8],
+        type=body.data.type,
+        desc=body.data.desc,
+        user_id=user.id
     )
-    if not is_created:
-        return abort(409, {"message": "Service Already Exists"})
-    else:
-        db.session.commit()
-        return {"message": "Created", "uuid": service.uuid, "token": service.token}, 201
-
-
-@service_endpoint.route("/search", methods=["GET"])
-@validate_request
-def list_services():
-    """
-    Used for listing all services belong to a user by sending a get request to /service/search path
-    """
-    user = db.session.query(User).filter(User.username.like(request.json["username"])).first()
-    if user is None:
-        return {"message": "Not Found"}, 404
-    services = db.session.query(Service).filter(Service.user_id == user.id).all()
+    session.add(made_service)
+    try:
+        await session.flush()
+    except IntegrityError as expt:
+        logger.exception("Uniqueness constraint failed")
+        raise HTTPException(
+            HTTP_409_CONFLICT,
+            "Uniqueness constraint failed"
+        ) from expt
     return {
-        "service_list": [
-            {
-                "id": service.uuid,
-                "username": user.username,
-                "name": service.name,
-                "type": service.type,
-                "desc": service.desc,
-                "disabled": service.disabled,
-            }
-            for service in services
-        ]
-    }, 200
+        "data": ServiceExternal.model_validate(made_service).model_dump()
+    }
 
 
-@service_endpoint.route("/", methods=["GET"])
-@validate_request(["service_uuid"])
-def lookup_service():
+@router.get(
+    "",
+    status_code=HTTP_200_OK,
+    response_model=ServiceManyResult,
+    tags=["services"]
+)
+async def list_services(
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    user: User = Depends(user_factory()),  # noqa : B008
+):
     """
-    Used for retrieving a service by it's uuid by sending a get request
-    to the /service path.
-
-    Request Body:
-        service_uuid: Service UUID
+    List all the services associated with a certain user
     """
-    service = db.session.query(Service).filter(Service.uuid == request.json["service_uuid"]).first()
-    if service is None:
-        return {"message": "Not Found"}, 404
-    else:
-        return {
-            "uuid": service.uuid,
-            "name": service.name,
-            "type": service.type,
-            "desc": service.desc,
-        }, 200
+    query = select(Service).where(Service.user_id==user.id)
+    service_data = await session.scalars(query)
+    return {
+        "data": [ServiceExternal.model_validate(srvc).model_dump() for srvc in service_data]
+    }
 
 
-@service_endpoint.route("/revoke", methods=["PUT"])
-@validate_request(["username", "service_uuid"])
-def revoke_service():
+@router.get(
+    "/{uuid}",
+    status_code=HTTP_200_OK,
+    response_model=ServiceResult,
+    tags=["services"]
+)
+async def get_service(
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
+):
     """
-    Used for revoking a service by sending a PUT request to /service/revoke path.
-
-    Request Body:
-        service_uuid: Service UUID
-        username: Username of the user that servicce belongs to.
+    Return the service with the specified UUID
     """
-    user = db.session.query(User).filter(User.username == request.json["username"]).first()
-    if user is None:
-        return {"message": "Not Found"}, 404
+    return {
+        "data": ServiceExternal.model_validate(service).model_dump()
+    }
 
-    service = (
-        db.session.query(Service)
-        .filter(Service.user_id == user.id)
-        .filter(Service.uuid == request.json["service_uuid"])
-        .first()
-    )
-    if service is None:
-        return {"message": "Not Found"}, 404
 
+@router.put(
+    "/revoke/{uuid}",
+    status_code=HTTP_202_ACCEPTED,
+    response_model=ServiceResult,
+    tags=["services"]
+)
+async def revoke_service(
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
+):
+    """
+    Revoke the service with the specified UUID
+    """
     service.disabled = True
-    db.session.commit()
-
-    return {"uuid": service.uuid, "is_valid": not service.disabled}, 200
-
-
-@service_endpoint.route("/", methods=["PUT"])
-@validate_request(["service_uuid"])
-def update_service():
-    """
-    Used for updating a service by sending a PUT request to /service path.
-
-    Request Body:
-        uuid: UUID of the service
-        name: Updated name (optional)
-        mesg_body: Updated message body (optional)
-
-    """
-    service = db.session.query(Service).filter(Service.uuid == request.json["service_uuid"]).first()
-    if service is None:
-        return {"message": "Not Found"}, 404
-
-    service.name = (
-        request.json["name"]
-        if "name" in request.json and request.json["name"] != ""
-        else service.name
-    )
-    service.desc = (
-        request.json["mesg_body"]
-        if "mesg_body" in request.json and request.json["mesg_body"] != ""
-        else service.desc
-    )
-    db.session.commit()
+    await session.flush()
     return {
-        "uuid": service.uuid,
-        "name": service.name,
-        "mesg_body": service.desc,
-        "is_valid": not service.disabled,
-    }, 200
+        "data": ServiceExternal.model_validate(service).model_dump()
+    }
 
 
-@service_endpoint.route("/token", methods=["POST"])
-@validate_request(["service_uuid"])
-def refresh_token():
-    service = db.session.query(Service).filter(Service.uuid == request.json["service_uuid"]).first()
-    if service is None:
-        return {"message": "Not Found"}, 404
+@router.put(
+    "/{uuid}",
+    status_code=HTTP_202_ACCEPTED,
+    response_model=ServiceResult,
+    tags=["services"]
+)
+async def update_service(
+    body: ServiceUpdate,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
+):
+    """
+    Update the service with the specified UUID
+    """
+    for attr in ("name", "type", "desc"):
+        data = getattr(body.data, attr).strip()
+        if not data:
+            continue
+        setattr(service, attr, data)
 
-    service.token = uuid.uuid4().hex
-    db.session.commit()
+    if body.data.username.strip() != "":
+        query = select(User).filter_by(username=body.data.username)
+        result = await session.execute(query)
+        try:
+            user_data = result.scalar_one()
+        except NoResultFound as expt:
+            raise HTTPException(
+                HTTP_422_UNPROCESSABLE_ENTITY,
+                "Service was attempted to be transferred to a non-existent user"
+            ) from expt
+        service.user_id = user_data.id
+
+    await session.flush()
+
     return {
-        "uuid": service.uuid,
-        "name": service.name,
-        "mesg_body": service.desc,
-        "is_valid": not service.disabled,
-        "token": service.token,
-    }, 200
+        "data": ServiceExternal.model_validate(service).model_dump()
+    }
+
+
+@router.put(
+    "/regenerate/{uuid}",
+    status_code=HTTP_202_ACCEPTED,
+    response_model=ServiceResult,
+    tags=["services"]
+)
+async def regenerate_token(
+    session: AsyncSession = Depends(get_session),  # noqa : B008
+    service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
+):
+    """
+    Regenerate the access token for the service with the requested UUID
+    """
+    service.token = uuid4().hex
+    await session.flush()
+    return {
+        "data": ServiceExternal.model_validate(service).model_dump()
+    }

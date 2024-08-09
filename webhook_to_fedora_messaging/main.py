@@ -7,45 +7,65 @@ The values for any configuration variable that was not mentioned of in the
 custom configuration file will be inherently taken from the default values
 """
 
-
 import logging
-from logging.config import dictConfig
+from contextlib import asynccontextmanager
 
-from flask import Flask
+import uvicorn.config
+from fastapi import FastAPI
 
-from webhook_to_fedora_messaging.database import db
-from webhook_to_fedora_messaging.exceptions import ConfigError
-
-from .config import get_config
-from .config.defaults import LOGGER_CONFIG
-from .endpoints.message import message_endpoint
-from .endpoints.service import service_endpoint
-from .endpoints.user import user_endpoint
+from webhook_to_fedora_messaging.config import setup_config, setup_database_manager, standard
+from webhook_to_fedora_messaging.endpoints import message, service, user
 
 
-def create_app(config=None):
-    # Instantiate a barebones Flask application
-    app = Flask("webhook_to_fedora_messaging")
-    # First attempt loading the defaults from the Defaults object
-    app.config.from_object("webhook_to_fedora_messaging.config.defaults.Defaults")
-    dictConfig(LOGGER_CONFIG)
+logger = logging.getLogger(__name__)
 
-    app.register_blueprint(user_endpoint, url_prefix="/user")
-    app.register_blueprint(service_endpoint, url_prefix="/service")
-    app.register_blueprint(message_endpoint, url_prefix="/message")
+desc = "Webhook To Fedora Messaging"
 
-    # Then load the variables up from the custom configuration file
-    try:
-        confdata = get_config()
-    except ConfigError as expt:
-        logging.error(f"Exiting - Reason - {expt!s}")
-        raise
+tags_metadata = [
+    {"name": "messages", "description": "Operations on messages"},
+    {"name": "services", "description": "Operations on services"},
+    {"name": "users", "description": "Operations on users"},
+]
 
-    app.config.from_mapping(confdata)
-    # Load the config passed as argument
-    app.config.update(config or {})
 
-    db.init_app(app)
-    dictConfig(confdata["logsconf"])
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    setup_config()
+    setup_database_manager()
+    yield
 
-    return app
+
+main = FastAPI(
+    title="Webhook To Fedora Messaging",
+    description=desc,
+    contact={"name": "Fedora Infrastructure", "email": "infrastructure@lists.fedoraproject.org"},
+    openapi_tags=tags_metadata,
+    lifespan=lifespan,
+)
+
+PREFIX = "/api/v1"
+
+main.include_router(user.router, prefix=PREFIX)
+main.include_router(service.router, prefix=PREFIX)
+main.include_router(message.router, prefix=PREFIX)
+
+
+def start_service():
+    loglevel_string = standard.main_logger_conf["handlers"]["console"]["level"]
+    loglevel_number = uvicorn.config.LOG_LEVELS[loglevel_string.lower()]
+    logger.info("Starting Webhook To Fedora Messaging...")
+    logger.info(f"Host address     : {standard.service_host}")
+    logger.info(f"Port number      : {standard.service_port}")
+    logger.info(f"Log level        : {loglevel_string} / {loglevel_string}")
+    logger.info(f"Reload on change : {str(standard.reload_on_change).upper()}")
+    logger.info(
+        f"Serving API docs on http://{standard.service_host}:{standard.service_port}/docs"
+    )
+    uvicorn.run(
+        "webhook_to_fedora_messaging.main:main",
+        host=standard.service_host,
+        port=standard.service_port,
+        log_level=loglevel_number,
+        reload=standard.reload_on_change,
+        log_config=standard.wsgi_logger_conf,
+    )
