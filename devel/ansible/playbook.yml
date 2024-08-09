@@ -12,7 +12,7 @@
     cert_owner: vagrant
 
   roles:
-    - core
+    - common
     - ipa-client
     - cert
     - gss-proxy

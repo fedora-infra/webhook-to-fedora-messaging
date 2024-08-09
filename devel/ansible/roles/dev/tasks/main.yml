@@ -20,21 +20,27 @@
   args:
     chdir: /home/vagrant/webhook-to-fedora-messaging
 
-- name: copy the config files
+- name: copy the config file
   copy:
     src: config.toml
     dest: /home/vagrant/config.toml
     mode: 0644
     owner: vagrant
     group: vagrant
-  loop:
-    - tahrir.cfg
+
+- name: copy the logging config file
+  copy:
+    remote_src: true
+    src: /home/vagrant/webhook-to-fedora-messaging/logging.yaml.example
+    dest: /home/vagrant/logging.yaml
+    mode: 0644
+    owner: vagrant
+    group: vagrant
 
 - name: Create or update the database
-  command: poetry run flask -A webhook_to_fedora_messaging.main db sync
+  command: poetry run w2fm setup
   environment:
-    W2FM_CONFIG: /home/vagrant/config.py
-    FLASK_DEBUG: 1
+    W2FM_CONFIG: /home/vagrant/w2fm.cfg
   become: yes
   become_user: vagrant
   args:
