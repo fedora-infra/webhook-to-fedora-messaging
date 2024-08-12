@@ -14,7 +14,7 @@ Environment=REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
 Environment=W2FM_CONFIG=/home/vagrant/config.toml
 Environment=PYTHONUNBUFFERED=1
 WorkingDirectory=/home/vagrant/webhook-to-fedora-messaging
-ExecStart=poetry run uvicorn --ssl-certfile /etc/pki/tls/certs/server.pem --ssl-keyfile /etc/pki/tls/private/server.key --host 0.0.0.0 --port 443 --log-config /home/vagrant/logging.yaml --reload "webhook_to_fedora_messaging.main:main"
+ExecStart=poetry run uvicorn --ssl-certfile /etc/pki/tls/certs/server.pem --ssl-keyfile /etc/pki/tls/private/server.key --host 0.0.0.0 --port 443 --log-config /home/vagrant/logging.yaml --reload "webhook_to_fedora_messaging.main:create_app"
 
 [Install]
 WantedBy=multi-user.target

@@ -27,6 +27,8 @@ tags_metadata = [
     {"name": "users", "description": "Operations on users"},
 ]
 
+PREFIX = "/api/v1"
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,19 +37,23 @@ async def lifespan(app: FastAPI):
     yield
 
 
-main = FastAPI(
-    title="Webhook To Fedora Messaging",
-    description=desc,
-    contact={"name": "Fedora Infrastructure", "email": "infrastructure@lists.fedoraproject.org"},
-    openapi_tags=tags_metadata,
-    lifespan=lifespan,
-)
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="Webhook To Fedora Messaging",
+        description=desc,
+        contact={
+            "name": "Fedora Infrastructure",
+            "email": "infrastructure@lists.fedoraproject.org",
+        },
+        openapi_tags=tags_metadata,
+        lifespan=lifespan,
+    )
 
-PREFIX = "/api/v1"
+    app.include_router(user.router, prefix=PREFIX)
+    app.include_router(service.router, prefix=PREFIX)
+    app.include_router(message.router, prefix=PREFIX)
 
-main.include_router(user.router, prefix=PREFIX)
-main.include_router(service.router, prefix=PREFIX)
-main.include_router(message.router, prefix=PREFIX)
+    return app
 
 
 def start_service():
@@ -58,11 +64,10 @@ def start_service():
     logger.info(f"Port number      : {standard.service_port}")
     logger.info(f"Log level        : {loglevel_string} / {loglevel_string}")
     logger.info(f"Reload on change : {str(standard.reload_on_change).upper()}")
-    logger.info(
-        f"Serving API docs on http://{standard.service_host}:{standard.service_port}/docs"
-    )
+    logger.info(f"Serving API docs on http://{standard.service_host}:{standard.service_port}/docs")
     uvicorn.run(
-        "webhook_to_fedora_messaging.main:main",
+        "webhook_to_fedora_messaging.main:create_app",
+        factory=True,
         host=standard.service_host,
         port=standard.service_port,
         log_level=loglevel_number,
