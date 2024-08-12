@@ -12,5 +12,5 @@ class User(Base, UUIDCreatableMixin, CreatableMixin):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    username = Column(UnicodeText, unique=True, nullable=False)
+    name = Column(UnicodeText, unique=True, nullable=False)
     is_admin = Column(Boolean, nullable=False, default=False)

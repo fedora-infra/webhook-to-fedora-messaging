@@ -44,5 +44,6 @@ def setup_config():
 def setup_database_manager() -> None:
     database.db = AsyncDatabaseManager(
         standard.database_url,
-        Path(__file__).parent.parent.joinpath("migrations").as_posix()
+        Path(__file__).parent.parent.joinpath("migrations").as_posix(),
+        # engine_args={"echo": True},
     )

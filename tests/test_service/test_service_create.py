@@ -5,41 +5,34 @@ import pytest
     "data, code",
     [
         pytest.param(
-            {"username": "mehmet", "type": "Github", "desc": "Github Demo", "name": "My Github"},
+            {"type": "github", "desc": "Github Demo", "name": "My Github"},
             201,
             id="SERVICE Endpoint - 201 Created",
         ),
         pytest.param(
-            {"username": "baran", "type": "Github", "desc": "Github Demo", "name": "My Github"},
-            404,
-            id="SERVICE Endpoint - 404 Not Found",
-        ),
-        pytest.param(
-            {"username": "mehmet", "type": "Github", "desc": "Github Demo"},
-            400,
+            {"type": "github", "desc": "Github Demo"},
+            422,
             id="SERVICE Endpoint - 400 Bad Request",
         ),
-        pytest.param(None, 415, id="SERVICE Endpoint - 415 Unsupported Media Type"),
     ],
 )
 @pytest.mark.usefixtures("db_user")
-def test_service_create(client, data, code):
-    response = client.post("/service/", json=data)
-    assert response.status_code == code
+async def test_service_create(client, client_auth, data, code):
+    response = await client.post("/api/v1/services", auth=client_auth, json={"data": data})
+    assert response.status_code == code, response.text
+    if code == 201:
+        result = response.json()
+        assert "data" in result
+        for prop in ("type", "desc", "name"):
+            assert result["data"][prop] == data[prop]
 
 
-@pytest.mark.parametrize(
-    "data, code",
-    [
-        pytest.param(
-            {"username": "mehmet", "type": "Github", "desc": "Github Demo", "name": "My Github"},
-            409,
-            id="SERVICE Endpoint - 409 Conflict",
-        )
-    ],
-)
-@pytest.mark.usefixtures("db_user")
-def test_service_conflict(client, data, code):
-    response = client.post("/service/", json=data)
-    response = client.post("/service/", json=data)
-    assert response.status_code == code
+async def test_service_conflict(client, client_auth, db_service, db_user):
+    data = {
+        "name": db_service.name,
+        "type": db_service.type,
+        "desc": db_service.desc,
+    }
+
+    response = await client.post("/api/v1/services", auth=client_auth, json={"data": data})
+    assert response.status_code == 409

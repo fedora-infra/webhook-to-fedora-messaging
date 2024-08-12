@@ -28,5 +28,5 @@ class CreatableMixin:
         "creation_date",
         TIMESTAMP(timezone=True),
         nullable=False,
-        default=partial(datetime.now, tz=UTC)
+        default=partial(datetime.now, tz=UTC),
     )

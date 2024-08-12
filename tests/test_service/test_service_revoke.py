@@ -1,21 +1,8 @@
-def test_service_revoke(client, db_service):
-    data = {"service_uuid": db_service.uuid, "username": "mehmet"}
-    response = client.put("/service/revoke", json=data)
-    assert response.status_code == 200
+async def test_service_revoke(client, client_auth, db_service):
+    response = await client.put(f"/api/v1/services/{db_service.uuid}/revoke", auth=client_auth)
+    assert response.status_code == 202
 
 
-def test_service_revoke_404(client, db_service):
-    data = {"service_uuid": db_service.uuid, "username": "not-existent-user"}
-    response = client.put("/service/revoke", json=data)
+async def test_service_revoke_404(client, client_auth, db_service):
+    response = await client.put("/api/v1/services/non-existent-uuid/revoke", auth=client_auth)
     assert response.status_code == 404
-
-
-def test_service_revoke_400(client):
-    data = {"username": "mehmet"}
-    response = client.put("/service/revoke", json=data)
-    assert response.status_code == 400
-
-
-def test_service_revoke_415(client):
-    response = client.put("/service/revoke", json=None)
-    assert response.status_code == 415

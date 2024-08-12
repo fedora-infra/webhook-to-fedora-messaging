@@ -1,21 +1,25 @@
-def test_service_update(client, db_service):
-    data = {"service_uuid": db_service.uuid, "username": "mehmet", "name": "new name"}
-    response = client.put("/service/", json=data)
-    assert response.status_code == 200
+async def test_service_update(client, client_auth, db_service, db_session):
+    data = {"name": "new name"}
+    response = await client.put(
+        f"/api/v1/services/{db_service.uuid}", auth=client_auth, json={"data": data}
+    )
+    assert response.status_code == 202, response.text
+    assert response.json()["data"]["name"] == "new name"
+    await db_session.refresh(db_service)
+    assert db_service.name == "new name"
 
 
-def test_service_update_404(client):
-    data = {"service_uuid": "not-existent-uuid", "username": "mehmet", "name": "new name"}
-    response = client.put("/service/", json=data)
+async def test_service_update_404(client, client_auth):
+    data = {"name": "new name"}
+    response = await client.put(
+        "/api/v1/services/non-existent-uuid", auth=client_auth, json={"data": data}
+    )
     assert response.status_code == 404
 
 
-def test_service_update_400(client):
-    data = {"username": "mehmet", "name": "new name"}
-    response = client.put("/service/", json=data)
-    assert response.status_code == 400
-
-
-def test_service_update_415(client):
-    response = client.put("/service/", json=None)
-    assert response.status_code == 415
+async def test_service_update_bad_request(client, client_auth, db_service):
+    data = {"something-else": "extra attr"}
+    response = await client.put(
+        f"/api/v1/services/{db_service.uuid}", auth=client_auth, json={"data": data}
+    )
+    assert response.status_code == 422

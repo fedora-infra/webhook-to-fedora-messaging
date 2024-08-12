@@ -3,36 +3,37 @@ import hmac
 import json
 
 import fasjson_client
-from starlette.datastructures import Headers
-from webhook_to_fedora_messaging_messages.github.github import GithubMessageV1
+from starlette.requests import Request
+from webhook_to_fedora_messaging_messages.github import GithubMessageV1
 
 from webhook_to_fedora_messaging.config import standard
 from webhook_to_fedora_messaging.exceptions import SignatureMatchError
 
 
-def github_parser(token: str, headers: Headers, body: dict) -> GithubMessageV1:
+async def github_parser(token: str, request: Request) -> GithubMessageV1:
     """Convert Flask request objects into desired FedMsg format.
 
     Args:
         token: Specifies whether the webhook has token key feature on or not
     """
 
-    headers = dict(headers)
+    headers = {k.lower(): v for k, v in request.headers.items()}
 
-    if "X-Hub-Signature-256" not in headers:
+    if "x-hub-signature-256" not in headers:
         raise KeyError("Signature not found")
 
-    if token and not verify_signature(token, headers["X-Hub-Signature-256"], body):
+    body_bytes = await request.body()
+    body = json.loads(body_bytes.decode("utf-8"))
+
+    if token and not verify_signature(token, headers["x-hub-signature-256"], body_bytes):
         raise SignatureMatchError("Message Signature Couldn't be Matched.")
 
-    topic = f"github.{headers['X-Github-Event']}"
+    topic = f"github.{headers['x-github-event']}"
     agent = fas_by_github(body["sender"]["login"])  # FASJSON
-    return GithubMessageV1(
-        topic=topic, body={"body": body, "headers": headers, "agent": agent}
-    )
+    return GithubMessageV1(topic=topic, body={"body": body, "headers": headers, "agent": agent})
 
 
-def verify_signature(token: str, signature_header: str, body: dict) -> bool:
+def verify_signature(token: str, signature_header: str, body: bytes) -> bool:
     """Verify that the payload was sent from GitHub by validating SHA256.
 
     Return false if not authorized.
@@ -45,8 +46,8 @@ def verify_signature(token: str, signature_header: str, body: dict) -> bool:
         return False
     hash_object = hmac.new(
         token.encode("utf-8"),
-        msg=json.dumps(body).encode(),
-        digestmod=hashlib.sha256
+        msg=body,
+        digestmod=hashlib.sha256,
     )
     expected_signature = "sha256=" + hash_object.hexdigest()
 

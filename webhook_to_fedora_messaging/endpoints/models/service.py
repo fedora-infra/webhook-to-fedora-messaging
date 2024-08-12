@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ServiceType(str, Enum):
@@ -15,8 +15,7 @@ class ServiceBase(BaseModel, ABC):
     Base: Service
     """
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ServiceExternal(ServiceBase):
@@ -34,6 +33,7 @@ class ServiceInternal(ServiceExternal):
 
 
 class ServiceRequestMain(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     name: str
     type: ServiceType
     desc: Optional[str]
@@ -44,6 +44,7 @@ class ServiceRequest(BaseModel):
 
 
 class ServiceUpdateMain(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     name: Optional[str] = ""
     type: Optional[str] = ""
     desc: Optional[str] = ""

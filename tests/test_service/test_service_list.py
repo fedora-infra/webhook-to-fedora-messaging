@@ -1,24 +1,16 @@
-import pytest
-
-
-@pytest.mark.parametrize(
-    "data, code",
-    [
-        pytest.param(
-            {"username": "mehmet"},
-            200,
-            id="SERVICE Endpoint - 200 Success",
-        ),
-        pytest.param(
-            {"username": "baran"},
-            404,
-            id="SERVICE Endpoint - 404 Not Found",
-        ),
-        pytest.param({"user": "mehmet"}, 400, id="SERVICE Endpoint - 400 Bad Request"),
-        pytest.param(None, 415, id="SERVICE Endpoint - 415 Unsupported Media Type"),
-    ],
-)
-@pytest.mark.usefixtures("db_user")
-def test_service_list(client, data, code):
-    response = client.get("/service/search", json=data)
-    assert response.status_code == code
+async def test_service_list(client, client_auth, db_service):
+    response = await client.get("/api/v1/services", auth=client_auth)
+    assert response.status_code == 200
+    assert response.json() == {
+        "data": [
+            {
+                "creation_date": db_service.creation_date.isoformat(),
+                "desc": db_service.desc,
+                "name": db_service.name,
+                "token": db_service.token,
+                "type": db_service.type,
+                "user_id": db_service.user_id,
+                "uuid": db_service.uuid,
+            },
+        ],
+    }

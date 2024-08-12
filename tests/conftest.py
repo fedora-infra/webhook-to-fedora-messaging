@@ -2,71 +2,80 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from os import environ
-from pathlib import Path
+from typing import AsyncGenerator
 
 import pytest
-from sqlalchemy_helpers import get_or_create
+from httpx import AsyncClient, BasicAuth
 
-from webhook_to_fedora_messaging.database import db
+from webhook_to_fedora_messaging import database
+from webhook_to_fedora_messaging.config import setup_database_manager, standard
 from webhook_to_fedora_messaging.main import create_app
 from webhook_to_fedora_messaging.models.service import Service
 from webhook_to_fedora_messaging.models.user import User
 
 
 @pytest.fixture()
-def client(tmp_path):
-    test_dir = Path(__file__).parent
-    environ["W2FM_APPCONFIG"] = test_dir.joinpath("data/test.toml").as_posix()
-    config = {"SQLALCHEMY_DATABASE_URI": f"sqlite:///{tmp_path.as_posix()}/w2fm.db"}
-    app = create_app(config)
-    with app.app_context():
-        db.manager.sync()
-    return app.test_client()
+async def db(tmp_path):
+    standard.database_url = f"sqlite:///{tmp_path.as_posix()}/w2fm.db"
+    setup_database_manager()
+    await database.db.sync()
+    yield database.db
 
 
 @pytest.fixture()
-def db_user(client):
-    with client.application.app_context():
-        # Setup code to create the object in the database
-        user, is_created = get_or_create(
-            db.session, User, username="mehmet"
-        )  # Adjust fields as necessary
-        db.session.commit()
+async def db_session(db):
+    session = db.Session()
+    yield session
+    await session.close()
+
+
+@pytest.fixture()
+async def client(db):
+    app = create_app()
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
+
+
+@pytest.fixture()
+async def db_user(client, db_session) -> AsyncGenerator[User, None]:
+    # Setup code to create the object in the database
+    user, is_created = await database.get_or_create(
+        db_session, User, name="mehmet"
+    )  # Adjust fields as necessary
+    await db_session.commit()
+    # Refreshing seems necessary on sqlite because it does not support timezones in timestamps
+    await db_session.refresh(user)
 
     yield user
 
-    with client.application.app_context():
-        # Teardown code to remove the object from the database
-        db.session.query(User).filter_by(username="mehmet").delete()
-        db.session.commit()
+    # Teardown code to remove the object from the database
+    await db_session.delete(user)
+    await db_session.commit()
 
 
 @pytest.fixture()
-def db_service(client):
-    with client.application.app_context():
-        # Setup code to create the object in the database
-        user, created = get_or_create(
-            db.session, User, username="mehmet"
-        )  # Adjust fields as necessary
+async def client_auth(db_user):
+    return BasicAuth(username=db_user.name, password=db_user.name)
 
-        service, created = get_or_create(
-            db.session,
-            Service,
-            name="GitHub Demo",
-            type="GitHub",
-            desc="description",
-            user_id=user.id,
-        )
 
-        service.token = "dummy-service-token"  # noqa: S105
-        db.session.commit()
-        db.session.refresh(service)
+@pytest.fixture()
+async def db_service(client, db_user, db_session) -> AsyncGenerator[Service, None]:
+    service, created = await database.get_or_create(
+        db_session,
+        Service,
+        name="GitHub Demo",
+        type="github",
+        desc="description",
+        user_id=db_user.id,
+    )
+
+    service.token = "dummy-service-token"  # noqa: S105
+    await db_session.commit()
+    # Refreshing seems necessary on sqlite because it does not support timezones in timestamps
+    await db_session.refresh(service)
 
     yield service
 
-    with client.application.app_context():
-        # Teardown code to remove the object from the database
-        db.session.query(User).filter_by(username="mehmet").delete()
-        db.session.query(Service).filter_by(name="GitHub Demo").delete()
-        db.session.commit()
+    # Teardown code to remove the object from the database
+    await db_session.delete(service)
+    await db_session.commit()

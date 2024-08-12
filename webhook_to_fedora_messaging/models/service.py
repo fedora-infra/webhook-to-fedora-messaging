@@ -4,7 +4,7 @@
 
 from uuid import uuid4
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, UnicodeText
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, UnicodeText, UniqueConstraint
 
 from webhook_to_fedora_messaging.database import Base
 from webhook_to_fedora_messaging.models.util import CreatableMixin, UUIDCreatableMixin
@@ -12,6 +12,7 @@ from webhook_to_fedora_messaging.models.util import CreatableMixin, UUIDCreatabl
 
 class Service(Base, UUIDCreatableMixin, CreatableMixin):
     __tablename__ = "services"
+    __table_args__ = (UniqueConstraint("type", "name"),)
 
     id = Column(Integer, primary_key=True, nullable=False)
     user_id = Column(

@@ -1,5 +1,7 @@
 import logging
 
+from starlette.requests import Request
+
 from webhook_to_fedora_messaging.models.service import Service
 
 from .github import github_parser
@@ -8,10 +10,10 @@ from .github import github_parser
 logger = logging.getLogger(__name__)
 
 
-def parser(service: Service, headers: str, body: dict):
+async def parser(service: Service, request: Request):
     if service.type.lower() == "github":
         try:
-            return github_parser(service.token, headers, body)
+            return await github_parser(service.token, request)
         except Exception:
             logger.exception("Message could not be parsed")
             raise

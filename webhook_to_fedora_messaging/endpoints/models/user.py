@@ -2,7 +2,7 @@ from abc import ABC
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserBase(BaseModel, ABC):
@@ -10,13 +10,12 @@ class UserBase(BaseModel, ABC):
     Base: User
     """
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserExternal(UserBase):
     uuid: str
-    username: str
+    name: str
     is_admin: bool = False
     creation_date: datetime
 
@@ -26,7 +25,9 @@ class UserInternal(UserExternal):
 
 
 class UserRequestMain(BaseModel):
-    username: str
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
 
 
 class UserRequest(BaseModel):

@@ -18,8 +18,7 @@ async def is_uuid_vacant(uuid: str) -> str:
 
 
 async def return_service_from_uuid(
-    uuid: str = Depends(is_uuid_vacant),
-    session: AsyncSession = Depends(get_session)  # noqa : B008
+    uuid: str = Depends(is_uuid_vacant), session: AsyncSession = Depends(get_session)  # noqa : B008
 ) -> Service:
     query = select(Service).filter_by(uuid=uuid).options(selectinload("*"))
     result = await session.execute(query)
@@ -27,19 +26,17 @@ async def return_service_from_uuid(
         service = result.scalar_one()
     except NoResultFound as expt:
         raise HTTPException(
-            HTTP_404_NOT_FOUND,
-            f"Service with the requested UUID '{uuid}' was not found"
+            HTTP_404_NOT_FOUND, f"Service with the requested UUID '{uuid}' was not found"
         ) from expt
     return service
 
 
 async def authorized_service_from_uuid(
     service: Service = Depends(return_service_from_uuid),  # noqa : B008
-    user: User = Depends(user_factory())  # noqa : B008
+    user: User = Depends(user_factory()),  # noqa : B008
 ) -> Service:
     if service.user_id != user.id:
         raise HTTPException(
-            HTTP_403_FORBIDDEN,
-            f"You are not permitted to access the service '{service.uuid}'"
+            HTTP_403_FORBIDDEN, f"You are not permitted to access the service '{service.uuid}'"
         )
     return service

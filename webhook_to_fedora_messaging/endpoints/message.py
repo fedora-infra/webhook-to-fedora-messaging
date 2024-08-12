@@ -27,18 +27,12 @@ async def create_message(
     """
     Create a message with the requested attributes
     """
-
     try:
-        message = parser(service, request.headers, body)
+        message = await parser(service, request)
     except (SignatureMatchError, ValueError, KeyError) as expt:
         raise HTTPException(
-            HTTP_400_BAD_REQUEST,
-            f"Message could not be dispatched - {expt}"
+            HTTP_400_BAD_REQUEST, f"Message could not be dispatched - {expt}"
         ) from expt
 
     api.publish(message)
-    return {
-        "data": {
-            "uuid": message.id
-        }
-    }
+    return {"data": {"message_id": message.id}}

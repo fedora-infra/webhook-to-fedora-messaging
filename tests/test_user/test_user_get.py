@@ -2,23 +2,29 @@ import pytest
 
 
 @pytest.mark.parametrize(
-    "data, code",
+    "username, code",
     [
         pytest.param(
-            {"username": "mehmet"},
+            "mehmet",
             200,
             id="USER Endpoint - 200 Success",
         ),
         pytest.param(
-            {"username": "baran"},
+            "baran",
             404,
             id="USER Endpoint - 404 Not Found",
         ),
-        pytest.param({"password": ""}, 400, id="USER Endpoint - 400 Bad Request"),
-        pytest.param(None, 415, id="USER Endpoint - 415 Unsupported Media Type"),
     ],
 )
-@pytest.mark.usefixtures("db_user")
-def test_user_get(client, data, code):
-    response = client.get("/user/search", json=data)
+async def test_user_get(client, client_auth, db_user, username, code):
+    response = await client.get(f"/api/v1/users/{username}", auth=client_auth)
     assert response.status_code == code
+    if code == 200:
+        assert response.json() == {
+            "data": {
+                "creation_date": db_user.creation_date.isoformat(),
+                "is_admin": False,
+                "name": db_user.name,
+                "uuid": db_user.uuid,
+            },
+        }
