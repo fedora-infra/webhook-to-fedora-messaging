@@ -4,7 +4,7 @@
 
 ### For development
 
-1.  Install the supported version of Python, Virtualenv, Git and Poetry on your Fedora Linux installation.
+1.  Install the supported version of Python, Virtualenv, Git, Poetry and krb5-devel package on your Fedora Linux installation.
     ```
     $ sudo dnf install python3
     ```
@@ -16,6 +16,9 @@
     ```
     ```
     $ sudo dnf install poetry
+    ```
+    ```
+    $ sudo dnf install krb5-devel
     ```
 
 2.  Clone the repository to your local storage and make it your present working directory.
@@ -67,7 +70,8 @@
     ```
     (venv) $ nano config
     ```
-4.  Start the application with the `--help` flag to understand how the application command line works.
+4.  Ensure that the W2FM_CONFIG environment variable points towards the correct configuration file (e.g., `/home/user/webhook-to-fedora-messaging/config`).
+5.  Start the application with the `--help` flag to understand how the application command line works.
     ```
     (venv) $ w2fm --help
     ```
@@ -83,7 +87,7 @@
     Commands:
       setup  Setup the database schema in the specified environment
     ```
-5.  While pointing towards the edited config file, run the `setup` command to initialize the database.
+6.  While pointing towards the edited config file, run the `setup` command to initialize the database.
     ```
     (venv) $ w2fm --conf config setup
     ```
@@ -91,12 +95,12 @@
     ```
     The database has been created
     ```
-6.  Note that the same command can be used to upgrade and downgrade through database schema revisions.
-7.  Once the database is created, run the following command to invoke the service application.
+7.  Note that the same command can be used to upgrade and downgrade through database schema revisions.
+8.  Once the database is created, run the following command to invoke the service application.
     ```
     $ (venv) uvicorn \
                --factory "webhook_to_fedora_messaging.main:create_app" \
-               --log-config logging.yaml
+               --log-config logging.yaml \
                --host 0.0.0.0 \
                --port 8080 \
                --workers 4
@@ -119,7 +123,7 @@
     [W2FM] [2024-08-14 01:56:49 +0530] [INFO] Application startup complete.
     ```
     This command will make `4 workers` processes of the service available on `all interfaces` and on `port 8080`, while logging according to the configuration available in the newly created `logging.yaml` file.
-8.  To stop the service application processes, invoke a keyboard interrupt by pressing `Ctrl` + `C`.
+9.  To stop the service application processes, invoke a keyboard interrupt by pressing `Ctrl` + `C`.
     ```
     Ctrl + C
     ```
@@ -153,7 +157,7 @@
     [W2FM] [2024-08-14 01:58:43 +0530] [INFO] Waiting for child process [11081]
     [W2FM] [2024-08-14 01:58:43 +0530] [INFO] Stopping parent process [11076]
     ```
-9.  For more utility options on running the service, start `uvicorn` with the `--help` flag.
+10.  For more utility options on running the service, start `uvicorn` with the `--help` flag.
     ```
     (venv) $ uvicorn --help
     ```
@@ -170,7 +174,7 @@
       --fd INTEGER                    Bind to socket from this file descriptor.
     ...
     ```
-10. Deactivate the virtual environment by running the following command.
+11. Deactivate the virtual environment by running the following command.
     ```
     (venv) $ deactivate
     ```
