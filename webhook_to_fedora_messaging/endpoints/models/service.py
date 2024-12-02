@@ -1,7 +1,7 @@
 from abc import ABC
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import (
     BaseModel,
@@ -76,4 +76,4 @@ class ServiceResult(BaseModel):
 
 
 class ServiceManyResult(BaseModel):
-    data: List[ServiceExternal] = []
+    data: list[ServiceExternal] = []

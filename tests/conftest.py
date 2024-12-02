@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 from unittest import mock
 
 import pytest

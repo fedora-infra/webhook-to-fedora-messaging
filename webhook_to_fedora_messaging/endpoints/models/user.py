@@ -1,6 +1,5 @@
 from abc import ABC
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
@@ -39,4 +38,4 @@ class UserResult(BaseModel):
 
 
 class UserManyResult(BaseModel):
-    data: List[UserExternal] = []
+    data: list[UserExternal] = []
