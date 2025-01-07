@@ -17,6 +17,8 @@ STRATEGY_TMPFILE=$(mktemp -t liccheck-strategy-XXXXXX.ini)
 
 curl -o $STRATEGY_TMPFILE $STRATEGY_URL
 
+poetry run pip install poetry-plugin-export
+
 poetry export --with dev --without-hashes -f requirements.txt -o $TMPFILE
 
 # Use pip freeze instead of poetry when it fails
