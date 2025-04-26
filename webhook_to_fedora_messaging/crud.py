@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.datastructures import URL
 
 from .config import get_config
@@ -15,13 +16,13 @@ log = logging.getLogger(__name__)
 
 
 async def create_service(
-    db,
+    db: AsyncSession,
     *,
     service_type: str,
     service_name: str,
     owner: str,
     service_description: str = "",
-):
+) -> Service:
     db_user = await db.scalar(select(User).where(User.name == owner))
     if not db_user:
         db_user = User(name=owner)

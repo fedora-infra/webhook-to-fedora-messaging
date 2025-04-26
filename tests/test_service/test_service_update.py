@@ -1,7 +1,12 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from webhook_to_fedora_messaging.database import get_or_create
 from webhook_to_fedora_messaging.models import User
+from webhook_to_fedora_messaging.models.service import Service
 
 
 @pytest.mark.parametrize(
@@ -18,7 +23,12 @@ from webhook_to_fedora_messaging.models import User
     ],
     indirect=["db_service"],
 )
-async def test_service_update(client, authenticated, db_service, db_session):
+async def test_service_update(
+    client: AsyncClient,
+    authenticated: mock.MagicMock,
+    db_service: Service,
+    db_session: AsyncSession,
+) -> None:
     """
     Updating an existing service
     """
@@ -44,7 +54,13 @@ async def test_service_update(client, authenticated, db_service, db_session):
     ],
     indirect=["db_service"],
 )
-async def test_service_update_user(client, authenticated, db_service, db_user, db_session):
+async def test_service_update_user(
+    client: AsyncClient,
+    authenticated: mock.MagicMock,
+    db_service: Service,
+    db_user: User,
+    db_session: AsyncSession,
+) -> None:
     """
     Updating an existing user
     """
@@ -75,7 +91,12 @@ async def test_service_update_user(client, authenticated, db_service, db_user, d
     ],
     indirect=["db_service"],
 )
-async def test_service_update_user_duplicate(client, authenticated, db_service, db_session):
+async def test_service_update_user_duplicate(
+    client: AsyncClient,
+    authenticated: mock.MagicMock,
+    db_service: Service,
+    db_session: AsyncSession,
+) -> None:
     """
     Verifying an existing user uniqueness during update
     """
@@ -104,7 +125,12 @@ async def test_service_update_user_duplicate(client, authenticated, db_service, 
     ],
     indirect=["db_service"],
 )
-async def test_service_update_user_non_existent(client, authenticated, db_service, db_session):
+async def test_service_update_user_non_existent(
+    client: AsyncClient,
+    authenticated: mock.MagicMock,
+    db_service: Service,
+    db_session: AsyncSession,
+) -> None:
     """
     Transferring an existing service to a non-existent user
     """
@@ -116,7 +142,7 @@ async def test_service_update_user_non_existent(client, authenticated, db_servic
     }
 
 
-async def test_service_update_404(client, authenticated):
+async def test_service_update_404(client: AsyncClient, authenticated: mock.MagicMock) -> None:
     """
     Updating a non-existent service
     """
@@ -139,7 +165,9 @@ async def test_service_update_404(client, authenticated):
     ],
     indirect=["db_service"],
 )
-async def test_service_update_bad_request(client, authenticated, db_service):
+async def test_service_update_bad_request(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Updating an existing service with invalid data
     """
