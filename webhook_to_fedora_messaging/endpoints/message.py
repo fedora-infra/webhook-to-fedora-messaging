@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fedora_messaging import exceptions as fm_exceptions
@@ -27,7 +28,7 @@ async def create_message(
     body: dict,
     request: Request,
     service: Service = Depends(return_service_from_uuid),  # noqa : B008
-):
+) -> dict[str, Any]:
     """
     Create a message with the requested attributes
     """

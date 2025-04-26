@@ -1,4 +1,9 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.user import User
 
 
 @pytest.mark.parametrize(
@@ -16,7 +21,9 @@ import pytest
         ),
     ],
 )
-async def test_user_get(client, authenticated, db_user, username, code):
+async def test_user_get(
+    client: AsyncClient, authenticated: mock.MagicMock, db_user: User, username: str, code: int
+) -> None:
     """
     Spotting users
     """
@@ -32,7 +39,9 @@ async def test_user_get(client, authenticated, db_user, username, code):
         }
 
 
-async def test_user_get_me(client, authenticated, db_user):
+async def test_user_get_me(
+    client: AsyncClient, authenticated: mock.MagicMock, db_user: User
+) -> None:
     """
     Spotting myself
     """

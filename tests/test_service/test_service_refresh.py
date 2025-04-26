@@ -1,4 +1,9 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.service import Service
 
 
 @pytest.mark.parametrize(
@@ -15,7 +20,9 @@ import pytest
     ],
     indirect=["db_service"],
 )
-async def test_service_refresh(client, authenticated, db_service):
+async def test_service_refresh(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Regenerating access token of an existing service
     """
@@ -24,7 +31,7 @@ async def test_service_refresh(client, authenticated, db_service):
     assert response.status_code == 202
 
 
-async def test_service_refresh_404(client, authenticated):
+async def test_service_refresh_404(client: AsyncClient, authenticated: mock.MagicMock) -> None:
     """
     Regenerating access token of a non-existent service
     """

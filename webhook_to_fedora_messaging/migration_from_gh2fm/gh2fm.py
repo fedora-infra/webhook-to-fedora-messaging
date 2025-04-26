@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from sqlalchemy import (
@@ -11,7 +12,7 @@ from sqlalchemy import (
     Table,
     Unicode,
 )
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 
 
 metadata = MetaData()
@@ -47,7 +48,7 @@ org_to_user = Table(
 
 
 @asynccontextmanager
-async def get_session(url):
+async def get_session(url: str) -> AsyncGenerator[AsyncConnection, None]:
     engine = create_async_engine(url)
 
     async with engine.begin() as conn:

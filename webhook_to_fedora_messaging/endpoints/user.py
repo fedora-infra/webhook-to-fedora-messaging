@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -27,7 +28,9 @@ router = APIRouter(prefix="/users")
 @router.get(
     "/search/{username}", status_code=HTTP_200_OK, response_model=UserManyResult, tags=["users"]
 )
-async def search_user(username: str, session: AsyncSession = Depends(get_session)):  # noqa : B008
+async def search_user(
+    username: str, session: AsyncSession = Depends(get_session)  # noqa : B008
+) -> dict[str, Any]:
     """
     Return the list of users matching the specified username
     """
@@ -41,7 +44,7 @@ async def search_user(username: str, session: AsyncSession = Depends(get_session
 @router.get("/me", status_code=HTTP_200_OK, response_model=UserResult, tags=["users"])
 async def get_me(
     user: User = Depends(current_user),  # noqa : B008
-):
+) -> dict[str, Any]:
     """
     Return the user with the specified username
     """
@@ -52,7 +55,7 @@ async def get_me(
 async def get_user(
     username: str,
     session: AsyncSession = Depends(get_session),  # noqa : B008
-):
+) -> dict[str, Any]:
     """
     Return the user with the specified username
     """

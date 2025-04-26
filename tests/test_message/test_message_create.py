@@ -2,17 +2,24 @@ import hashlib
 import hmac
 import json
 import pathlib
+from collections.abc import Generator
+from typing import Union
 from unittest import mock
 
 import pytest
 from fedora_messaging.exceptions import ConnectionException
+from httpx import AsyncClient
+from pytest import FixtureRequest
 from twisted.internet import defer
+from twisted.internet.defer import Deferred
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 
+from webhook_to_fedora_messaging.models.service import Service
 
-@pytest.fixture
-def request_data(request):
+
+@pytest.fixture()
+def request_data(request: FixtureRequest) -> str:
     """
     For setting the correct body information
     """
@@ -21,8 +28,10 @@ def request_data(request):
         return fh.read().strip()
 
 
-@pytest.fixture
-def request_headers(request, db_service, request_data):
+@pytest.fixture()
+def request_headers(
+    request: FixtureRequest, db_service: Service, request_data: str
+) -> dict[str, str]:
     """
     For setting the correct header information
     """
@@ -40,7 +49,7 @@ def request_headers(request, db_service, request_data):
 
 
 @pytest.fixture()
-def fasjson_client():
+def fasjson_client() -> Generator[mock.Mock, None]:
     """
     For resolving FAS usernames locally
     """
@@ -52,14 +61,16 @@ def fasjson_client():
         yield client
 
 
-@pytest.fixture
-def sent_messages():
+@pytest.fixture()
+def sent_messages() -> Generator[list, None]:
     """
     For confirming successful message dispatch
     """
     sent = []
 
-    def _add_and_return(message, exchange=None):
+    def _add_and_return(
+        message: Union[GitHubMessageV1, ForgejoMessageV1], exchange=None
+    ) -> Deferred[None]:
         sent.append(message)
         return defer.succeed(None)
 
@@ -94,16 +105,16 @@ def sent_messages():
     indirect=["request_data", "db_service", "request_headers"],
 )
 async def test_message_create(
-    client,
-    db_service,
-    request_data,
-    request_headers,
-    fasjson_client,
-    sent_messages,
-    kind,
-    schema,
-    username,
-):
+    client: AsyncClient,
+    db_service: Service,
+    request_data: str,
+    request_headers: dict,
+    fasjson_client: mock.Mock,
+    sent_messages: list,
+    kind: str,
+    schema: Union[type[GitHubMessageV1], type[ForgejoMessageV1]],
+    username: str,
+) -> None:
     """
     Sending data and successfully creating message
     """
@@ -153,8 +164,14 @@ async def test_message_create(
     indirect=["request_data", "db_service", "request_headers"],
 )
 async def test_message_create_failure(
-    client, db_service, request_data, request_headers, fasjson_client, kind, username
-):
+    client: AsyncClient,
+    db_service: Service,
+    request_data: str,
+    request_headers: dict,
+    fasjson_client: mock.Mock,
+    kind: str,
+    username: str,
+) -> None:
     """
     Sending data but facing broken connection
     """
@@ -193,7 +210,9 @@ async def test_message_create_failure(
     ],
     indirect=["request_data", "db_service", "request_headers"],
 )
-async def test_message_create_400(client, db_service, request_data, request_headers, kind):
+async def test_message_create_400(
+    client: AsyncClient, db_service: Service, request_data: str, request_headers: dict, kind: str
+) -> None:
     """
     Sending data with wrong information
     """
@@ -204,7 +223,7 @@ async def test_message_create_400(client, db_service, request_data, request_head
     assert response.status_code == 400
 
 
-async def test_message_create_404(client):
+async def test_message_create_404(client: AsyncClient) -> None:
     """
     Sending data to a non-existent service
     """
@@ -226,7 +245,7 @@ async def test_message_create_404(client):
     ],
     indirect=["db_service"],
 )
-async def test_message_create_bad_request(client, db_service):
+async def test_message_create_bad_request(client: AsyncClient, db_service: Service) -> None:
     """
     Sending data with wrong format
     """

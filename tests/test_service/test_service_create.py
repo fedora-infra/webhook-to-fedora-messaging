@@ -1,4 +1,10 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.service import Service
+from webhook_to_fedora_messaging.models.user import User
 
 
 @pytest.mark.parametrize(
@@ -26,7 +32,9 @@ import pytest
         ),
     ],
 )
-async def test_service_create(client, authenticated, data, code):
+async def test_service_create(
+    client: AsyncClient, authenticated: mock.MagicMock, data: dict, code: int
+) -> None:
     """
     Creating a non-existent service with wrong information
     """
@@ -53,7 +61,9 @@ async def test_service_create(client, authenticated, data, code):
     ],
     indirect=["db_service"],
 )
-async def test_service_conflict(client, authenticated, db_service, db_user):
+async def test_service_conflict(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service, db_user: User
+) -> None:
     """
     Creating an existing service again
     """

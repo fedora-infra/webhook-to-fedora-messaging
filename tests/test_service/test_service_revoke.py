@@ -1,4 +1,9 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.service import Service
 
 
 @pytest.mark.parametrize(
@@ -15,7 +20,9 @@ import pytest
     ],
     indirect=["db_service"],
 )
-async def test_service_revoke(client, authenticated, db_service):
+async def test_service_revoke(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Revoking an existing service
     """
@@ -37,7 +44,9 @@ async def test_service_revoke(client, authenticated, db_service):
     ],
     indirect=["db_service"],
 )
-async def test_service_revoke_404(client, authenticated, db_service):
+async def test_service_revoke_404(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Revoking a non-existent service
     """

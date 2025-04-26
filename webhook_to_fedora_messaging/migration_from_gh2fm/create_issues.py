@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Optional
 
 import click
 import gidgethub
@@ -60,7 +61,13 @@ log = logging.getLogger(__name__)
     help="The URL to Github2Fedmsg's DB",
 )
 @click.option("-d", "--debug", is_flag=True, help="Show more information")
-def main(config_path, github_username, github_token, github2fedmsg_db_url, debug):
+def main(
+    config_path: Optional[str],
+    github_username: str,
+    github_token: str,
+    github2fedmsg_db_url: str,
+    debug: bool,
+) -> None:
     if config_path:
         set_config_file(config_path)
     logging.basicConfig(
@@ -71,7 +78,7 @@ def main(config_path, github_username, github_token, github2fedmsg_db_url, debug
     asyncio.run(_main(github_username, github_token, github2fedmsg_db_url))
 
 
-async def _main(github_username, github_token, github2fedmsg_db_url):
+async def _main(github_username: str, github_token: str, github2fedmsg_db_url: str) -> None:
     async with httpx.AsyncClient() as http_client:
         gh = gidgethub.httpx.GitHubAPI(http_client, github_username, oauth_token=github_token)
         async with gh2fm.get_session(github2fedmsg_db_url) as gh2fm_session:
@@ -85,7 +92,7 @@ async def _main(github_username, github_token, github2fedmsg_db_url):
                 await process_repo(f"{user}/{repo}", gh)
 
 
-async def process_repo(repo, gh: gidgethub.abc.GitHubAPI):
+async def process_repo(repo: str, gh: gidgethub.abc.GitHubAPI) -> None:
     log.debug("Processing %s", repo)
     # Make sure the repo exists:
     try:

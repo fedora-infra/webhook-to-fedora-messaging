@@ -11,11 +11,11 @@ from fedora_messaging import exceptions as fm_exceptions
 log = logging.getLogger(__name__)
 
 
-def backoff_hdlr(details):
+def backoff_hdlr(details) -> None:
     log.warning("Publishing message failed. Retrying. %s", traceback.format_tb(sys.exc_info()[2]))
 
 
-def giveup_hdlr(details):
+def giveup_hdlr(details) -> None:
     log.error("Publishing message failed. Giving up. %s", traceback.format_tb(sys.exc_info()[2]))
 
 
@@ -26,5 +26,5 @@ def giveup_hdlr(details):
     on_backoff=backoff_hdlr,
     on_giveup=giveup_hdlr,
 )
-async def publish(message):
+async def publish(message: api.Message) -> None:
     await run_in_threadpool(api.publish, message)

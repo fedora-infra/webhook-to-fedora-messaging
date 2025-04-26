@@ -1,4 +1,7 @@
-async def test_root_redirect(client):
+from httpx import AsyncClient
+
+
+async def test_root_redirect(client: AsyncClient) -> None:
     """
     Redirecting to API documentation
     """

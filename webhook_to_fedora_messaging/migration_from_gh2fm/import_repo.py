@@ -1,12 +1,14 @@
 import asyncio
 import logging
 from functools import lru_cache
+from typing import Any, Optional
 
 import click
 from fasjson_client import Client as FasjsonClient
 from fasjson_client.errors import APIError as FasjsonApiError
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 from ..config import set_config_file
 from ..crud import create_service
@@ -35,7 +37,13 @@ log = logging.getLogger(__name__)
 @click.option("-d", "--debug", is_flag=True, help="Show more information")
 @click.argument("repo", required=True)
 @click.argument("fas_username", required=False)
-def main(config_path, github2fedmsg_db_url, debug, repo, fas_username):
+def main(
+    config_path: Optional[str],
+    github2fedmsg_db_url: str,
+    debug: bool,
+    repo: str,
+    fas_username: Optional[str],
+) -> None:
     if config_path:
         set_config_file(config_path)
     logging.basicConfig(
@@ -49,7 +57,9 @@ def main(config_path, github2fedmsg_db_url, debug, repo, fas_username):
     asyncio.run(_main(repo, fas_username, github2fedmsg_db_url))
 
 
-async def _main(repo_full_name, fas_username, github2fedmsg_db_url):
+async def _main(
+    repo_full_name: str, fas_username: Optional[str], github2fedmsg_db_url: str
+) -> None:
     if "/" in repo_full_name:
         user_or_org, repo_name = repo_full_name.split("/")
     else:
@@ -104,7 +114,7 @@ async def _main(repo_full_name, fas_username, github2fedmsg_db_url):
                 log.warning(str(e))
 
 
-def _get_fasjson_url():
+def _get_fasjson_url() -> str:
     from configparser import ConfigParser
 
     ipa_config = ConfigParser()
@@ -113,7 +123,7 @@ def _get_fasjson_url():
     return f"https://fasjson.{domain}"
 
 
-async def _get_owner(gh2fm_session, repo):
+async def _get_owner(gh2fm_session: AsyncConnection, repo: Any) -> str:
     owner = repo.fas_username
     if owner.startswith("github_org_"):
         org_name = owner[len("github_org_") :]
@@ -137,12 +147,12 @@ async def _get_owner(gh2fm_session, repo):
 
 
 @lru_cache
-def _get_fasjson_client():
+def _get_fasjson_client() -> FasjsonClient:
     return FasjsonClient(_get_fasjson_url())
 
 
 @lru_cache
-def _get_fas_username(username):
+def _get_fas_username(username: str) -> str:
     fasjson = _get_fasjson_client()
     try:
         fas_user = fasjson.get_user(username=username).result

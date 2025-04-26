@@ -1,4 +1,9 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.service import Service
 
 
 @pytest.mark.parametrize(
@@ -15,7 +20,9 @@ import pytest
     ],
     indirect=["db_service"],
 )
-async def test_service_lookup(client, authenticated, db_service):
+async def test_service_lookup(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Spotting an existing service
     """
@@ -34,7 +41,7 @@ async def test_service_lookup(client, authenticated, db_service):
     }
 
 
-async def test_service_404(client, authenticated):
+async def test_service_404(client: AsyncClient, authenticated: mock.MagicMock) -> None:
     """
     Spotting a non-existent service
     """

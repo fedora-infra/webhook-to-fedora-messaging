@@ -9,7 +9,9 @@ custom configuration file will be inherently taken from the default values
 
 import importlib.metadata
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -38,7 +40,7 @@ PREFIX = "/api/v1"
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[Any, Any]:
     # Initialize long-lived objects
     get_db_manager()
     configure_cache()

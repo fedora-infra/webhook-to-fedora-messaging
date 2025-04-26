@@ -2,6 +2,7 @@ import logging
 import logging.config
 import os
 from asyncio import run
+from typing import Optional
 
 import click
 import yaml
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
     default=None,
 )
 @click.version_option(version=__version__, prog_name="w2fm")
-def main(conf=None):
+def main(conf=None) -> None:
     if conf:
         set_config_file(os.path.abspath(conf))
         get_db_manager.cache_clear()
@@ -36,7 +37,7 @@ def main(conf=None):
 
 
 @main.command(name="setup", help="Setup the database schema in the specified environment")
-def setup():
+def setup() -> None:
     result = run(setup_database())
     if result == SyncResult.ALREADY_UP_TO_DATE:
         click.echo("The database was already up-to-date")
@@ -51,8 +52,8 @@ def setup():
 @click.option("--type", "service_type", required=True)
 @click.option("--owner", required=True)
 @click.option("--description")
-def create(service, service_type, owner, description):
-    async def _main():
+def create(service: str, service_type: str, owner: str, description: Optional[str]) -> None:
+    async def _main() -> None:
         async with with_db_session() as db_session:
             await create_service(
                 db_session,
