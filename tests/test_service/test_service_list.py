@@ -1,4 +1,9 @@
+from unittest import mock
+
 import pytest
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.service import Service
 
 
 @pytest.mark.parametrize(
@@ -15,7 +20,9 @@ import pytest
     ],
     indirect=["db_service"],
 )
-async def test_service_list(client, authenticated, db_service):
+async def test_service_list(
+    client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
+) -> None:
     """
     Listing all available services
     """

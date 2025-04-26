@@ -44,7 +44,7 @@ class OIDCUser(BaseModel):
 async def current_user(
     token: Optional[str] = Depends(oidc),
     session: AsyncSession = Depends(get_session),  # noqa : B008
-):
+) -> User:
     # Read the token
     try:
         token_type, token = token.split(" ", 1)
