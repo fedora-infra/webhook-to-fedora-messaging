@@ -6,6 +6,9 @@ from webhook_to_fedora_messaging import cli, database, models
 
 
 def test_cli_create(db_session):
+    """
+    Creating a service using CLI
+    """
     runner = CliRunner()
     result = runner.invoke(
         cli.create,

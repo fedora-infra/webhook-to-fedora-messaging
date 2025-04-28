@@ -7,16 +7,19 @@ import pytest
         pytest.param(
             "mehmet",
             200,
-            id="USER Endpoint - 200 Success",
+            id="General - Spotting an existing service",
         ),
         pytest.param(
             "baran",
             404,
-            id="USER Endpoint - 404 Not Found",
+            id="General - Spotting a non-existent service",
         ),
     ],
 )
 async def test_user_get(client, authenticated, db_user, username, code):
+    """
+    Spotting users
+    """
     response = await client.get(f"/api/v1/users/{username}")
     assert response.status_code == code
     if code == 200:
@@ -30,6 +33,9 @@ async def test_user_get(client, authenticated, db_user, username, code):
 
 
 async def test_user_get_me(client, authenticated, db_user):
+    """
+    Spotting myself
+    """
     response = await client.get("/api/v1/users/me")
     assert response.status_code == 200
     assert response.json() == {
