@@ -8,8 +8,8 @@ import gidgethub.httpx
 import httpx
 from sqlalchemy import select
 
-from webhook_to_fedora_messaging.config import set_config_file
-from webhook_to_fedora_messaging.migration_from_gh2fm import gh2fm
+from ..config import set_config_file
+from . import gh2fm
 
 
 DESC_PREFIX = "Migrated from GitHub2FedMsg."

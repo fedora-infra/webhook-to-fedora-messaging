@@ -4,8 +4,8 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
-from webhook_to_fedora_messaging.models import Service, User
-from webhook_to_fedora_messaging.models.owners import owners_table
+from .models import Service, User
+from .models.owners import owners_table
 
 
 log = logging.getLogger(__name__)

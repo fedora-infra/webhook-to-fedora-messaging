@@ -2,8 +2,7 @@ import logging
 
 from starlette.requests import Request
 
-from webhook_to_fedora_messaging.models.service import Service
-
+from ..service import Service
 from .forgejo import forgejo_parser
 from .github import github_parser
 

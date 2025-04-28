@@ -14,16 +14,16 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from webhook_to_fedora_messaging.auth import current_user
-from webhook_to_fedora_messaging.database import get_session
-from webhook_to_fedora_messaging.endpoints.models.service import (
+from ..auth import current_user
+from ..database import get_session
+from ..models import Service, User
+from .models.service import (
     ServiceManyResult,
     ServiceRequest,
     ServiceResult,
     ServiceUpdate,
 )
-from webhook_to_fedora_messaging.endpoints.util import authorized_service_from_uuid
-from webhook_to_fedora_messaging.models import Service, User
+from .util import authorized_service_from_uuid
 
 
 logger = logging.getLogger(__name__)

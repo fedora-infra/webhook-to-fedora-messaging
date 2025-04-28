@@ -5,10 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
 
-from webhook_to_fedora_messaging.auth import current_user
-from webhook_to_fedora_messaging.database import get_session
-from webhook_to_fedora_messaging.models.service import Service
-from webhook_to_fedora_messaging.models.user import User
+from ..auth import current_user
+from ..database import get_session
+from ..models.service import Service
+from ..models.user import User
 
 
 async def is_uuid_vacant(uuid: str) -> str:

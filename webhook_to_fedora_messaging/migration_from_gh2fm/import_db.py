@@ -8,10 +8,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
-from webhook_to_fedora_messaging.config import get_config
-from webhook_to_fedora_messaging.database import get_session
-from webhook_to_fedora_messaging.models import Service, User
-from webhook_to_fedora_messaging.models.owners import owners_table
+from ..config import get_config
+from ..database import get_session
+from ..models import Service, User
+from ..models.owners import owners_table
 
 
 format = "%d-%m-%Y %H:%M:%S"

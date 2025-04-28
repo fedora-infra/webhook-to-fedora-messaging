@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Table
 
-from webhook_to_fedora_messaging.database import Base
+from ..database import Base
 
 
 # note for a Core table, we use the sqlalchemy.Column construct,

@@ -16,11 +16,11 @@ from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 
-from webhook_to_fedora_messaging.cache import configure_cache
-from webhook_to_fedora_messaging.config import get_config
-from webhook_to_fedora_messaging.database import get_db_manager
-from webhook_to_fedora_messaging.endpoints import message, service, user
-from webhook_to_fedora_messaging.fasjson import get_fasjson
+from .cache import configure_cache
+from .config import get_config
+from .database import get_db_manager
+from .endpoints import message, service, user
+from .fasjson import get_fasjson
 
 
 logger = logging.getLogger(__name__)

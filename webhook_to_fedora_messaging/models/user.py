@@ -5,10 +5,9 @@
 from sqlalchemy import Boolean, Column, Integer, UnicodeText
 from sqlalchemy.orm import relationship
 
-from webhook_to_fedora_messaging.database import Base
-from webhook_to_fedora_messaging.models.util import CreatableMixin
-
+from ..database import Base
 from .owners import owners_table
+from .util import CreatableMixin
 
 
 class User(Base, CreatableMixin):

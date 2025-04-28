@@ -5,9 +5,9 @@ from typing import Callable
 
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 
-from webhook_to_fedora_messaging.endpoints.parser.base import initialize_parser
-from webhook_to_fedora_messaging.exceptions import SignatureMatchError
-from webhook_to_fedora_messaging.fasjson import get_fasjson
+from ...endpoints.parser.base import initialize_parser
+from ...exceptions import SignatureMatchError
+from ...fasjson import get_fasjson
 
 
 def validate_checksum(function: Callable) -> Callable:

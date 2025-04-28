@@ -4,13 +4,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fedora_messaging import exceptions as fm_exceptions
 from starlette.status import HTTP_202_ACCEPTED, HTTP_400_BAD_REQUEST, HTTP_502_BAD_GATEWAY
 
-from webhook_to_fedora_messaging.endpoints.models.message import MessageResult
-from webhook_to_fedora_messaging.endpoints.util import return_service_from_uuid
-from webhook_to_fedora_messaging.exceptions import SignatureMatchError
-from webhook_to_fedora_messaging.models import Service
-from webhook_to_fedora_messaging.publishing import publish
-
+from ..exceptions import SignatureMatchError
+from ..models import Service
+from ..publishing import publish
+from .models.message import MessageResult
 from .parser import parser
+from .util import return_service_from_uuid
 
 
 logger = logging.getLogger(__name__)

@@ -7,10 +7,9 @@ from uuid import uuid4
 from sqlalchemy import Boolean, Column, Integer, UnicodeText, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from webhook_to_fedora_messaging.database import Base
-from webhook_to_fedora_messaging.models.util import CreatableMixin, UUIDCreatableMixin
-
+from ..database import Base
 from .owners import owners_table
+from .util import CreatableMixin, UUIDCreatableMixin
 
 
 class Service(Base, UUIDCreatableMixin, CreatableMixin):

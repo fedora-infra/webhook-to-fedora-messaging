@@ -8,7 +8,7 @@ from pydantic import (
     model_validator,
 )
 
-from webhook_to_fedora_messaging.config import get_config
+from ...config import get_config
 
 
 class MessageBase(BaseModel, ABC):

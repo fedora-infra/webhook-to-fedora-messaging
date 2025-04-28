@@ -8,9 +8,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.status import HTTP_401_UNAUTHORIZED
 
-from webhook_to_fedora_messaging.config import get_config
-from webhook_to_fedora_messaging.database import get_or_create, get_session
-from webhook_to_fedora_messaging.models import User
+from .config import get_config
+from .database import get_or_create, get_session
+from .models import User
 
 
 log = logging.getLogger(__name__)

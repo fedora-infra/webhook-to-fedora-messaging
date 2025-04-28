@@ -8,10 +8,10 @@ from fasjson_client.errors import APIError as FasjsonApiError
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from webhook_to_fedora_messaging.config import set_config_file
-from webhook_to_fedora_messaging.crud import create_service
-from webhook_to_fedora_messaging.database import with_db_session
-from webhook_to_fedora_messaging.migration_from_gh2fm import gh2fm
+from ..config import set_config_file
+from ..crud import create_service
+from ..database import with_db_session
+from . import gh2fm
 
 
 log = logging.getLogger(__name__)

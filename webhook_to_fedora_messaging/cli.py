@@ -7,10 +7,10 @@ import click
 import yaml
 from sqlalchemy_helpers.aio import SyncResult
 
-from webhook_to_fedora_messaging import __version__
-from webhook_to_fedora_messaging.config import get_config, set_config_file
-from webhook_to_fedora_messaging.crud import create_service
-from webhook_to_fedora_messaging.database import get_db_manager, setup_database, with_db_session
+from . import __version__
+from .config import get_config, set_config_file
+from .crud import create_service
+from .database import get_db_manager, setup_database, with_db_session
 
 
 logger = logging.getLogger(__name__)
