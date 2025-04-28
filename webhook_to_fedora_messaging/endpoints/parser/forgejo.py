@@ -3,7 +3,7 @@ from functools import wraps
 from hashlib import sha256
 from typing import Callable
 
-from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
+from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 
 from webhook_to_fedora_messaging.endpoints.parser.base import initialize_parser
 from webhook_to_fedora_messaging.exceptions import SignatureMatchError
@@ -29,10 +29,10 @@ def validate_checksum(function: Callable) -> Callable:
 
 @initialize_parser
 @validate_checksum
-async def github_parser(headers: dict, body: dict) -> GitHubMessageV1:
+async def forgejo_parser(headers: dict, body: dict) -> ForgejoMessageV1:
     """
     Convert request objects into desired Fedora Messaging format
     """
-    topic = f"github.{headers['x-github-event']}"
-    agent = await get_fasjson().get_username_from_github(body["sender"]["login"])
-    return GitHubMessageV1(topic=topic, body={"body": body, "headers": headers, "agent": agent})
+    topic = f"forgejo.{headers['x-forgejo-event']}"
+    agent = await get_fasjson().get_username_from_forgejo(body["sender"]["login"])
+    return ForgejoMessageV1(topic=topic, body={"body": body, "headers": headers, "agent": agent})

@@ -50,6 +50,10 @@ class FASJSONAsyncProxy:
             return users[0]["username"]
         return None
 
+    async def get_username_from_forgejo(self, username):
+        # TODO: Revisit user retrieval using FASJSON once the FAS supports Forgejo Auth
+        return username
+
 
 @ft_cache
 def get_fasjson() -> FASJSONAsyncProxy:

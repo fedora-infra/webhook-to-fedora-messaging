@@ -16,6 +16,7 @@ from starlette.requests import Request
 
 class ServiceType(str, Enum):
     github = "github"
+    forgejo = "forgejo"
 
 
 class ServiceBase(BaseModel, ABC):
