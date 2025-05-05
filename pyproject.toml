@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "webhook-to-fedora-messaging"
-version = "0.1.0"
+version = "0.2.0"
 description = "Webhook to Fedora Messaging"
 
 license = "AGPL-3.0-or-later"
