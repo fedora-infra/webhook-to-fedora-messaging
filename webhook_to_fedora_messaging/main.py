@@ -7,6 +7,7 @@ The values for any configuration variable that was not mentioned of in the
 custom configuration file will be inherently taken from the default values
 """
 
+import importlib.metadata
 import logging
 from contextlib import asynccontextmanager
 
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
             "name": "Fedora Infrastructure",
             "email": "infrastructure@lists.fedoraproject.org",
         },
+        version=importlib.metadata.version("webhook-to-fedora-messaging"),
         openapi_tags=tags_metadata,
         swagger_ui_init_oauth={
             "clientId": config.oidc.client_id,
