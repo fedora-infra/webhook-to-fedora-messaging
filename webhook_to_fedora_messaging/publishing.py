@@ -6,16 +6,17 @@ import backoff
 from fastapi.concurrency import run_in_threadpool
 from fedora_messaging import api
 from fedora_messaging import exceptions as fm_exceptions
+from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 
 
 log = logging.getLogger(__name__)
 
 
-def backoff_hdlr(details):
+def backoff_hdlr(details) -> None:
     log.warning("Publishing message failed. Retrying. %s", traceback.format_tb(sys.exc_info()[2]))
 
 
-def giveup_hdlr(details):
+def giveup_hdlr(details) -> None:
     log.error("Publishing message failed. Giving up. %s", traceback.format_tb(sys.exc_info()[2]))
 
 
@@ -26,5 +27,5 @@ def giveup_hdlr(details):
     on_backoff=backoff_hdlr,
     on_giveup=giveup_hdlr,
 )
-async def publish(message):
+async def publish(message: GitHubMessageV1) -> None:
     await run_in_threadpool(api.publish, message)

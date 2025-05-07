@@ -1,11 +1,12 @@
 import asyncio
 
 from click.testing import CliRunner
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from webhook_to_fedora_messaging import cli, database, models
 
 
-def test_cli_create(db_session):
+def test_cli_create(db_session: AsyncSession) -> None:
     """
     Creating a service using CLI
     """
@@ -16,7 +17,7 @@ def test_cli_create(db_session):
     )
     assert result.exit_code == 0
 
-    async def _check():
+    async def _check() -> None:
         user, is_created = await database.get_or_create(db_session, models.User, name="dummy-user")
         assert is_created is False
         service, is_created = await database.get_or_create(
