@@ -1,5 +1,6 @@
 import csv
 from asyncio import run
+from collections.abc import Generator
 from datetime import datetime
 from uuid import uuid4
 
@@ -17,7 +18,7 @@ from ..models.owners import owners_table
 format = "%d-%m-%Y %H:%M:%S"
 
 
-def read_user(userscsv_fileloca):
+def read_user(userscsv_fileloca: str) -> Generator[str, None, None]:
     with open(userscsv_fileloca) as file:
         useriter = csv.reader(file)
         next(useriter)
@@ -25,7 +26,7 @@ def read_user(userscsv_fileloca):
             yield item[0]
 
 
-def read_repo(reposcsv_fileloca):
+def read_repo(reposcsv_fileloca: str) -> Generator[tuple[str, str, str, str], None, None]:
     with open(reposcsv_fileloca) as file:
         repoiter = csv.reader(file)
         next(repoiter)
@@ -33,7 +34,7 @@ def read_repo(reposcsv_fileloca):
             yield item[1], item[2], item[4], item[5]
 
 
-def read_pair(userscsv_fileloca, pairscsv_fileloca):
+def read_pair(userscsv_fileloca: str, pairscsv_fileloca: str) -> dict:
     pair, userdict = dict(), dict()
     with open(userscsv_fileloca) as file:
         useriter = csv.reader(file)
@@ -51,7 +52,7 @@ def read_pair(userscsv_fileloca, pairscsv_fileloca):
     return pair
 
 
-async def import_user_to_database(userscsv_fileloca):
+async def import_user_to_database(userscsv_fileloca: str) -> None:
     async for sess in get_session():
         for item in read_user(userscsv_fileloca):
             try:
@@ -70,7 +71,9 @@ async def import_user_to_database(userscsv_fileloca):
         await sess.close()
 
 
-async def import_repo_to_database(userscsv_fileloca, reposcsv_fileloca, pairscsv_fileloca):
+async def import_repo_to_database(
+    userscsv_fileloca: str, reposcsv_fileloca: str, pairscsv_fileloca: str
+) -> None:
     pairdata, done = read_pair(userscsv_fileloca, pairscsv_fileloca), set()
     async for sess in get_session():
         for item in read_repo(reposcsv_fileloca):
@@ -148,7 +151,7 @@ async def import_repo_to_database(userscsv_fileloca, reposcsv_fileloca, pairscsv
 @click.option(
     "-p", "--pairs", required=True, type=click.Path(readable=True), help="Path to the pairs CSV"
 )
-def main(users, repos, pairs):
+def main(users: str, repos: str, pairs: str) -> None:
     # Ensure that the W2FM_CONFIG environment variable points towards the correct file
     get_config()
 

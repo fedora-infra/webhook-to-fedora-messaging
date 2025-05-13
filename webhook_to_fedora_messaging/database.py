@@ -14,6 +14,7 @@ from functools import cache
 
 from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncSession
 from sqlalchemy_helpers.aio import (  # noqa: F401
+    AsyncDatabaseManager,
     get_or_create,
     update_or_create,
 )
@@ -28,7 +29,7 @@ Base = get_base(cls=AsyncAttrs)
 
 
 @cache
-def get_db_manager():
+def get_db_manager() -> AsyncDatabaseManager:
     config = get_config()
     return manager_from_config(config.database, base_model=Base)
 

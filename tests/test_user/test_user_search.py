@@ -1,4 +1,9 @@
-async def test_user_search(client, db_user):
+from httpx import AsyncClient
+
+from webhook_to_fedora_messaging.models.user import User
+
+
+async def test_user_search(client: AsyncClient, db_user: User) -> None:
     """
     Searching users with valid format
     """
@@ -15,7 +20,7 @@ async def test_user_search(client, db_user):
     }
 
 
-async def test_user_search_too_short(client, db_user):
+async def test_user_search_too_short(client: AsyncClient, db_user: User) -> None:
     """
     Searching users with wrong format
     """

@@ -27,7 +27,7 @@ async def create_message(
     body: dict,
     request: Request,
     service: Service = Depends(return_service_from_uuid),  # noqa : B008
-):
+) -> MessageResult:
     """
     Create a message with the requested attributes
     """
