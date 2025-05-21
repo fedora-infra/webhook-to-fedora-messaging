@@ -36,7 +36,7 @@ async def create_service(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     user: User = Depends(current_user),  # noqa : B008
-):
+) -> ServiceResult:
     """
     Create a service with the requested attributes
     """
@@ -61,7 +61,7 @@ async def list_services(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     user: User = Depends(current_user),  # noqa : B008
-):
+) -> ServiceManyResult:
     """
     List all the services associated with a certain user
     """
@@ -75,7 +75,7 @@ async def get_service(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
-):
+) -> ServiceResult:
     """
     Return the service with the specified UUID
     """
@@ -89,7 +89,7 @@ async def revoke_service(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
-):
+) -> ServiceResult:
     """
     Revoke the service with the specified UUID
     """
@@ -106,7 +106,7 @@ async def update_service(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
-):
+) -> ServiceResult:
     """
     Update the service with the specified UUID
     """
@@ -144,7 +144,7 @@ async def regenerate_token(
     request: Request,
     session: AsyncSession = Depends(get_session),  # noqa : B008
     service: Service = Depends(authorized_service_from_uuid),  # noqa : B008
-):
+) -> ServiceResult:
     """
     Regenerate the access token for the service with the requested UUID
     """

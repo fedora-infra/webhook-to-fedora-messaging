@@ -3,10 +3,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from collections.abc import AsyncGenerator
+from pathlib import PosixPath
 from unittest import mock
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy_helpers.aio import AsyncDatabaseManager
 
 from webhook_to_fedora_messaging import database
 from webhook_to_fedora_messaging.config import set_config_file
@@ -17,7 +20,7 @@ from webhook_to_fedora_messaging.models.user import User
 
 
 @pytest.fixture()
-async def app_config(tmp_path):
+async def app_config(tmp_path: PosixPath) -> None:
     config_path = tmp_path.joinpath("app.cfg")
     database_url = f"sqlite:///{tmp_path.as_posix()}/w2fm.db"
     with open(config_path, "w") as fh:
@@ -33,7 +36,7 @@ DATAGREPPER_URL = "http://datagrepper.example.com/"
 
 
 @pytest.fixture()
-async def db(app_config):
+async def db(app_config: None) -> AsyncGenerator[AsyncDatabaseManager, None]:
     """
     For initializing the database
     """
@@ -46,7 +49,7 @@ async def db(app_config):
 
 
 @pytest.fixture()
-async def db_session(db):
+async def db_session(db: AsyncDatabaseManager) -> AsyncGenerator[AsyncSession, None]:
     """
     For initializing the database session
     """
@@ -58,7 +61,7 @@ async def db_session(db):
 
 
 @pytest.fixture()
-async def client(app_config, db):
+async def client(app_config: None, db: AsyncDatabaseManager) -> AsyncGenerator[AsyncClient, None]:
     """
     For initializing the testing client
     """
@@ -69,23 +72,7 @@ async def client(app_config, db):
 
 
 @pytest.fixture()
-async def authenticated(db_user, client):
-    """
-    For authenticating the connected client
-    """
-    oidc_user = {
-        "nickname": db_user.name,
-        "email": f"{db_user.name}@example.com",
-        "sub": "dummyusersub",
-    }
-    with mock.patch("webhook_to_fedora_messaging.auth.oauth") as oauth:
-        oauth.fedora.userinfo = mock.AsyncMock(return_value=oidc_user)
-        client.headers = {"Authorization": "Bearer dummy-token"}
-        yield oauth
-
-
-@pytest.fixture()
-async def db_user(client, db_session) -> AsyncGenerator[User, None]:
+async def db_user(client: AsyncClient, db_session: AsyncSession) -> AsyncGenerator[User, None]:
     """
     For seeding the database with user
     """
@@ -105,7 +92,25 @@ async def db_user(client, db_session) -> AsyncGenerator[User, None]:
 
 
 @pytest.fixture()
-async def db_service(client, db_user, db_session, request) -> AsyncGenerator[Service, None]:
+async def authenticated(db_user: User, client: AsyncClient) -> AsyncGenerator[mock.MagicMock, None]:
+    """
+    For authenticating the connected client
+    """
+    oidc_user = {
+        "nickname": db_user.name,
+        "email": f"{db_user.name}@example.com",
+        "sub": "dummyusersub",
+    }
+    with mock.patch("webhook_to_fedora_messaging.auth.oauth") as oauth:
+        oauth.fedora.userinfo = mock.AsyncMock(return_value=oidc_user)
+        client.headers = {"Authorization": "Bearer dummy-token"}
+        yield oauth
+
+
+@pytest.fixture()
+async def db_service(
+    client: AsyncClient, db_user: User, db_session: AsyncSession, request
+) -> AsyncGenerator[Service, None]:
     """
     For seeding the database with service
     """
