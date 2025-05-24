@@ -18,4 +18,4 @@ class GitHubParser(BaseParser):
         return f"github.{headers['x-github-event']}"
 
     async def _get_agent(self, body: Body) -> str | None:
-        return await get_fasjson().get_username_from_github(body["sender"]["login"])
+        return await get_fasjson().get_username("github", body["sender"]["login"])
