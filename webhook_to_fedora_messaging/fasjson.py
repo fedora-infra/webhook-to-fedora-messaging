@@ -40,21 +40,28 @@ class FASJSONAsyncProxy:
     ) -> list[dict[str, Any]]:
         return [user for user in (await self.get("/search/users/", params=params))["result"]]
 
-    async def get_username_from_github(self, username: str) -> str | None:
-        if username.endswith("[bot]"):
-            return None
+    async def _search_user(self, **filters: str) -> str | None:
         try:
-            users = await self.search_users(github_username=username)
+            users = await self.search_users(**filters)
         except httpx.TimeoutException:
-            log.exception("Timeout fetching the FAS user with Github username %r", username)
+            log.exception("Timeout fetching the FAS user with %r", filters)
             return None
         if len(users) == 1:
             return cast(str, users[0]["username"])
+        elif len(users) > 1:
+            log.exception("Found multiple FAS users with %r", filters)
         return None
 
-    async def get_username_from_forgejo(self, username: str) -> str | None:
-        # TODO: Revisit user retrieval using FASJSON once the FAS supports Forgejo Auth
-        return None
+    async def get_username(self, service: str, username: str) -> str | None:
+        if service == "forgejo":
+            # Skip because FAS does not support Forgejo Auth yet
+            return None
+        if service == "github" and username.endswith("[bot]"):
+            # Github bots can't be FAS users, skip them
+            return None
+
+        key = f"{service}_username"
+        return await self._search_user(**{key: username})
 
 
 @ft_cache
