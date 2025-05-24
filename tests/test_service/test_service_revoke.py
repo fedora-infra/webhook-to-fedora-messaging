@@ -17,6 +17,10 @@ from webhook_to_fedora_messaging.models.service import Service
             "forgejo",
             id="Forgejo - Revoking an existing service",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab - Revoking an existing service",
+        ),
     ],
     indirect=["db_service"],
 )
@@ -40,6 +44,10 @@ async def test_service_revoke(
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],

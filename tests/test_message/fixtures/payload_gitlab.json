@@ -1,0 +1,63 @@
+{
+  "object_kind": "push",
+  "event_name": "push",
+  "before": "0000000000000000000000000000000000000000",
+  "after": "7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+  "ref": "refs/heads/test-branch",
+  "ref_protected": false,
+  "checkout_sha": "7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+  "message": null,
+  "user_id": 16997011,
+  "user_name": "Shounak Dey",
+  "user_username": "sdglitched",
+  "user_email": null,
+  "user_avatar": "https://secure.gravatar.com/avatar/9458b3a00e2f3f262b05309bd9a43a233c28689e6cbae811b198cd5ee9fb3653?s=80&d=identicon",
+  "project_id": 69912300,
+  "project": {
+    "id": 69912300,
+    "name": "w2fm-test",
+    "description": null,
+    "web_url": "https://gitlab.com/sdglitched/w2fm-test",
+    "avatar_url": null,
+    "git_ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "git_http_url": "https://gitlab.com/sdglitched/w2fm-test.git",
+    "namespace": "Shounak Dey",
+    "visibility_level": 0,
+    "path_with_namespace": "sdglitched/w2fm-test",
+    "default_branch": "main",
+    "ci_config_path": "",
+    "homepage": "https://gitlab.com/sdglitched/w2fm-test",
+    "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "http_url": "https://gitlab.com/sdglitched/w2fm-test.git"
+  },
+  "commits": [
+    {
+      "id": "7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+      "message": "Test commit\n\nSigned-off-by: Shounak Dey <shounakdey@ymail.com>\n",
+      "title": "Test commit",
+      "timestamp": "2025-05-16T21:24:13+05:30",
+      "url": "https://gitlab.com/sdglitched/w2fm-test/-/commit/7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+      "author": {
+        "name": "Shounak Dey",
+        "email": "shounakdey@ymail.com"
+      },
+      "added": [],
+      "modified": [
+        "README.md"
+      ],
+      "removed": []
+    }
+  ],
+  "total_commits_count": 1,
+  "push_options": {},
+  "repository": {
+    "name": "w2fm-test",
+    "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "description": null,
+    "homepage": "https://gitlab.com/sdglitched/w2fm-test",
+    "git_http_url": "https://gitlab.com/sdglitched/w2fm-test.git",
+    "git_ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "visibility_level": 0
+  }
+}
