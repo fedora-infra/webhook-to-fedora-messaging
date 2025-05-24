@@ -1,0 +1,360 @@
+{
+  "object_kind": "merge_request",
+  "event_type": "merge_request",
+  "user": {
+    "id": 16997011,
+    "name": "Shounak Dey",
+    "username": "sdglitched",
+    "avatar_url": "https://secure.gravatar.com/avatar/9458b3a00e2f3f262b05309bd9a43a233c28689e6cbae811b198cd5ee9fb3653?s=80&d=identicon",
+    "email": "[REDACTED]"
+  },
+  "project": {
+    "id": 69912300,
+    "name": "w2fm-test",
+    "description": null,
+    "web_url": "https://gitlab.com/sdglitched/w2fm-test",
+    "avatar_url": null,
+    "git_ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "git_http_url": "https://gitlab.com/sdglitched/w2fm-test.git",
+    "namespace": "Shounak Dey",
+    "visibility_level": 0,
+    "path_with_namespace": "sdglitched/w2fm-test",
+    "default_branch": "main",
+    "ci_config_path": "",
+    "homepage": "https://gitlab.com/sdglitched/w2fm-test",
+    "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "http_url": "https://gitlab.com/sdglitched/w2fm-test.git"
+  },
+  "object_attributes": {
+    "assignee_id": 16997011,
+    "author_id": 16997011,
+    "created_at": "2025-05-16 16:04:39 UTC",
+    "description": "Testing merge request\n\nSigned-off-by: Shounak Dey <shounakdey@ymail.com>",
+    "draft": false,
+    "head_pipeline_id": null,
+    "id": 384001326,
+    "iid": 1,
+    "last_edited_at": null,
+    "last_edited_by_id": null,
+    "merge_commit_sha": "3d75f77dac5ad3cfd47ece50d4b4d42c3618589a",
+    "merge_error": null,
+    "merge_params": {
+      "force_remove_source_branch": "0"
+    },
+    "merge_status": "can_be_merged",
+    "merge_user_id": null,
+    "merge_when_pipeline_succeeds": false,
+    "milestone_id": null,
+    "source_branch": "test-branch",
+    "source_project_id": 69912300,
+    "state_id": 3,
+    "target_branch": "main",
+    "target_project_id": 69912300,
+    "time_estimate": 0,
+    "title": "Test merge request",
+    "updated_at": "2025-05-16 16:05:41 UTC",
+    "updated_by_id": null,
+    "prepared_at": "2025-05-16 16:04:41 UTC",
+    "assignee_ids": [
+      16997011
+    ],
+    "blocking_discussions_resolved": true,
+    "detailed_merge_status": "not_open",
+    "first_contribution": true,
+    "human_time_change": null,
+    "human_time_estimate": null,
+    "human_total_time_spent": null,
+    "labels": [
+      {
+        "id": 40565189,
+        "title": "bug",
+        "color": "#d9534f",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565191,
+        "title": "confirmed",
+        "color": "#d9534f",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565190,
+        "title": "critical",
+        "color": "#d9534f",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565195,
+        "title": "discussion",
+        "color": "#428bca",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565192,
+        "title": "documentation",
+        "color": "#f0ad4e",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565197,
+        "title": "enhancement",
+        "color": "#5cb85c",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565196,
+        "title": "suggestion",
+        "color": "#428bca",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      },
+      {
+        "id": 40565194,
+        "title": "support",
+        "color": "#f0ad4e",
+        "project_id": 69912300,
+        "created_at": "2025-05-16 15:09:39 UTC",
+        "updated_at": "2025-05-16 15:09:39 UTC",
+        "template": false,
+        "description": null,
+        "type": "ProjectLabel",
+        "group_id": null
+      }
+    ],
+    "last_commit": {
+      "id": "7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+      "message": "Test commit\n\nSigned-off-by: Shounak Dey <shounakdey@ymail.com>\n",
+      "title": "Test commit",
+      "timestamp": "2025-05-16T21:24:13+05:30",
+      "url": "https://gitlab.com/sdglitched/w2fm-test/-/commit/7aa00b22e26de3efc8270aebc9ee51c40107d4ff",
+      "author": {
+        "name": "Shounak Dey",
+        "email": "shounakdey@ymail.com"
+      }
+    },
+    "reviewer_ids": [
+      16997011
+    ],
+    "source": {
+      "id": 69912300,
+      "name": "w2fm-test",
+      "description": null,
+      "web_url": "https://gitlab.com/sdglitched/w2fm-test",
+      "avatar_url": null,
+      "git_ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "git_http_url": "https://gitlab.com/sdglitched/w2fm-test.git",
+      "namespace": "Shounak Dey",
+      "visibility_level": 0,
+      "path_with_namespace": "sdglitched/w2fm-test",
+      "default_branch": "main",
+      "ci_config_path": "",
+      "homepage": "https://gitlab.com/sdglitched/w2fm-test",
+      "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "http_url": "https://gitlab.com/sdglitched/w2fm-test.git"
+    },
+    "state": "merged",
+    "target": {
+      "id": 69912300,
+      "name": "w2fm-test",
+      "description": null,
+      "web_url": "https://gitlab.com/sdglitched/w2fm-test",
+      "avatar_url": null,
+      "git_ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "git_http_url": "https://gitlab.com/sdglitched/w2fm-test.git",
+      "namespace": "Shounak Dey",
+      "visibility_level": 0,
+      "path_with_namespace": "sdglitched/w2fm-test",
+      "default_branch": "main",
+      "ci_config_path": "",
+      "homepage": "https://gitlab.com/sdglitched/w2fm-test",
+      "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "ssh_url": "git@gitlab.com:sdglitched/w2fm-test.git",
+      "http_url": "https://gitlab.com/sdglitched/w2fm-test.git"
+    },
+    "time_change": 0,
+    "total_time_spent": 0,
+    "url": "https://gitlab.com/sdglitched/w2fm-test/-/merge_requests/1",
+    "work_in_progress": false,
+    "approval_rules": [],
+    "action": "merge"
+  },
+  "labels": [
+    {
+      "id": 40565189,
+      "title": "bug",
+      "color": "#d9534f",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565191,
+      "title": "confirmed",
+      "color": "#d9534f",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565190,
+      "title": "critical",
+      "color": "#d9534f",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565195,
+      "title": "discussion",
+      "color": "#428bca",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565192,
+      "title": "documentation",
+      "color": "#f0ad4e",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565197,
+      "title": "enhancement",
+      "color": "#5cb85c",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565196,
+      "title": "suggestion",
+      "color": "#428bca",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    },
+    {
+      "id": 40565194,
+      "title": "support",
+      "color": "#f0ad4e",
+      "project_id": 69912300,
+      "created_at": "2025-05-16 15:09:39 UTC",
+      "updated_at": "2025-05-16 15:09:39 UTC",
+      "template": false,
+      "description": null,
+      "type": "ProjectLabel",
+      "group_id": null
+    }
+  ],
+  "changes": {
+    "merge_commit_sha": {
+      "previous": null,
+      "current": "3d75f77dac5ad3cfd47ece50d4b4d42c3618589a"
+    },
+    "state_id": {
+      "previous": 1,
+      "current": 3
+    },
+    "updated_at": {
+      "previous": "2025-05-16 16:04:41 UTC",
+      "current": "2025-05-16 16:05:41 UTC"
+    }
+  },
+  "repository": {
+    "name": "w2fm-test",
+    "url": "git@gitlab.com:sdglitched/w2fm-test.git",
+    "description": null,
+    "homepage": "https://gitlab.com/sdglitched/w2fm-test"
+  },
+  "assignees": [
+    {
+      "id": 16997011,
+      "name": "Shounak Dey",
+      "username": "sdglitched",
+      "avatar_url": "https://secure.gravatar.com/avatar/9458b3a00e2f3f262b05309bd9a43a233c28689e6cbae811b198cd5ee9fb3653?s=80&d=identicon",
+      "email": "[REDACTED]"
+    }
+  ],
+  "reviewers": [
+    {
+      "id": 16997011,
+      "name": "Shounak Dey",
+      "username": "sdglitched",
+      "avatar_url": "https://secure.gravatar.com/avatar/9458b3a00e2f3f262b05309bd9a43a233c28689e6cbae811b198cd5ee9fb3653?s=80&d=identicon",
+      "email": "[REDACTED]"
+    }
+  ]
+}

@@ -12,6 +12,10 @@ import pytest
             "forgejo",
             id="Forgejo",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
+        ),
     ],
     indirect=["db_service"],
 )

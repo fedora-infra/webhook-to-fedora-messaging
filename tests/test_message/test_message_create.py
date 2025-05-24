@@ -9,6 +9,7 @@ from fedora_messaging.exceptions import ConnectionException
 from twisted.internet import defer
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
+from webhook_to_fedora_messaging_messages.gitlab import GitLabMessageV1
 
 
 @pytest.fixture
@@ -40,13 +41,39 @@ def request_headers(request, db_service, request_data):
 
 
 @pytest.fixture()
-def fasjson_client():
+def fasjson_client_github():
     """
     For resolving FAS usernames locally
     """
     client = mock.Mock(name="fasjson")
     with mock.patch(
         "webhook_to_fedora_messaging.endpoints.parser.github.get_fasjson",
+        return_value=client,
+    ):
+        yield client
+
+
+@pytest.fixture()
+def fasjson_client_forgejo():
+    """
+    For resolving FAS usernames locally
+    """
+    client = mock.Mock(name="fasjson")
+    with mock.patch(
+        "webhook_to_fedora_messaging.endpoints.parser.forgejo.get_fasjson",
+        return_value=client,
+    ):
+        yield client
+
+
+@pytest.fixture()
+def fasjson_client_gitlab():
+    """
+    For resolving FAS usernames locally
+    """
+    client = mock.Mock(name="fasjson")
+    with mock.patch(
+        "webhook_to_fedora_messaging.endpoints.parser.gitlab.get_fasjson",
         return_value=client,
     ):
         yield client
@@ -84,11 +111,20 @@ def sent_messages():
         pytest.param(
             "forgejo",
             ForgejoMessageV1,
-            "gridhead",
+            "dummy-fas-username",
             "forgejo",
             "forgejo",
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            GitLabMessageV1,
+            "dummy-fas-username",
+            "gitlab",
+            "gitlab",
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["request_data", "db_service", "request_headers"],
@@ -98,7 +134,9 @@ async def test_message_create(
     db_service,
     request_data,
     request_headers,
-    fasjson_client,
+    fasjson_client_github,
+    fasjson_client_gitlab,
+    fasjson_client_forgejo,
     sent_messages,
     kind,
     schema,
@@ -107,11 +145,24 @@ async def test_message_create(
     """
     Sending data and successfully creating message
     """
-    setattr(
-        fasjson_client,
-        f"get_username_from_{kind}",
-        mock.AsyncMock(return_value="dummy-fas-username"),
-    )
+    if kind == "github":
+        setattr(
+            fasjson_client_github,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
+    if kind == "forgejo":
+        setattr(
+            fasjson_client_forgejo,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
+    if kind == "gitlab":
+        setattr(
+            fasjson_client_gitlab,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
     response = await client.post(
         f"/api/v1/messages/{db_service.uuid}", content=request_data, headers=request_headers
     )
@@ -119,7 +170,10 @@ async def test_message_create(
     assert len(sent_messages) == 1
     sent_msg = sent_messages[0]
     assert isinstance(sent_msg, schema)
-    assert sent_msg.topic == f"{kind}.push"
+    if kind == "gitlab":
+        assert sent_msg.topic == f"{kind}.Merge Request Hook"
+    else:
+        assert sent_msg.topic == f"{kind}.push"
     assert sent_msg.agent_name == username
     assert sent_msg.body["body"] == json.loads(request_data)
     assert response.json() == {
@@ -143,26 +197,55 @@ async def test_message_create(
         ),
         pytest.param(
             "forgejo",
-            "gridhgead",
+            "dummy-fas-username",
             "forgejo",
             "forgejo",
             "forgejo",
             id="Forgejo",
         ),
+        pytest.param(
+            "gitlab",
+            "dummy-fas-username",
+            "gitlab",
+            "gitlab",
+            "gitlab",
+            id="GitLab",
+        ),
     ],
     indirect=["request_data", "db_service", "request_headers"],
 )
 async def test_message_create_failure(
-    client, db_service, request_data, request_headers, fasjson_client, kind, username
+    client,
+    db_service,
+    request_data,
+    request_headers,
+    fasjson_client_github,
+    fasjson_client_gitlab,
+    fasjson_client_forgejo,
+    kind,
+    username,
 ):
     """
     Sending data but facing broken connection
     """
-    setattr(
-        fasjson_client,
-        f"get_username_from_{kind}",
-        mock.AsyncMock(return_value=username),
-    )
+    if kind == "github":
+        setattr(
+            fasjson_client_github,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
+    if kind == "gitlab":
+        setattr(
+            fasjson_client_gitlab,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
+    if kind == "forgejo":
+        setattr(
+            fasjson_client_forgejo,
+            f"get_username_from_{kind}",
+            mock.AsyncMock(return_value="dummy-fas-username"),
+        )
     with mock.patch(
         "webhook_to_fedora_messaging.publishing.api.twisted_publish",
         side_effect=ConnectionException,
@@ -222,6 +305,10 @@ async def test_message_create_404(client):
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],

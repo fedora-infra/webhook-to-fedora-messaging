@@ -1,0 +1,14 @@
+{
+  "host": "w2fm.gridhead.net",
+  "user-agent": "GitLab/18.1.0-pre",
+  "content-length": "8172",
+  "accept": "*/*",
+  "accept-encoding": "gzip, br",
+  "connection": "keep-alive",
+  "content-type": "application/json",
+  "x-gitlab-event": "Merge Request Hook",
+  "x-gitlab-webhook-uuid": "9cf056fa-f86c-49bb-93f0-b9e705eee5df",
+  "x-gitlab-event-uuid": "ea4bf54d-f330-4702-94e0-dda5ee03a57f",
+  "x-forwarded-for": "34.74.226.47",
+  "x-forwarded-proto": "https"
+}

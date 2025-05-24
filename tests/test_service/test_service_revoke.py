@@ -12,6 +12,10 @@ import pytest
             "forgejo",
             id="Forgejo - Revoking an existing service",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab - Revoking an existing service",
+        ),
     ],
     indirect=["db_service"],
 )
@@ -33,6 +37,10 @@ async def test_service_revoke(client, authenticated, db_service):
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],

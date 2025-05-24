@@ -24,6 +24,16 @@ import pytest
             422,
             id="Forgejo",
         ),
+        pytest.param(
+            {"type": "gitlab", "desc": "Gitlab Demo", "name": "My Gitlab"},
+            201,
+            id="Gitlab",
+        ),
+        pytest.param(
+            {"type": "gitlab", "desc": "Gitlab Demo"},
+            422,
+            id="Gitlab",
+        ),
     ],
 )
 async def test_service_create(client, authenticated, data, code):
@@ -49,6 +59,10 @@ async def test_service_create(client, authenticated, data, code):
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
