@@ -18,4 +18,4 @@ class ForgejoParser(BaseParser):
         return f"forgejo.{headers['x-forgejo-event']}"
 
     async def _get_agent(self, body: Body) -> str | None:
-        return await get_fasjson().get_username_from_forgejo(body["sender"]["login"])
+        return await get_fasjson().get_username("forgejo", body["sender"]["login"])
