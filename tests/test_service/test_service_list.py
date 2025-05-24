@@ -17,6 +17,10 @@ from webhook_to_fedora_messaging.models.service import Service
             "forgejo",
             id="Forgejo",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
+        ),
     ],
     indirect=["db_service"],
 )
