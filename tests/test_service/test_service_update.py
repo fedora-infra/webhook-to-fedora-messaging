@@ -20,6 +20,10 @@ from webhook_to_fedora_messaging.models.service import Service
             "forgejo",
             id="Forgejo",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
+        ),
     ],
     indirect=["db_service"],
 )
@@ -50,6 +54,10 @@ async def test_service_update(
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
@@ -88,6 +96,10 @@ async def test_service_update_user(
             "forgejo",
             id="Forgejo",
         ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
+        ),
     ],
     indirect=["db_service"],
 )
@@ -121,6 +133,10 @@ async def test_service_update_user_duplicate(
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
@@ -161,6 +177,10 @@ async def test_service_update_404(client: AsyncClient, authenticated: mock.Magic
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
