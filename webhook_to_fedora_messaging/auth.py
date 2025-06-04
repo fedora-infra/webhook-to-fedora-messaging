@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 
 from authlib.integrations.starlette_client import OAuth
+from authlib.oidc.core import UserInfo
 from fastapi import Depends, HTTPException
 from fastapi.security import OpenIdConnect
 from pydantic import BaseModel, Field
@@ -22,7 +23,7 @@ oidc = OpenIdConnect(
     openIdConnectUrl=metadata_url,
     scheme_name="OpenID Connect",
 )
-oauth = OAuth()
+oauth = OAuth()  # type: ignore
 oauth.register(
     "fedora",
     server_metadata_url=metadata_url,
@@ -39,6 +40,11 @@ class OIDCUser(BaseModel):
     preferred_username: str | None = None
     groups: list[str] = Field(default_factory=list)
     sub: str
+
+    @classmethod
+    def from_userinfo(cls, userinfo: UserInfo) -> "OIDCUser":
+        fields = {field: userinfo[field] for field in cls.model_fields if field in userinfo}
+        return cls(**fields)  # pyright: ignore
 
 
 async def current_user(
@@ -68,7 +74,7 @@ async def current_user(
             status_code=HTTP_401_UNAUTHORIZED,
             detail=f"Supplied authentication could not be validated ({e})",
         ) from e
-    oidc_user = OIDCUser(**userinfo)
+    oidc_user = OIDCUser.from_userinfo(userinfo)
     username = oidc_user.preferred_username or oidc_user.nickname
     # Add to the DB if needed
     user, created = await get_or_create(session, User, name=username)

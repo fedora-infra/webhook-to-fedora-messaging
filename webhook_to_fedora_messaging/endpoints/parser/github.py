@@ -1,18 +1,25 @@
 import hmac
+from collections.abc import Awaitable
 from functools import wraps
 from hashlib import sha256
 from typing import Callable
 
+from fedora_messaging.api import Message
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 
 from ...endpoints.parser.base import initialize_parser
 from ...exceptions import SignatureMatchError
 from ...fasjson import get_fasjson
+from .base import Body, BodyData, HeadersDict
 
 
-def validate_checksum(function: Callable) -> Callable:
+def validate_checksum(
+    function: Callable[[HeadersDict, Body], Awaitable[Message]],
+) -> Callable[[str, HeadersDict, Body, BodyData], Awaitable[Message]]:
     @wraps(function)
-    async def verify_before(token: str, headers: dict, body: dict, data: bytes) -> Callable:
+    async def verify_before(
+        token: str, headers: HeadersDict, body: Body, data: BodyData
+    ) -> Message:
         """
         Verify that the payload was sent from GitHub by validating SHA256.
         """
@@ -29,7 +36,7 @@ def validate_checksum(function: Callable) -> Callable:
 
 @initialize_parser
 @validate_checksum
-async def github_parser(headers: dict, body: dict) -> GitHubMessageV1:
+async def github_parser(headers: HeadersDict, body: Body) -> GitHubMessageV1:
     """
     Convert request objects into desired Fedora Messaging format
     """

@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fedora_messaging import exceptions as fm_exceptions
@@ -24,7 +25,7 @@ router = APIRouter(prefix="/messages")
     tags=["messages"],
 )
 async def create_message(
-    body: dict,
+    body: dict[str, Any],
     request: Request,
     service: Service = Depends(return_service_from_uuid),  # noqa : B008
 ) -> SerializedModel:

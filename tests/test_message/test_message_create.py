@@ -3,10 +3,10 @@ import hmac
 import json
 import pathlib
 from collections.abc import Generator
-from typing import Union
 from unittest import mock
 
 import pytest
+from fedora_messaging.api import Message
 from fedora_messaging.exceptions import ConnectionException
 from httpx import AsyncClient
 from pytest import FixtureRequest
@@ -38,7 +38,7 @@ def request_headers(
     fixtures_dir = pathlib.Path(__file__).parent.joinpath("fixtures")
     with open(fixtures_dir.joinpath(f"headers_{request.param}.json")) as fh:
         data = fh.read().strip()
-    headers = json.loads(data)
+    headers: dict[str, str] = json.loads(data)
     sign = hmac.new(
         db_service.token.encode("utf-8"),
         msg=request_data.encode("utf-8"),
@@ -62,15 +62,13 @@ def fasjson_client() -> Generator[mock.Mock, None]:
 
 
 @pytest.fixture()
-def sent_messages() -> Generator[list, None]:
+def sent_messages() -> Generator[list[Message]]:
     """
     For confirming successful message dispatch
     """
     sent = []
 
-    def _add_and_return(
-        message: Union[GitHubMessageV1, ForgejoMessageV1], exchange=None
-    ) -> Deferred[None]:
+    def _add_and_return(message: Message, exchange: str | None = None) -> Deferred[None]:
         sent.append(message)
         return defer.succeed(None)
 
@@ -108,11 +106,11 @@ async def test_message_create(
     client: AsyncClient,
     db_service: Service,
     request_data: str,
-    request_headers: dict,
+    request_headers: dict[str, str],
     fasjson_client: mock.Mock,
-    sent_messages: list,
+    sent_messages: list[Message],
     kind: str,
-    schema: Union[type[GitHubMessageV1], type[ForgejoMessageV1]],
+    schema: type[Message],
     username: str,
 ) -> None:
     """
@@ -167,7 +165,7 @@ async def test_message_create_failure(
     client: AsyncClient,
     db_service: Service,
     request_data: str,
-    request_headers: dict,
+    request_headers: dict[str, str],
     fasjson_client: mock.Mock,
     kind: str,
     username: str,
@@ -211,7 +209,11 @@ async def test_message_create_failure(
     indirect=["request_data", "db_service", "request_headers"],
 )
 async def test_message_create_400(
-    client: AsyncClient, db_service: Service, request_data: str, request_headers: dict, kind: str
+    client: AsyncClient,
+    db_service: Service,
+    request_data: str,
+    request_headers: dict[str, str],
+    kind: str,
 ) -> None:
     """
     Sending data with wrong information

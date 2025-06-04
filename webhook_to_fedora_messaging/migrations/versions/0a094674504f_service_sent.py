@@ -20,9 +20,9 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.add_column("services", sa.Column("sent", sa.Integer(), nullable=False, default=0))
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_column("services", "sent")

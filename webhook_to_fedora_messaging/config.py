@@ -75,7 +75,7 @@ class Config(BaseSettings):
 
 @cache
 def get_config() -> Config:
-    return Config(_env_file=_config_file)
+    return Config(_env_file=_config_file)  # pyright: ignore[reportCallIssue]
 
 
 def set_config_file(path: str) -> None:

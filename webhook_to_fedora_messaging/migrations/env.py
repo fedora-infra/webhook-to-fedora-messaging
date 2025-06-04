@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import logging
+from typing import Any
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
@@ -63,7 +64,7 @@ def do_run_migrations(connection: Connection) -> None:
     # this callback is used to prevent an auto-migration from being generated
     # when there are no changes to the schema
     # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
-    def process_revision_directives(context, revision, directives):
+    def process_revision_directives(context: Any, revision: Any, directives: Any) -> None:
         if getattr(alembic_config.cmd_opts, "autogenerate", False):
             script = directives[0]
             if script.upgrade_ops.is_empty():

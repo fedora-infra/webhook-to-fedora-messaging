@@ -44,7 +44,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.11"
 sqlalchemy-helpers = ">=2.0.1"
-webhook-to-fedora-messaging-messages = "^1.1.1"
+webhook-to-fedora-messaging-messages = "^1.3.0"
 fastapi = "^0.111.1 || ^0.112.0 || ^0.113.0 || ^0.114.0 || ^0.115.0"
 asyncpg = {version = "^0.29.0 || ^0.30.0", optional = true}
 uvicorn = {extras = ["standard"], version = "^0.30.5 || ^0.31.0 || ^0.32.0 || ^0.33.0 || ^0.34.0"}
@@ -77,6 +77,8 @@ pytest-asyncio = "^0.23.8 || ^0.24.0 || ^0.25.0 || ^0.26.0 || ^1.0.0"
 pytest-spec = "^4.0 || ^5.0.0"
 mypy = "^1.15.0"
 types-pyyaml = "^6.0.12.20250516"
+pyright = "^1.1.402"
+types-authlib = "^1.5.0.20250608"
 
 
 [tool.poetry.group.scripts.dependencies]
@@ -182,23 +184,19 @@ showcontent = true
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
-
-[[tool.mypy.overrides]]
-module = ["fedora_messaging.*"]
-follow_untyped_imports = true
+strict = true
 
 [[tool.mypy.overrides]]
 module = ["fasjson_client.*"]
 follow_untyped_imports = true
 
 [[tool.mypy.overrides]]
-module = ["webhook_to_fedora_messaging_messages.*"]
-follow_untyped_imports = true
-
-[[tool.mypy.overrides]]
-module = ["httpx_gssapi.*", "authlib.*"]
+module = ["httpx_gssapi.*"]
 follow_untyped_imports = true
 
 [[tool.mypy.overrides]]
 module = ["webhook_to_fedora_messaging.migration_from_gh2fm.*"]
 ignore_errors = true
+
+[tool.pyright]
+exclude = ["webhook_to_fedora_messaging/migration_from_gh2fm/**"]

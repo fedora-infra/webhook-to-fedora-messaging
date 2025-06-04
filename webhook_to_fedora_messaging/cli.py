@@ -6,7 +6,7 @@ from typing import Optional
 
 import click
 import yaml
-from sqlalchemy_helpers.aio import SyncResult
+from sqlalchemy_helpers.manager import SyncResult
 
 from . import __version__
 from .config import get_config, set_config_file
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
     default=None,
 )
 @click.version_option(version=__version__, prog_name="w2fm")
-def main(conf=None) -> None:
+def main(conf: Optional[str] = None) -> None:
     if conf:
         set_config_file(os.path.abspath(conf))
         get_db_manager.cache_clear()

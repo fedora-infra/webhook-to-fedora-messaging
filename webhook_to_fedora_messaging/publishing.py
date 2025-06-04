@@ -3,6 +3,7 @@ import sys
 import traceback
 
 import backoff
+from backoff.types import Details
 from fastapi.concurrency import run_in_threadpool
 from fedora_messaging import api
 from fedora_messaging import exceptions as fm_exceptions
@@ -11,11 +12,11 @@ from fedora_messaging import exceptions as fm_exceptions
 log = logging.getLogger(__name__)
 
 
-def backoff_hdlr(details) -> None:
+def backoff_hdlr(details: Details) -> None:
     log.warning("Publishing message failed. Retrying. %s", traceback.format_tb(sys.exc_info()[2]))
 
 
-def giveup_hdlr(details) -> None:
+def giveup_hdlr(details: Details) -> None:
     log.error("Publishing message failed. Giving up. %s", traceback.format_tb(sys.exc_info()[2]))
 
 

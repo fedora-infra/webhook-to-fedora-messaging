@@ -1,7 +1,7 @@
 import logging
 from functools import cache as ft_cache
 from functools import cached_property as ft_cached_property
-from typing import Any
+from typing import Any, cast
 
 import httpx
 from cashews import cache
@@ -26,7 +26,7 @@ class FASJSONAsyncProxy:
     def api_url(self) -> str:
         return f"{self.base_url.rstrip('/')}/{self.API_VERSION}"
 
-    async def get(self, url: str, **kwargs) -> Any:
+    async def get(self, url: str, **kwargs: Any) -> Any:
         """Query the API for a single result."""
         kwargs["follow_redirects"] = True
         response = await self.client.get(url, **kwargs)
@@ -36,21 +36,21 @@ class FASJSONAsyncProxy:
     @cache(ttl="1d", prefix="v1")
     async def search_users(
         self,
-        **params: dict[str, Any],
-    ) -> list[dict]:
+        **params: Any,
+    ) -> list[dict[str, Any]]:
         return [user for user in (await self.get("/search/users/", params=params))["result"]]
 
-    async def get_username_from_github(self, username):
+    async def get_username_from_github(self, username: str) -> str | None:
         try:
             users = await self.search_users(github_username=username)
         except httpx.TimeoutException:
             log.exception("Timeout fetching the FAS user with Github username %r", username)
             return None
         if len(users) == 1:
-            return users[0]["username"]
+            return cast(str, users[0]["username"])
         return None
 
-    async def get_username_from_forgejo(self, username):
+    async def get_username_from_forgejo(self, username: str) -> str | None:
         # TODO: Revisit user retrieval using FASJSON once the FAS supports Forgejo Auth
         return username
 

@@ -21,7 +21,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     connection = op.get_bind()
     if is_sqlite(connection):
         connection.execute(sa.text("PRAGMA foreign_keys=OFF"))
@@ -29,7 +29,7 @@ def upgrade():
         batch_op.alter_column("desc", existing_type=sa.TEXT(), nullable=True)
 
 
-def downgrade():
+def downgrade() -> None:
     connection = op.get_bind()
     if is_sqlite(connection):
         connection.execute(sa.text("PRAGMA foreign_keys=OFF"))

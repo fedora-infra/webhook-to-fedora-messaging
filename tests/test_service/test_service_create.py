@@ -1,3 +1,4 @@
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -33,7 +34,7 @@ from webhook_to_fedora_messaging.models.user import User
     ],
 )
 async def test_service_create(
-    client: AsyncClient, authenticated: mock.MagicMock, data: dict, code: int
+    client: AsyncClient, authenticated: mock.MagicMock, data: dict[str, Any], code: int
 ) -> None:
     """
     Creating a non-existent service with wrong information

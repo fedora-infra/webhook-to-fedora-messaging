@@ -20,12 +20,12 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     with op.batch_alter_table("users") as batch_op:
         batch_op.drop_constraint("uq_users_uuid", type_="unique")
         batch_op.drop_column("uuid")
 
 
-def downgrade():
+def downgrade() -> None:
     op.add_column("users", sa.Column("uuid", sa.TEXT(), nullable=False))
     op.create_unique_constraint("uq_users_uuid", "users", ["uuid"])

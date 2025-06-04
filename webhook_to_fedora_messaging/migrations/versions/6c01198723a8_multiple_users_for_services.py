@@ -20,7 +20,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.create_table(
         "owners",
         sa.Column("service_id", sa.Integer(), nullable=False),
@@ -36,7 +36,7 @@ def upgrade():
         batch_op.drop_column("user_id")
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_table("owners")
     op.add_column("services", sa.Column("user_id", sa.INTEGER(), nullable=False))
     op.create_foreign_key(

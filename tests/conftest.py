@@ -109,7 +109,7 @@ async def authenticated(db_user: User, client: AsyncClient) -> AsyncGenerator[mo
 
 @pytest.fixture()
 async def db_service(
-    client: AsyncClient, db_user: User, db_session: AsyncSession, request
+    client: AsyncClient, db_user: User, db_session: AsyncSession, request: pytest.FixtureRequest
 ) -> AsyncGenerator[Service, None]:
     """
     For seeding the database with service

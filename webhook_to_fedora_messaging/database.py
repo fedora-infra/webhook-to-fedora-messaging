@@ -13,15 +13,27 @@ from contextlib import asynccontextmanager
 from functools import cache
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy_helpers.aio import (  # noqa: F401
+from sqlalchemy_helpers.aio import (
     AsyncDatabaseManager,
     Base,
     get_or_create,
     update_or_create,
 )
 from sqlalchemy_helpers.fastapi import make_db_session, manager_from_config
+from sqlalchemy_helpers.manager import SyncResult
 
 from .config import get_config
+
+
+__all__ = (
+    "Base",
+    "get_db_manager",
+    "get_or_create",
+    "get_session",
+    "setup_database",
+    "update_or_create",
+    "with_db_session",
+)
 
 
 @cache
@@ -30,7 +42,7 @@ def get_db_manager() -> AsyncDatabaseManager:
     return manager_from_config(config.database, base_model=Base)
 
 
-async def setup_database():
+async def setup_database() -> SyncResult:
     db = get_db_manager()
     # Populate Base.metadata
     from . import models  # noqa: F401
