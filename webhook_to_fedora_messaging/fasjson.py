@@ -54,6 +54,16 @@ class FASJSONAsyncProxy:
         # TODO: Revisit user retrieval using FASJSON once the FAS supports Forgejo Auth
         return username
 
+    async def get_username_from_gitlab(self, username):
+        try:
+            users = await self.search_users(gitlab_username=username)
+        except httpx.TimeoutException:
+            log.exception("Timeout fetching the FAS user with GitLab username %r", username)
+            return None
+        if len(users) == 1:
+            return users[0]["username"]
+        return None
+
 
 @ft_cache
 def get_fasjson() -> FASJSONAsyncProxy:
