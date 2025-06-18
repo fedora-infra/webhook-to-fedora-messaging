@@ -27,7 +27,7 @@ def validate_checksum(function: Callable) -> Callable:
     return verify_before
 
 
-@initialize_parser
+@initialize_parser()
 @validate_checksum
 async def github_parser(headers: dict, body: dict) -> GitHubMessageV1:
     """

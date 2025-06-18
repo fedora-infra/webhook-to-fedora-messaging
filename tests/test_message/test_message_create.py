@@ -14,6 +14,7 @@ from twisted.internet import defer
 from twisted.internet.defer import Deferred
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
+from webhook_to_fedora_messaging_messages.gitlab import GitLabMessageV1
 
 from webhook_to_fedora_messaging.models.service import Service
 
@@ -54,14 +55,22 @@ def fasjson_client() -> Generator[mock.Mock, None]:
     For resolving FAS usernames locally
     """
     client = mock.Mock(name="fasjson")
-    with mock.patch(
-        "webhook_to_fedora_messaging.endpoints.parser.github.get_fasjson",
-        return_value=client,
-    ):
-        yield client
+    parser_names = ("github", "forgejo", "gitlab")
+    patches = (
+        mock.patch(
+            f"webhook_to_fedora_messaging.endpoints.parser.{name}.get_fasjson",
+            return_value=client,
+        )
+        for name in parser_names
+    )
+    for patch in patches:
+        patch.start()
+    yield client
+    for patch in patches:
+        patch.stop()
 
 
-@pytest.fixture()
+@pytest.fixture
 def sent_messages() -> Generator[list, None]:
     """
     For confirming successful message dispatch
@@ -95,11 +104,20 @@ def sent_messages() -> Generator[list, None]:
         pytest.param(
             "forgejo",
             ForgejoMessageV1,
-            "gridhead",
+            "dummy-fas-username",
             "forgejo",
             "forgejo",
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            GitLabMessageV1,
+            "dummy-fas-username",
+            "gitlab",
+            "gitlab",
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["request_data", "db_service", "request_headers"],
@@ -109,7 +127,7 @@ async def test_message_create(
     db_service: Service,
     request_data: str,
     request_headers: dict,
-    fasjson_client: mock.Mock,
+    fasjson_client,
     sent_messages: list,
     kind: str,
     schema: Union[type[GitHubMessageV1], type[ForgejoMessageV1]],
@@ -154,11 +172,19 @@ async def test_message_create(
         ),
         pytest.param(
             "forgejo",
-            "gridhgead",
+            "dummy-fas-username",
             "forgejo",
             "forgejo",
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            "dummy-fas-username",
+            "gitlab",
+            "gitlab",
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["request_data", "db_service", "request_headers"],
@@ -168,7 +194,7 @@ async def test_message_create_failure(
     db_service: Service,
     request_data: str,
     request_headers: dict,
-    fasjson_client: mock.Mock,
+    fasjson_client,
     kind: str,
     username: str,
 ) -> None:
@@ -178,7 +204,7 @@ async def test_message_create_failure(
     setattr(
         fasjson_client,
         f"get_username_from_{kind}",
-        mock.AsyncMock(return_value=username),
+        mock.AsyncMock(return_value="dummy-fas-username"),
     )
     with mock.patch(
         "webhook_to_fedora_messaging.publishing.api.twisted_publish",
@@ -241,6 +267,10 @@ async def test_message_create_404(client: AsyncClient) -> None:
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
