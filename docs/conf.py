@@ -41,6 +41,7 @@ release = webhook_to_fedora_messaging.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints",
     "sphinx.ext.intersphinx",
     "sphinx.ext.extlinks",
     "sphinx.ext.viewcode",
@@ -104,7 +105,10 @@ myst_heading_anchors = 3
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#configuration
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "sqlalchemy": ("http://docs.sqlalchemy.org/en/stable", None),
+}
 
 
 # -- Misc -----
