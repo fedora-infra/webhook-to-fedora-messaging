@@ -157,7 +157,7 @@
     [W2FM] [2024-08-14 01:58:43 +0530] [INFO] Waiting for child process [11081]
     [W2FM] [2024-08-14 01:58:43 +0530] [INFO] Stopping parent process [11076]
     ```
-10.  For more utility options on running the service, start `uvicorn` with the `--help` flag.
+10. For more utility options on running the service, start `uvicorn` with the `--help` flag.
     ```
     (venv) $ uvicorn --help
     ```
