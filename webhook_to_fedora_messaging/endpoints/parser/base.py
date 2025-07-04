@@ -42,12 +42,8 @@ class BaseParser:
         Verify the payload by validating its signature.
         """
         algorithm, signature = sig_header.split("=", 1)
-        try:
-            algo_function = getattr(hashlib, algorithm)
-        except AttributeError as e:
-            raise SignatureMatchError(f"Unsupported algorithm: {algorithm}") from e
-        hash_object = hmac.new(self._token.encode("utf-8"), msg=data, digestmod=algo_function)
-        if not hmac.compare_digest(hash_object.hexdigest(), signature):
+        payload_sig = get_payload_sig(data, self._token, algorithm)
+        if not hmac.compare_digest(payload_sig, signature):
             raise SignatureMatchError("Message signature could not be matched")
 
     async def parse(self) -> Message:
@@ -60,3 +56,12 @@ class BaseParser:
         return self.message_class(
             topic=topic, body={"body": body, "headers": headers, "agent": agent}
         )
+
+
+def get_payload_sig(data: BodyData, token: str, algorithm: str) -> str:
+    try:
+        algo_function = getattr(hashlib, algorithm)
+    except AttributeError as e:
+        raise SignatureMatchError(f"Unsupported algorithm: {algorithm}") from e
+    hash_object = hmac.new(token.encode("utf-8"), msg=data, digestmod=algo_function)
+    return hash_object.hexdigest()

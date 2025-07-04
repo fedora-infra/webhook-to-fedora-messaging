@@ -1,4 +1,3 @@
-import hashlib
 import hmac
 import json
 import pathlib
@@ -15,6 +14,8 @@ from twisted.internet.defer import Deferred
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 
+from webhook_to_fedora_messaging.endpoints.parser.base import get_payload_sig
+from webhook_to_fedora_messaging.fasjson import FASJSONAsyncProxy
 from webhook_to_fedora_messaging.models.service import Service
 
 
@@ -39,11 +40,7 @@ def request_headers(
     with open(fixtures_dir.joinpath(f"headers_{request.param}.json")) as fh:
         data = fh.read().strip()
     headers: dict[str, str] = json.loads(data)
-    sign = hmac.new(
-        db_service.token.encode("utf-8"),
-        msg=request_data.encode("utf-8"),
-        digestmod=hashlib.sha256,
-    ).hexdigest()
+    sign = get_payload_sig(request_data.encode("utf-8"), db_service.token, "sha256")
     headers["x-hub-signature-256"] = f"sha256={sign}"
     return headers
 
@@ -222,10 +219,10 @@ async def test_message_create_400(
     """
     Sending data with wrong information
     """
-    hmac.compare_digest = mock.MagicMock(return_value=False)
-    response = await client.post(
-        f"/api/v1/messages/{db_service.uuid}", content=request_data, headers=request_headers
-    )
+    with mock.patch.object(hmac, "compare_digest", new=mock.MagicMock(return_value=False)):
+        response = await client.post(
+            f"/api/v1/messages/{db_service.uuid}", content=request_data, headers=request_headers
+        )
     assert response.status_code == 400
 
 
@@ -257,3 +254,51 @@ async def test_message_create_bad_request(client: AsyncClient, db_service: Servi
     """
     response = await client.post(f"/api/v1/messages/{db_service.uuid}", content="not json")
     assert response.status_code == 422
+
+
+@pytest.mark.parametrize(
+    "kind, username, request_data, db_service, request_headers",
+    [
+        pytest.param(
+            "github",
+            "dummy[bot]",
+            "github",
+            "github",
+            "github",
+            id="GitHub",
+        ),
+    ],
+    indirect=["request_data", "db_service", "request_headers"],
+)
+async def test_message_create_from_bot(
+    client: AsyncClient,
+    db_service: Service,
+    request_data: str,
+    request_headers: dict[str, str],
+    sent_messages: list[Message],
+    kind: str,
+    username: str,
+) -> None:
+    """
+    Ignoring username lookups on bot actions
+    """
+    request_data = request_data.replace('"login": "username",', f'"login": "{username}",')
+    request_sig = get_payload_sig(request_data.encode("utf-8"), db_service.token, "sha256")
+    request_headers["x-hub-signature-256"] = f"sha256={request_sig}"
+    fasjson_client = FASJSONAsyncProxy("http://fasjson.example.com")
+    with mock.patch(
+        "webhook_to_fedora_messaging.endpoints.parser.github.get_fasjson",
+        return_value=fasjson_client,
+    ), mock.patch.object(
+        fasjson_client,
+        "search_users",
+        new=mock.AsyncMock(return_value=[{"username": "dummy-fas-username"}]),
+    ):
+        response = await client.post(
+            f"/api/v1/messages/{db_service.uuid}", content=request_data, headers=request_headers
+        )
+        assert response.status_code == 202, response.text
+        fasjson_client.search_users.assert_not_awaited()  # type: ignore
+    assert len(sent_messages) == 1
+    sent_msg = sent_messages[0]
+    assert sent_msg.agent_name is None

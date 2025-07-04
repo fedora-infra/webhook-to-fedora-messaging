@@ -41,6 +41,8 @@ class FASJSONAsyncProxy:
         return [user for user in (await self.get("/search/users/", params=params))["result"]]
 
     async def get_username_from_github(self, username: str) -> str | None:
+        if username.endswith("[bot]"):
+            return None
         try:
             users = await self.search_users(github_username=username)
         except httpx.TimeoutException:
