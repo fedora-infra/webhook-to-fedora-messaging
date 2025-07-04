@@ -31,6 +31,16 @@ from webhook_to_fedora_messaging.models.user import User
             422,
             id="Forgejo",
         ),
+        pytest.param(
+            {"type": "gitlab", "desc": "Gitlab Demo", "name": "My Gitlab"},
+            201,
+            id="Gitlab",
+        ),
+        pytest.param(
+            {"type": "gitlab", "desc": "Gitlab Demo"},
+            422,
+            id="Gitlab",
+        ),
     ],
 )
 async def test_service_create(
@@ -58,6 +68,10 @@ async def test_service_create(
         pytest.param(
             "forgejo",
             id="Forgejo",
+        ),
+        pytest.param(
+            "gitlab",
+            id="GitLab",
         ),
     ],
     indirect=["db_service"],
