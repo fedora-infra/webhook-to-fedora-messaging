@@ -1,0 +1,102 @@
+@font-face {
+  font-family: "Inter";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../assets/font/sans_rlar.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 400;
+  font-style: italic;
+  src: url("../assets/font/sans_rlit.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 700;
+  font-style: normal;
+  src: url("../assets/font/sans_bold.ttf");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-weight: 700;
+  font-style: italic;
+  src: url("../assets/font/sans_bdit.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 400;
+  font-style: normal;
+  src: url("../assets/font/mono_rlar.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 400;
+  font-style: italic;
+  src: url("../assets/font/mono_rlit.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 700;
+  font-style: normal;
+  src: url("../assets/font/mono_bold.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-weight: 700;
+  font-style: italic;
+  src: url("../assets/font/mono_bdit.ttf");
+}
+
+.logo {
+  filter: invert(73%) sepia(10%) saturate(5496%) hue-rotate(176deg) brightness(86%) contrast(99%);
+}
+
+.head {
+  color: #51a2da;
+}
+
+.headelem {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+}
+
+.monoelem {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.dropdown-menu {
+  padding: 2px;
+}
+
+/* Navbar must have have the "fixed-top" class, not the "sticky-top" class */
+body {
+  font-family: "Inter", sans-serif;
+  overflow-y: scroll;
+  padding-top: 45px;
+}
+
+/* Navbar must have have the "fixed-top" class, not the "sticky-top" class */
+.side {
+  top: 60px;
+  overflow-y: auto;
+  max-height: calc(100vh - 50px);
+  scrollbar-width: none;
+}
+
+/* Workaround to vertically center the mode icon on the navbar */
+a.dropdown-toggle {
+  display: flex;
+  align-items: center;
+}
+
+.mdcustom img {
+  max-width: 100%;
+  margin: 0.75rem auto;
+}
