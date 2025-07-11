@@ -1,6 +1,5 @@
 from unittest import mock
 
-import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,24 +8,6 @@ from webhook_to_fedora_messaging.models import User
 from webhook_to_fedora_messaging.models.service import Service
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_update(
     client: AsyncClient,
     authenticated: mock.MagicMock,
@@ -44,24 +25,6 @@ async def test_service_update(
     assert db_service.name == "new name"
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_update_user(
     client: AsyncClient,
     authenticated: mock.MagicMock,
@@ -85,24 +48,6 @@ async def test_service_update_user(
     assert {u.name for u in users} == {db_user.name, username}
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_update_user_duplicate(
     client: AsyncClient,
     authenticated: mock.MagicMock,
@@ -123,24 +68,6 @@ async def test_service_update_user_duplicate(
     assert users[0].name == "mehmet"
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_update_user_non_existent(
     client: AsyncClient,
     authenticated: mock.MagicMock,
@@ -167,24 +94,6 @@ async def test_service_update_404(client: AsyncClient, authenticated: mock.Magic
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_update_bad_request(
     client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
 ) -> None:

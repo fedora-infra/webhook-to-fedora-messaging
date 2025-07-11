@@ -1,29 +1,10 @@
 from unittest import mock
 
-import pytest
 from httpx import AsyncClient
 
 from webhook_to_fedora_messaging.models.service import Service
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_list(
     client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
 ) -> None:

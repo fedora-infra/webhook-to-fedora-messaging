@@ -4,6 +4,7 @@
 
 from collections.abc import AsyncGenerator
 from pathlib import PosixPath
+from typing import cast
 from unittest import mock
 
 import pytest
@@ -17,6 +18,8 @@ from webhook_to_fedora_messaging.database import get_db_manager
 from webhook_to_fedora_messaging.main import create_app
 from webhook_to_fedora_messaging.models.service import Service
 from webhook_to_fedora_messaging.models.user import User
+
+from .utils import make_db_service
 
 
 @pytest.fixture()
@@ -46,6 +49,8 @@ async def db(app_config: None) -> AsyncGenerator[AsyncDatabaseManager, None]:
     db_mgr = get_db_manager()
     await db_mgr.sync()
     yield db_mgr
+    await db_mgr.drop()
+    await db_mgr.engine.dispose()
 
 
 @pytest.fixture()
@@ -107,31 +112,28 @@ async def authenticated(db_user: User, client: AsyncClient) -> AsyncGenerator[mo
         yield oauth
 
 
+@pytest.fixture(params=["github", "gitlab", "forgejo"])
+def service_type(request: pytest.FixtureRequest) -> str:
+    return cast(str, request.param)
+
+
+@pytest.fixture(params=["push", "pull_request"])
+def event_type(request: pytest.FixtureRequest) -> str:
+    return cast(str, request.param)
+
+
 @pytest.fixture()
 async def db_service(
-    client: AsyncClient, db_user: User, db_session: AsyncSession, request: pytest.FixtureRequest
-) -> AsyncGenerator[Service, None]:
+    client: AsyncClient,
+    db_user: User,
+    db_session: AsyncSession,
+    service_type: str,
+) -> AsyncGenerator[Service]:
     """
     For seeding the database with service
     """
-    service, created = await database.get_or_create(
-        db_session,
-        Service,
-        name="Demo Service",
-        type=request.param,
-        desc="description",
-    )
-
-    service.token = "dummy-service-token"  # noqa: S105
-    await db_session.flush()
-    (await service.awaitable_attrs.users).append(db_user)
-    await db_session.commit()
-
-    # Refreshing seems necessary on sqlite because it does not support timezones in timestamps
-    await db_session.refresh(service)
-
+    service = await make_db_service(db_session, service_type, db_user)
     yield service
-
     # Teardown code to remove the object from the database
     await db_session.delete(service)
     await db_session.commit()

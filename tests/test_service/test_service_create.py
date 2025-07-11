@@ -58,24 +58,6 @@ async def test_service_create(
             assert result["data"][prop] == data[prop]
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_conflict(
     client: AsyncClient, authenticated: mock.MagicMock, db_service: Service, db_user: User
 ) -> None:

@@ -1,29 +1,10 @@
 from unittest import mock
 
-import pytest
 from httpx import AsyncClient
 
 from webhook_to_fedora_messaging.models.service import Service
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo - Revoking an existing service",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab - Revoking an existing service",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_revoke(
     client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
 ) -> None:
@@ -34,24 +15,6 @@ async def test_service_revoke(
     assert response.status_code == 202
 
 
-@pytest.mark.parametrize(
-    "db_service",
-    [
-        pytest.param(
-            "github",
-            id="GitHub",
-        ),
-        pytest.param(
-            "forgejo",
-            id="Forgejo",
-        ),
-        pytest.param(
-            "gitlab",
-            id="GitLab",
-        ),
-    ],
-    indirect=["db_service"],
-)
 async def test_service_revoke_404(
     client: AsyncClient, authenticated: mock.MagicMock, db_service: Service
 ) -> None:
