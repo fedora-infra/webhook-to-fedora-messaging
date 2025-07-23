@@ -1,0 +1,72 @@
+- name: Install the backend
+  command: poetry install --all-extras
+  register: result
+  changed_when: '"No dependencies to install or update" not in result.stdout'
+
+- name: Get the Tinystage CA cert
+  get_url:
+    url: https://auth.tinystage.test/ca.crt
+    dest: "{{ devel_dir }}/ca.crt"
+    validate_certs: false
+
+- name: Load the content of the Tinystage CA cert
+  slurp:
+    src: "{{ devel_dir }}/ca.crt"
+  register: ca_crt
+
+- name: Find where certifi's CA bundle is located
+  command:
+    cmd: poetry run python -c "import certifi; print(certifi.where())"
+  register: _ca_bundle_path
+  changed_when: False
+
+- name: Put tinystage root CA in the list of CA's for certifi
+  blockinfile:
+    block: "{{ ca_crt.content | b64decode }}"
+    path: "{{ _ca_bundle_path.stdout }}"
+
+- name: Register the application with the OIDC provider
+  command:
+    cmd: poetry run oidc-register --debug --public-client --output-file {{ devel_dir }}/oidc.json https://auth.tinystage.test/idp/openidc/ http://localhost:8000/docs/oauth2-redirect http://localhost:5173/callback
+    creates: "{{ devel_dir }}/oidc.json"
+
+- name: Load the OIDC config
+  ansible.builtin.slurp:
+    src: "{{ devel_dir }}/oidc.json"
+  register: oidc_config
+
+- name: Extract the OIDC client_id
+  set_fact:
+    oidc_client_id: "{{ oidc_config['content'] | b64decode | from_json | json_query('web.client_id') }}"
+
+- name: Create the backend config file
+  template:
+    src: w2fm.cfg.j2
+    dest: "{{ devel_dir }}/w2fm.cfg"
+  notify: reload supervisord
+
+- name: Create the frontend config file
+  template:
+    src: frontend.env.j2
+    dest: "{{ top_dir }}/frontend/.env.development.local"
+  notify: reload supervisord
+
+- name: Create or update the database
+  command: poetry run w2fm setup
+  environment:
+    W2FM_CONFIG: "{{ devel_dir }}/w2fm.cfg"
+  args:
+    creates: "{{ devel_dir }}/w2fm.db"
+
+- name: Create the supervisord config file
+  template:
+    src: supervisord.conf.j2
+    dest: "{{ top_dir }}/supervisord.conf"
+  notify: reload supervisord
+
+- name: Install the frontend
+  command:
+    cmd: npm install
+    chdir: "{{ top_dir }}/frontend"
+  register: result
+  changed_when: '"up to date" not in result.stdout'

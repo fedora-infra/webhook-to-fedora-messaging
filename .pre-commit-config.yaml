@@ -35,3 +35,23 @@ repos:
   #   rev: v3.0.2
   #   hooks:
   #     - id: reuse
+
+  - repo: local
+    hooks:
+      - id: js-prettier
+        name: Run prettier
+        language: system
+        files: ^frontend/.*$
+        types_or: [javascript, json, markdown]
+        pass_filenames: false
+        entry: npm --prefix frontend run format
+
+  - repo: local
+    hooks:
+      - id: js-linter
+        name: Run the JS linter
+        language: system
+        files: ^frontend/.*$
+        types_or: [javascript, json]
+        pass_filenames: false
+        entry: npm --prefix frontend run lint

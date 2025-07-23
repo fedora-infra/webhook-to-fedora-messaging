@@ -71,7 +71,7 @@ function SideMenu() {
           action
           className="small d-flex align-items-center ps-2 pe-2"
           as={Link}
-          to="/docs"
+          to={`${import.meta.env.VITE_API_URL}/docs`}
           target="_blank"
         >
           <Icon className="me-2" size={0.75} path={mdiWeb} />
