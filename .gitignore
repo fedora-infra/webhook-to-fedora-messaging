@@ -1,3 +1,13 @@
+# Project-specific
+devel/ca.crt
+devel/oidc.json
+devel/w2fm.cfg
+devel/w2fm.db
+devel/*.log
+devel/*.sock
+devel/*.pid
+supervisord.conf
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

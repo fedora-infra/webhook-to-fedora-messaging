@@ -1,13 +1,13 @@
 import { UserManager } from "oidc-client";
-import { hostname } from "./data.js";
 
+const redirectUri = new URL(`${import.meta.env.BASE_URL}callback`, window.location.href).href;
 const oidcSettings = {
-  authority: "https://id.stg.fedoraproject.org/openidc",
-  client_id: "w2fm",
-  redirect_uri: `https://${hostname}/callback`,
+  authority: import.meta.env.VITE_OIDC_PROVIDER_URL,
+  client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+  redirect_uri: redirectUri,
   response_type: "code",
   scope: "openid email profile https://id.fedoraproject.org/scope/groups https://id.fedoraproject.org/scope/agreements",
-  post_logout_redirect_uri: `https://${hostname}/`,
+  post_logout_redirect_uri: URL.parse("/", window.location.href).href,
   monitorSession: true,
   loadUserInfo: true,
 };

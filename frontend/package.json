@@ -19,7 +19,6 @@
     "printWidth": 120,
     "bracketSpacing": true
   },
-  "proxy": "http://localhost:5000/",
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",

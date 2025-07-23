@@ -1,5 +1,3 @@
-export const hostname = "w2fm.gridhead.net";
-
 export const typeName = {
   github: "GitHub",
   gitlab: "GitLab",

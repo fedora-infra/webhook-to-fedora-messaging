@@ -1,0 +1,40 @@
+; supervisor config file.
+; This is used for development.
+
+[unix_http_server]
+file=%(here)s/devel/supervisor.sock
+
+[supervisord]
+logfile = %(here)s/devel/supervisord.log
+logfile_maxbytes = 0
+logfile_backups = 0
+pidfile=%(here)s/devel/supervisord.pid
+directory = %(here)s
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix://%(here)s/devel/supervisor.sock
+
+; Programs
+
+[program:backend]
+command = poetry run uvicorn --factory webhook_to_fedora_messaging.main:create_app --reload
+environment =
+    PYTHONUNBUFFERED=1,
+    W2FM_CONFIG={{ devel_dir }}/w2fm.cfg
+autorestart = false
+redirect_stderr = true
+stdout_logfile = {{ devel_dir }}/%(program_name)s.log
+stdout_logfile_maxbytes = 0
+
+[program:frontend]
+command = npm run dev -- --clearScreen false
+directory = %(here)s/frontend
+environment =
+    BROWSER=none
+autorestart = false
+redirect_stderr = true
+stdout_logfile = {{ devel_dir }}/%(program_name)s.log
+stdout_logfile_maxbytes = 0
