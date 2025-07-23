@@ -1,24 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { userManager } from "../config/oidc.js";
+import { apiCall } from "./api.js";
 
 export const keepServices = createAsyncThunk("area/keepServices", async (_, { rejectWithValue }) => {
   try {
-    const userdata = await userManager.getUser();
-    if (userdata && !userdata.expired) {
-      const resp = await fetch("/api/v1/services", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userdata.access_token}`,
-          Accept: "application/json",
-        },
-      });
-      if (!resp.ok) {
-        return rejectWithValue(`Error: ${resp.status}`);
-      }
-      const data = await resp.json();
-      return data.data;
-    }
-    return rejectWithValue("Error: Unauthenticated");
+    return await apiCall({ method: "GET", path: "/services" });
   } catch (err) {
     return rejectWithValue(err.toString());
   }

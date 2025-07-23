@@ -1,5 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useDispatch, useSelector } from "react-redux";
+import { apiCall } from "../features/api.js";
 import {
   failFlagStat,
   hideFlagArea,
@@ -10,44 +16,31 @@ import {
   passFlagStat,
   showFlagArea,
 } from "../features/part.jsx";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "@mdi/react";
-import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
-import { userManager } from "../config/oidc.js";
 
 async function codeUnit(dispatch, uuid) {
   try {
-    const userdata = await userManager.getUser();
-    if (userdata && !userdata.expired) {
-      const resp = await fetch(`/api/v1/services/${uuid}/regenerate `, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userdata?.access_token}`,
-          Accept: "application/json",
-        },
-      });
-
+    let data;
+    try {
+      data = await apiCall({ method: "PUT", path: `/services/${uuid}/regenerate` });
+      console.log("Result:", data);
+    } catch (error) {
+      console.log(error);
+      dispatch(hideReviving());
+      dispatch(hideFlagArea());
+      dispatch(keepFlagHead("Bind regeneration failed"));
+      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during regeneration`));
+      dispatch(showFlagArea());
+      dispatch(failFlagStat());
+      return;
+    } finally {
       dispatch(keepServices());
-      if (resp.ok) {
-        const data = await resp.json();
-        console.log("Result.", data);
-        dispatch(hideReviving());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead(`Bind #${data.data.uuid} regenerated`));
-        dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
-        dispatch(showFlagArea());
-        dispatch(passFlagStat());
-      } else {
-        dispatch(hideReviving());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead("Bind regeneration failed"));
-        dispatch(keepFlagBody(`Encountered "Status ${resp.status}" response during regeneration`));
-        dispatch(showFlagArea());
-        dispatch(failFlagStat());
-      }
     }
+    dispatch(hideReviving());
+    dispatch(hideFlagArea());
+    dispatch(keepFlagHead(`Bind #${data.uuid} regenerated`));
+    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(showFlagArea());
+    dispatch(passFlagStat());
   } catch (expt) {
     console.log(expt);
   }

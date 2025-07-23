@@ -1,5 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useDispatch, useSelector } from "react-redux";
+import { apiCall } from "../features/api.js";
 import {
   failFlagStat,
   hideFlagArea,
@@ -10,44 +16,31 @@ import {
   passFlagStat,
   showFlagArea,
 } from "../features/part.jsx";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "@mdi/react";
-import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
-import { userManager } from "../config/oidc.js";
 
 async function wipeUnit(dispatch, uuid) {
   try {
-    const userdata = await userManager.getUser();
-    if (userdata && !userdata.expired) {
-      const resp = await fetch(`/api/v1/services/${uuid}/revoke`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userdata?.access_token}`,
-          Accept: "application/json",
-        },
-      });
-
+    let data;
+    try {
+      data = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
+      console.log("Result:", data);
+    } catch (error) {
       dispatch(keepServices());
-      if (resp.ok) {
-        const data = await resp.json();
-        console.log("Result.", data);
-        dispatch(hideRevoking());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead(`Bind #${data.data.uuid} revoked`));
-        dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
-        dispatch(showFlagArea());
-        dispatch(passFlagStat());
-      } else {
-        dispatch(hideRevoking());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead("Bind revocation failed"));
-        dispatch(keepFlagBody(`Encountered "Status ${resp.status}" response during revocation`));
-        dispatch(showFlagArea());
-        dispatch(failFlagStat());
-      }
+      dispatch(hideRevoking());
+      dispatch(hideFlagArea());
+      dispatch(keepFlagHead("Bind revocation failed"));
+      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during revocation`));
+      dispatch(showFlagArea());
+      dispatch(failFlagStat());
+      return;
+    } finally {
+      dispatch(keepServices());
     }
+    dispatch(hideRevoking());
+    dispatch(hideFlagArea());
+    dispatch(keepFlagHead(`Bind #${data.uuid} revoked`));
+    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(showFlagArea());
+    dispatch(passFlagStat());
   } catch (expt) {
     console.log(expt);
   }

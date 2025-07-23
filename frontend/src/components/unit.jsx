@@ -1,30 +1,21 @@
-import Card from "react-bootstrap/Card";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "@mdi/react";
 import { mdiContentSave, mdiDelete, mdiRefreshCircle } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  failFlagStat,
+  hideFlagArea,
+  keepFlagBody,
+  keepFlagHead,
   prepBindUuid,
+  prepNextData,
+  prepPrevData,
+  showFlagArea,
+  showReviving,
   showRevoking,
   showUpdating,
-  prepPrevData,
-  prepNextData,
-  hideFlagArea,
-  keepFlagHead,
-  keepFlagBody,
-  showFlagArea,
-  failFlagStat,
-  showReviving,
 } from "../features/part.jsx";
-import { hostname } from "../config/data.js";
-
-function hostReplacer(text) {
-  let link = new URL(text);
-  link.hostname = hostname;
-  link.protocol = "https";
-  link.port = "443";
-  return link.toString();
-}
 
 function UnitCard({ data }) {
   const dispatch = useDispatch();
@@ -114,7 +105,7 @@ function UnitCard({ data }) {
           </div>
           <div className="col-md-6 col-12">
             <FloatingLabel className="small" controlId={`link-${data.uuid}`} label="Endpoint">
-              <Form.Control className="monoelem" defaultValue={hostReplacer(data.webhook_url)} readOnly={true} />
+              <Form.Control className="monoelem" defaultValue={data.webhook_url} readOnly={true} />
             </FloatingLabel>
           </div>
           <div className="col-md-6 col-12">

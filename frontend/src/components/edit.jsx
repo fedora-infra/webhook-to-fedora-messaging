@@ -1,62 +1,56 @@
-import { useDispatch, useSelector } from "react-redux";
+import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useDispatch, useSelector } from "react-redux";
+import { apiCall } from "../features/api.js";
 import {
   failFlagStat,
   hideFlagArea,
+  hideUpdating,
   keepFlagBody,
   keepFlagHead,
+  keepServices,
   passFlagStat,
   showFlagArea,
-  hideUpdating,
-  keepServices,
 } from "../features/part.jsx";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "@mdi/react";
-import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
-import { userManager } from "../config/oidc.js";
 import DiffCard from "./diff.jsx";
 
 async function editUnit(dispatch, uuid) {
   try {
-    const userdata = await userManager.getUser();
-    if (userdata && !userdata.expired) {
-      const resp = await fetch(`/api/v1/services/${uuid}`, {
+    let data;
+    try {
+      data = await apiCall({
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${userdata?.access_token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+        path: `/services/${uuid}`,
+        body: {
           data: {
             name: document.getElementById(`name-${uuid}`).value,
             type: document.getElementById(`type-${uuid}`).value,
             desc: document.getElementById(`desc-${uuid}`).value,
             username: document.getElementById(`user-${uuid}`).value,
           },
-        }),
+        },
       });
-
+    } catch (error) {
+      dispatch(hideUpdating());
+      dispatch(hideFlagArea());
+      dispatch(keepFlagHead("Bind updating failed"));
+      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during updating`));
+      dispatch(showFlagArea());
+      dispatch(failFlagStat());
+      return;
+    } finally {
       dispatch(keepServices());
-      if (resp.ok) {
-        const data = await resp.json();
-        dispatch(hideUpdating());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead(`Bind #${data.data.uuid} updated`));
-        dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
-        dispatch(showFlagArea());
-        dispatch(passFlagStat());
-      } else {
-        dispatch(hideUpdating());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead("Bind updating failed"));
-        dispatch(keepFlagBody(`Encountered "Status ${resp.status}" response during updating`));
-        dispatch(showFlagArea());
-        dispatch(failFlagStat());
-      }
     }
+    dispatch(hideUpdating());
+    dispatch(hideFlagArea());
+    dispatch(keepFlagHead(`Bind #${data.uuid} updated`));
+    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(showFlagArea());
+    dispatch(passFlagStat());
   } catch (expt) {
     console.log(expt);
   }

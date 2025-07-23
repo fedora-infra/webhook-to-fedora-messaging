@@ -1,61 +1,55 @@
+import { mdiContentSave, mdiDelete } from "@mdi/js";
+import Icon from "@mdi/react";
+import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
+import { useDispatch, useSelector } from "react-redux";
+import { apiCall } from "../features/api.js";
 import {
+  failFlagStat,
   hideCreation,
   hideFlagArea,
   keepFlagBody,
   keepFlagHead,
-  passFlagStat,
-  failFlagStat,
-  showFlagArea,
   keepServices,
+  passFlagStat,
+  showFlagArea,
 } from "../features/part.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import Container from "react-bootstrap/Container";
-import Card from "react-bootstrap/Card";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Icon from "@mdi/react";
-import { mdiContentSave, mdiDelete } from "@mdi/js";
-import { userManager } from "../config/oidc.js";
 
 async function saveUnit(dispatch) {
   try {
-    const userdata = await userManager.getUser();
-    if (userdata && !userdata.expired) {
-      const resp = await fetch("/api/v1/services", {
+    let data;
+    try {
+      data = await apiCall({
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${userdata?.access_token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+        path: `/services`,
+        body: {
           data: {
             name: document.getElementById("name-make").value.trim(),
             desc: document.getElementById("desc-make").value.trim(),
             type: document.getElementById("type-make").value.trim(),
           },
-        }),
+        },
       });
-
+      console.log("Result:", data);
+    } catch (error) {
+      dispatch(hideCreation());
+      dispatch(hideFlagArea());
+      dispatch(keepFlagHead("Bind creation failed"));
+      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during creation`));
+      dispatch(showFlagArea());
+      dispatch(failFlagStat());
+      return;
+    } finally {
       dispatch(keepServices());
-      if (resp.ok) {
-        const data = await resp.json();
-        console.log("Result.", data);
-        dispatch(hideCreation());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead(`Bind #${data.data.uuid} created`));
-        dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
-        dispatch(showFlagArea());
-        dispatch(passFlagStat());
-      } else {
-        dispatch(hideCreation());
-        dispatch(hideFlagArea());
-        dispatch(keepFlagHead("Bind creation failed"));
-        dispatch(keepFlagBody(`Encountered "Status ${resp.status}" response during creation`));
-        dispatch(showFlagArea());
-        dispatch(failFlagStat());
-      }
     }
+    dispatch(hideCreation());
+    dispatch(hideFlagArea());
+    dispatch(keepFlagHead(`Bind #${data.uuid} created`));
+    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(showFlagArea());
+    dispatch(passFlagStat());
   } catch (expt) {
     console.log(expt);
   }
