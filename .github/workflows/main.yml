@@ -24,13 +24,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y pre-commit git krb5-devel libpq-devel poetry python3-poetry-plugin-export
+          dnf install -y --setopt=install_weak_deps=false pre-commit git krb5-devel libpq-devel poetry python3-poetry-plugin-export npm
 
       - name: Mark the working directory as safe for Git
         run: git config --global --add safe.directory $PWD
 
-      - name: Install the project
+      - name: Install the backend
         run: poetry install
+
+      - name: Install the frontend
+        run: |
+          cd frontend
+          npm install
 
       - name: Run pre-commit checks
         run: pre-commit run --all-files
