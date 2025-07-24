@@ -4,22 +4,22 @@ Forgejo repository to be conveyed to the Fedora Messaging bus.
 1. Create a webhook bind under the type **Forgejo** on the dashboard with
    a unique name and an appropriate description.
 
-2. Navigate to the project repository on **Forgejo**.  
+2. Navigate to the project repository on **Forgejo**.
    ![](../../../public/imgs/fogo/1.png)
 
-3. On the **Settings** page, navigate to the **Webhooks** section.  
+3. On the **Settings** page, navigate to the **Webhooks** section.
    ![](../../../public/imgs/fogo/2.png)
 
-4. Click on the **Add webhook** button to open the combobox.  
+4. Click on the **Add webhook** button to open the combobox.
    ![](../../../public/imgs/fogo/3.png)
 
-5. Select the **Forgejo** option there to begin.  
+5. Select the **Forgejo** option there to begin.
    ![](../../../public/imgs/fogo/4.png)
 
-6. Fill the information accurately from the created webhook bind.  
+6. Fill the information accurately from the created webhook bind.
    ![](../../../public/imgs/fogo/5.png)
 
-7. After saving, the webhook bind should be enabled.  
+7. After saving, the webhook bind should be enabled.
    ![](../../../public/imgs/fogo/6.png)
 
 8. Perform one of the following actions for triggering the events.
