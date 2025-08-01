@@ -32,16 +32,11 @@
 
 ### For development
 
-1.  Setup the development environment. For this step to complete, you will need to have TinyStage's `ipa` and `auth` VMs running.
+Setup the development environment. For this step to complete, you will need to have TinyStage's `ipa` and `auth` VMs running.
 
-    ```
-    $ ansible-playbook ./devel/ansible/devel.yml
-    ```
-
-2.  Run the backend and the frontend:
-    ```
-    $ supervisord
-    ```
+```
+$ ansible-playbook ./devel/ansible/devel.yml
+```
 
 The backend and the frontend are now running. You can check their status with:
 
@@ -55,7 +50,7 @@ You can follow the backend and the frontend logs with:
 $ tail -f devel/*.log
 ```
 
-You can stop the backend and the fronend with:
+You can stop the backend and the frontend with:
 
 ```
 $ supervisorctl stop
