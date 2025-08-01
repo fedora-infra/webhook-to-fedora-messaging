@@ -27,7 +27,7 @@
 
 - name: Register the application with the OIDC provider
   command:
-    cmd: poetry run oidc-register --debug --public-client --output-file {{ devel_dir }}/oidc.json https://auth.tinystage.test/idp/openidc/ http://localhost:8000/docs/oauth2-redirect http://localhost:5173/callback
+    cmd: poetry run oidc-register --debug --public-client --output-file {{ devel_dir }}/oidc.json https://ipsilon.tinystage.test/idp/openidc/ http://localhost:8000/docs/oauth2-redirect http://localhost:5173/callback
     creates: "{{ devel_dir }}/oidc.json"
 
 - name: Load the OIDC config
@@ -63,6 +63,12 @@
     src: supervisord.conf.j2
     dest: "{{ top_dir }}/supervisord.conf"
   notify: reload supervisord
+
+- name: Start supervisord
+  command:
+    cmd: supervisord
+    chdir: "{{ top_dir }}"
+    creates: "{{ devel_dir }}/supervisor.sock"
 
 - name: Install the frontend
   command:
