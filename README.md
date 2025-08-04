@@ -44,6 +44,7 @@ The backend and the frontend are now running. You can check their status with:
 $ supervisorctl status
 ```
 
+The frontend is running locally on [port 5173](http://localhost:5173/). The backend is running on [port 8000](http://localhost:8000) should you need to access it.
 You can follow the backend and the frontend logs with:
 
 ```
