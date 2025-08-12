@@ -12,12 +12,12 @@ from webhook_to_fedora_messaging.models.user import User
         pytest.param(
             "mehmet",
             200,
-            id="General - Spotting an existing service",
+            id="Existing",
         ),
         pytest.param(
             "baran",
             404,
-            id="General - Spotting a non-existent service",
+            id="Non-existent",
         ),
     ],
 )

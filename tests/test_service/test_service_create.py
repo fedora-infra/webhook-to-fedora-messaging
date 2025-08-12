@@ -14,32 +14,32 @@ from webhook_to_fedora_messaging.models.user import User
         pytest.param(
             {"type": "github", "desc": "GitHub Demo", "name": "My GitHub"},
             201,
-            id="GitHub",
+            id="GitHub repository with name",
         ),
         pytest.param(
             {"type": "github", "desc": "GitHub Demo"},
             422,
-            id="GitHub",
+            id="GitHub repository without name",
         ),
         pytest.param(
             {"type": "forgejo", "desc": "Forgejo Demo", "name": "My Forgejo"},
             201,
-            id="Forgejo",
+            id="Forgejo repository with name",
         ),
         pytest.param(
             {"type": "forgejo", "desc": "Forgejo Demo"},
             422,
-            id="Forgejo",
+            id="Forgejo repository without name",
         ),
         pytest.param(
             {"type": "gitlab", "desc": "Gitlab Demo", "name": "My Gitlab"},
             201,
-            id="Gitlab",
+            id="Gitlab repository with name",
         ),
         pytest.param(
             {"type": "gitlab", "desc": "Gitlab Demo"},
             422,
-            id="Gitlab",
+            id="Gitlab repository without name",
         ),
     ],
 )
