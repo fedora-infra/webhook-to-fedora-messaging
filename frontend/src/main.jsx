@@ -21,7 +21,7 @@ import FactDocs from "./components/fact.jsx";
 createRoot(document.getElementById("root")).render(
   <Provider store={data}>
     <ModeWrap>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <Navigation />
         <Container>
           <div className="row g-3">

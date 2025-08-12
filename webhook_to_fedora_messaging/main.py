@@ -9,9 +9,10 @@ custom configuration file will be inherently taken from the default values
 
 import importlib.metadata
 import logging
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Awaitable
 from contextlib import asynccontextmanager
-from typing import Any
+from pathlib import Path
+from typing import Any, Callable
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,6 +25,7 @@ from .config import get_config
 from .database import get_db_manager
 from .endpoints import message, service, user
 from .fasjson import get_fasjson
+from .ui import StaticFilesWithFallback
 
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,8 @@ tags_metadata = [
 ]
 
 PREFIX = "/api/v1"
+
+PROJECT_ROOT = Path(__file__).parent.parent
 
 
 @asynccontextmanager
@@ -85,9 +89,24 @@ def create_app() -> FastAPI:
     app.include_router(service.router, prefix=PREFIX)
     app.include_router(message.router, prefix=PREFIX)
 
-    async def _redirect_to_docs(request: Request) -> RedirectResponse:
-        return RedirectResponse(app.docs_url or "/docs")
+    # UI
+    ui_path = PROJECT_ROOT.joinpath("frontend", "dist")
+    if ui_path.exists():
+        app.mount(
+            "/ui",
+            StaticFilesWithFallback(directory=ui_path, fallback="index.html", html=True),
+            name="ui",
+        )
+        default_redirect = "/ui"
+    else:
+        default_redirect = app.docs_url or "/docs"
 
-    app.add_route("/", _redirect_to_docs, include_in_schema=False)
+    def _redirect(destination: str) -> Callable[[Request], Awaitable[RedirectResponse]]:
+        async def _do_redirect(request: Request) -> RedirectResponse:
+            return RedirectResponse(destination)
+
+        return _do_redirect
+
+    app.add_route("/", _redirect(default_redirect), include_in_schema=False)
 
     return app
