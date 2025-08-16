@@ -1,10 +1,10 @@
 from httpx import AsyncClient
 
 
-async def test_root_redirect(client: AsyncClient) -> None:
+async def test_root_serves_ui(client: AsyncClient) -> None:
     """
-    Redirecting to API documentation
+    Serving UI from root endpoint
     """
     response = await client.get("/")
-    assert response.status_code == 307
-    assert response.headers.get("location") == "/docs"
+    assert response.status_code == 200
+    assert "text/html" in response.headers.get("content-type", "")

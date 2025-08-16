@@ -9,16 +9,15 @@ custom configuration file will be inherently taken from the default values
 
 import importlib.metadata
 import logging
-from collections.abc import AsyncGenerator, Awaitable
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from starlette.middleware.sessions import SessionMiddleware
-from starlette.requests import Request
 
 from .cache import configure_cache
 from .config import get_config
@@ -90,23 +89,18 @@ def create_app() -> FastAPI:
     app.include_router(message.router, prefix=PREFIX)
 
     # UI
-    ui_path = PROJECT_ROOT.joinpath("frontend", "dist")
+    ui_path = PROJECT_ROOT.joinpath("webhook_to_fedora_messaging", "frontend")
     if ui_path.exists():
-        app.mount(
-            "/ui",
-            StaticFilesWithFallback(directory=ui_path, fallback="index.html", html=True),
-            name="ui",
+        static = StaticFilesWithFallback(
+            directory=ui_path, fallback="index.html", html=True, follow_symlink=True
         )
-        default_redirect = "/ui"
+        app.mount("/", static, name="ui")
+        app.mount("/public", static, name="public")
     else:
-        default_redirect = app.docs_url or "/docs"
-
-    def _redirect(destination: str) -> Callable[[Request], Awaitable[RedirectResponse]]:
-        async def _do_redirect(request: Request) -> RedirectResponse:
-            return RedirectResponse(destination)
-
-        return _do_redirect
-
-    app.add_route("/", _redirect(default_redirect), include_in_schema=False)
+        app.add_route(
+            "/",
+            lambda request: RedirectResponse(app.docs_url or "/docs"),
+            include_in_schema=False,
+        )
 
     return app
