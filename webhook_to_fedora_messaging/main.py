@@ -90,12 +90,21 @@ def create_app() -> FastAPI:
     app.include_router(message.router, prefix=PREFIX)
 
     # UI
-    ui_path = PROJECT_ROOT.joinpath("frontend", "dist")
+    ui_path = PROJECT_ROOT.joinpath("webhook_to_fedora_messaging", "frontend")
     if ui_path.exists():
         app.mount(
             "/ui",
-            StaticFilesWithFallback(directory=ui_path, fallback="index.html", html=True),
+            StaticFilesWithFallback(
+                directory=ui_path, fallback="index.html", html=True, follow_symlink=True
+            ),
             name="ui",
+        )
+        app.mount(
+            "/public",
+            StaticFilesWithFallback(
+                directory=ui_path, fallback="index.html", html=True, follow_symlink=True
+            ),
+            name="public",
         )
         default_redirect = "/ui"
     else:
