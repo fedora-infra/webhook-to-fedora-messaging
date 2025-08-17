@@ -18,41 +18,36 @@ import {
 } from "../features/part.jsx";
 
 async function saveUnit(dispatch) {
+  let data;
   try {
-    let data;
-    try {
-      data = await apiCall({
-        method: "POST",
-        path: `/services`,
-        body: {
-          data: {
-            name: document.getElementById("name-make").value.trim(),
-            desc: document.getElementById("desc-make").value.trim(),
-            type: document.getElementById("type-make").value.trim(),
-          },
+    data = await apiCall({
+      method: "POST",
+      path: `/services`,
+      body: {
+        data: {
+          name: document.getElementById("name-make").value.trim(),
+          desc: document.getElementById("desc-make").value.trim(),
+          type: document.getElementById("type-make").value.trim(),
         },
-      });
-      console.log("Result:", data);
-    } catch (error) {
-      dispatch(hideCreation());
-      dispatch(hideFlagArea());
-      dispatch(keepFlagHead("Bind creation failed"));
-      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during creation`));
-      dispatch(showFlagArea());
-      dispatch(failFlagStat());
-      return;
-    } finally {
-      dispatch(keepServices());
-    }
+      },
+    });
+  } catch (error) {
     dispatch(hideCreation());
     dispatch(hideFlagArea());
-    dispatch(keepFlagHead(`Bind #${data.uuid} created`));
-    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(keepFlagHead("Bind creation failed"));
+    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during creation`));
     dispatch(showFlagArea());
-    dispatch(passFlagStat());
-  } catch (expt) {
-    console.log(expt);
+    dispatch(failFlagStat());
+    return;
+  } finally {
+    dispatch(keepServices());
   }
+  dispatch(hideCreation());
+  dispatch(hideFlagArea());
+  dispatch(keepFlagHead(`Bind #${data.uuid} created`));
+  dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+  dispatch(showFlagArea());
+  dispatch(passFlagStat());
 }
 
 function Creation() {
