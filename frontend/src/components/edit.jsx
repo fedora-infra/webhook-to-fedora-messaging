@@ -19,41 +19,37 @@ import {
 import DiffCard from "./diff.jsx";
 
 async function editUnit(dispatch, uuid) {
+  let data;
   try {
-    let data;
-    try {
-      data = await apiCall({
-        method: "PUT",
-        path: `/services/${uuid}`,
-        body: {
-          data: {
-            name: document.getElementById(`name-${uuid}`).value,
-            type: document.getElementById(`type-${uuid}`).value,
-            desc: document.getElementById(`desc-${uuid}`).value,
-            username: document.getElementById(`user-${uuid}`).value,
-          },
+    data = await apiCall({
+      method: "PUT",
+      path: `/services/${uuid}`,
+      body: {
+        data: {
+          name: document.getElementById(`name-${uuid}`).value,
+          type: document.getElementById(`type-${uuid}`).value,
+          desc: document.getElementById(`desc-${uuid}`).value,
+          username: document.getElementById(`user-${uuid}`).value,
         },
-      });
-    } catch (error) {
-      dispatch(hideUpdating());
-      dispatch(hideFlagArea());
-      dispatch(keepFlagHead("Bind updating failed"));
-      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during updating`));
-      dispatch(showFlagArea());
-      dispatch(failFlagStat());
-      return;
-    } finally {
-      dispatch(keepServices());
-    }
+      },
+    });
+  } catch (error) {
     dispatch(hideUpdating());
     dispatch(hideFlagArea());
-    dispatch(keepFlagHead(`Bind #${data.uuid} updated`));
-    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(keepFlagHead("Bind updating failed"));
+    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during updating`));
     dispatch(showFlagArea());
-    dispatch(passFlagStat());
-  } catch (expt) {
-    console.log(expt);
+    dispatch(failFlagStat());
+    return;
+  } finally {
+    dispatch(keepServices());
   }
+  dispatch(hideUpdating());
+  dispatch(hideFlagArea());
+  dispatch(keepFlagHead(`Bind #${data.uuid} updated`));
+  dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+  dispatch(showFlagArea());
+  dispatch(passFlagStat());
 }
 
 function Updating() {

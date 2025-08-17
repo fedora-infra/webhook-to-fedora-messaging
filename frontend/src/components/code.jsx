@@ -18,32 +18,26 @@ import {
 } from "../features/part.jsx";
 
 async function codeUnit(dispatch, uuid) {
+  let data;
   try {
-    let data;
-    try {
-      data = await apiCall({ method: "PUT", path: `/services/${uuid}/regenerate` });
-      console.log("Result:", data);
-    } catch (error) {
-      console.log(error);
-      dispatch(hideReviving());
-      dispatch(hideFlagArea());
-      dispatch(keepFlagHead("Bind regeneration failed"));
-      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during regeneration`));
-      dispatch(showFlagArea());
-      dispatch(failFlagStat());
-      return;
-    } finally {
-      dispatch(keepServices());
-    }
+    data = await apiCall({ method: "PUT", path: `/services/${uuid}/regenerate` });
+  } catch (error) {
     dispatch(hideReviving());
     dispatch(hideFlagArea());
-    dispatch(keepFlagHead(`Bind #${data.uuid} regenerated`));
-    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(keepFlagHead("Bind regeneration failed"));
+    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during regeneration`));
     dispatch(showFlagArea());
-    dispatch(passFlagStat());
-  } catch (expt) {
-    console.log(expt);
+    dispatch(failFlagStat());
+    return;
+  } finally {
+    dispatch(keepServices());
   }
+  dispatch(hideReviving());
+  dispatch(hideFlagArea());
+  dispatch(keepFlagHead(`Bind #${data.uuid} regenerated`));
+  dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+  dispatch(showFlagArea());
+  dispatch(passFlagStat());
 }
 
 function Reviving() {

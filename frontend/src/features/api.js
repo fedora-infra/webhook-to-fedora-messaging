@@ -5,7 +5,6 @@ export async function apiCall({ method, path, body }) {
   if (!userdata || userdata.expired) {
     throw new Error("Unauthenticated", { cause: new Response(null, { status: 401, statusText: "Unauthenticated" }) });
   }
-  console.log(body);
   const resp = await fetch(`${import.meta.env.VITE_API_URL}/api/v1${path}`, {
     method: method,
     headers: {

@@ -18,32 +18,27 @@ import {
 } from "../features/part.jsx";
 
 async function wipeUnit(dispatch, uuid) {
+  let data;
   try {
-    let data;
-    try {
-      data = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
-      console.log("Result:", data);
-    } catch (error) {
-      dispatch(keepServices());
-      dispatch(hideRevoking());
-      dispatch(hideFlagArea());
-      dispatch(keepFlagHead("Bind revocation failed"));
-      dispatch(keepFlagBody(`Encountered "${error.toString()}" response during revocation`));
-      dispatch(showFlagArea());
-      dispatch(failFlagStat());
-      return;
-    } finally {
-      dispatch(keepServices());
-    }
+    data = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
+  } catch (error) {
+    dispatch(keepServices());
     dispatch(hideRevoking());
     dispatch(hideFlagArea());
-    dispatch(keepFlagHead(`Bind #${data.uuid} revoked`));
-    dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+    dispatch(keepFlagHead("Bind revocation failed"));
+    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during revocation`));
     dispatch(showFlagArea());
-    dispatch(passFlagStat());
-  } catch (expt) {
-    console.log(expt);
+    dispatch(failFlagStat());
+    return;
+  } finally {
+    dispatch(keepServices());
   }
+  dispatch(hideRevoking());
+  dispatch(hideFlagArea());
+  dispatch(keepFlagHead(`Bind #${data.uuid} revoked`));
+  dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
+  dispatch(showFlagArea());
+  dispatch(passFlagStat());
 }
 
 function Revoking() {
