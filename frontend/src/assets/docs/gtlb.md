@@ -5,22 +5,22 @@ GitLab repository to be conveyed to the Fedora Messaging bus.
    a unique name and an appropriate description.
 
 2. From the navigation menu, head over to the **Webhooks** page from the **Settings** section.
-   ![](../../../public/imgs/gtlb/1.png)
+   ![](/imgs/gtlb/1.png)
 
 3. Click on the **Add new webhook** button.
-   ![](../../../public/imgs/gtlb/2.png)
+   ![](/imgs/gtlb/2.png)
 
 4. Fill the information accurately from the created webhook bind.
-   ![](../../../public/imgs/gtlb/3.png)
+   ![](/imgs/gtlb/3.png)
 
 5. Select all applicable events for triggering the webhook.
-   ![](../../../public/imgs/gtlb/4.png)
+   ![](/imgs/gtlb/4.png)
 
 6. Click on the **Add webhook** button to save changes.
-   ![](../../../public/imgs/gtlb/5.png)
+   ![](/imgs/gtlb/5.png)
 
 7. After saving, the webhook bind should be enabled.
-   ![](../../../public/imgs/gtlb/6.png)
+   ![](/imgs/gtlb/6.png)
 
 8. Perform one of the following actions for triggering the events.
    1. Push (Events catalogued under the [`org.fedoraproject.prod.gitlab.push`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.push) topic)

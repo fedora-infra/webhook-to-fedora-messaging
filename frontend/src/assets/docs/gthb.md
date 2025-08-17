@@ -5,22 +5,22 @@ GitHub repository to be conveyed to the Fedora Messaging bus.
    a unique name and an appropriate description.
 
 2. Navigate to the project repository on **GitHub**.
-   ![](../../../public/imgs/gthb/1.png)
+   ![](/imgs/gthb/1.png)
 
 3. On the **Settings** page, navigate to the **Webhooks** section.
-   ![](../../../public/imgs/gthb/2.png)
+   ![](/imgs/gthb/2.png)
 
 4. Click on the **Add webhook** button to begin.
-   ![](../../../public/imgs/gthb/3.png)
+   ![](/imgs/gthb/3.png)
 
 5. Reauthenticate yourself to **GitHub** if required.
-   ![](../../../public/imgs/gthb/4.png)
+   ![](/imgs/gthb/4.png)
 
 6. Fill the information accurately from the created webhook bind.
-   ![](../../../public/imgs/gthb/5.png)
+   ![](/imgs/gthb/5.png)
 
 7. After saving, the webhook bind should be enabled.
-   ![](../../../public/imgs/gthb/6.png)
+   ![](/imgs/gthb/6.png)
 
 8. Perform one of the following actions for triggering the events.
    1. Push (Events catalogued under the [`org.fedoraproject.prod.github.push`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.github.push) topic)
