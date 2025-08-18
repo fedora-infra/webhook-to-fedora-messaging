@@ -8,7 +8,7 @@ Serving the JS UI through FastAPI.
 
 from typing import Any
 
-from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles as StaticFiles
 from starlette.exceptions import HTTPException
 from starlette.responses import Response
 from starlette.types import Scope
