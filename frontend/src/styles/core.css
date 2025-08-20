@@ -2,56 +2,56 @@
   font-family: "Inter";
   font-weight: 400;
   font-style: normal;
-  src: url("../assets/font/sans_rlar.ttf");
+  src: url("/font/sans_rlar.ttf");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 400;
   font-style: italic;
-  src: url("../assets/font/sans_rlit.ttf");
+  src: url("/font/sans_rlit.ttf");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 700;
   font-style: normal;
-  src: url("../assets/font/sans_bold.ttf");
+  src: url("/font/sans_bold.ttf");
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 700;
   font-style: italic;
-  src: url("../assets/font/sans_bdit.ttf");
+  src: url("/font/sans_bdit.ttf");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 400;
   font-style: normal;
-  src: url("../assets/font/mono_rlar.ttf");
+  src: url("/font/mono_rlar.ttf");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 400;
   font-style: italic;
-  src: url("../assets/font/mono_rlit.ttf");
+  src: url("/font/mono_rlit.ttf");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 700;
   font-style: normal;
-  src: url("../assets/font/mono_bold.ttf");
+  src: url("/font/mono_bold.ttf");
 }
 
 @font-face {
   font-family: "JetBrains Mono";
   font-weight: 700;
   font-style: italic;
-  src: url("../assets/font/mono_bdit.ttf");
+  src: url("/font/mono_bdit.ttf");
 }
 
 .logo {
