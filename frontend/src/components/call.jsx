@@ -1,8 +1,9 @@
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
+
 import { userManager } from "../config/oidc.js";
 import { loadUserData } from "../features/auth.jsx";
-import { useDispatch } from "react-redux";
 
 function Callback() {
   const navigate = useNavigate();

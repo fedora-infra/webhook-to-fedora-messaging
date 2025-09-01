@@ -1,7 +1,8 @@
+import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
+import Icon from "@mdi/react";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import Icon from "@mdi/react";
-import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
+
 import { hideFlagArea } from "../features/part.jsx";
 
 function FlagArea() {

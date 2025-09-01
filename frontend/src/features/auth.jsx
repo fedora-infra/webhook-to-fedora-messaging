@@ -1,6 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { userManager } from "../config/oidc.js";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import md5 from "crypto-js/md5";
+
+import { userManager } from "../config/oidc.js";
 
 export const loadUserData = createAsyncThunk("auth/loadUserData", async () => {
   const user = await userManager.getUser();

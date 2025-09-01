@@ -1,14 +1,15 @@
-import Container from "react-bootstrap/Container";
-import Navbar from "react-bootstrap/Navbar";
-import { userManager } from "../config/oidc.js";
-import { useSelector, useDispatch } from "react-redux";
-import { loadUserData, wipeUserData } from "../features/auth.jsx";
-import Image from "react-bootstrap/Image";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import { mdiMemory, mdiPower, mdiWeatherNight, mdiWeatherSunny } from "@mdi/js";
 import Icon from "@mdi/react";
-import { mdiWeatherSunny, mdiWeatherNight, mdiMemory, mdiPower } from "@mdi/js";
-import { prepTintMode } from "../features/part.jsx";
 import { useEffect } from "react";
+import Container from "react-bootstrap/Container";
+import Image from "react-bootstrap/Image";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { useDispatch, useSelector } from "react-redux";
+
+import { userManager } from "../config/oidc.js";
+import { loadUserData, wipeUserData } from "../features/auth.jsx";
+import { prepTintMode } from "../features/part.jsx";
 
 function Navigation() {
   const dispatch = useDispatch();
