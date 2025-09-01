@@ -1,6 +1,9 @@
+import { mdiBug, mdiCodeJson, mdiHomeAccount, mdiLinkCircleOutline, mdiPlusThick, mdiWeb } from "@mdi/js";
+import Icon from "@mdi/react";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+
 import {
   failFlagStat,
   hideCreation,
@@ -10,9 +13,6 @@ import {
   showCreation,
   showFlagArea,
 } from "../features/part.jsx";
-
-import { mdiBug, mdiCodeJson, mdiHomeAccount, mdiLinkCircleOutline, mdiPlusThick, mdiWeb } from "@mdi/js";
-import Icon from "@mdi/react";
 
 function SideMenu() {
   const dispatch = useDispatch();

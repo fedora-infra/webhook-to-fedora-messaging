@@ -1,4 +1,5 @@
 import ListGroup from "react-bootstrap/ListGroup";
+
 import { typeName } from "../config/data.js";
 
 function DiffCard({ stat, data }) {

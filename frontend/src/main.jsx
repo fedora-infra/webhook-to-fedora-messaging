@@ -1,22 +1,24 @@
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router";
-import Callback from "./components/call.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/core.css";
-import { Provider } from "react-redux";
-import { data } from "./features/data.jsx";
-import Navigation from "./components/navi.jsx";
-import SideMenu from "./components/side.jsx";
+
 import Container from "react-bootstrap/Container";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import Callback from "./components/call.jsx";
+import Reviving from "./components/code.jsx";
+import Updating from "./components/edit.jsx";
+import FactDocs from "./components/fact.jsx";
+import FlagArea from "./components/flag.jsx";
+import Mistaken from "./components/flaw.jsx";
 import MainList from "./components/list.jsx";
 import Creation from "./components/make.jsx";
-import FlagArea from "./components/flag.jsx";
-import Revoking from "./components/wipe.jsx";
-import Updating from "./components/edit.jsx";
 import ModeWrap from "./components/mode.jsx";
-import Mistaken from "./components/flaw.jsx";
-import Reviving from "./components/code.jsx";
-import FactDocs from "./components/fact.jsx";
+import Navigation from "./components/navi.jsx";
+import SideMenu from "./components/side.jsx";
+import Revoking from "./components/wipe.jsx";
+import { data } from "./features/data.jsx";
 
 createRoot(document.getElementById("root")).render(
   <Provider store={data}>
