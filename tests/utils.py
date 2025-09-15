@@ -10,7 +10,7 @@ async def make_db_service(
     service_type: str,
     db_user: User,
 ) -> Service:
-    service, created = await database.get_or_create(
+    service, _created = await database.get_or_create(
         db_session,
         Service,
         name="Demo Service",

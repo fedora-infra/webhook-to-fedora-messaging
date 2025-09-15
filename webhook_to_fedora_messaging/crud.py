@@ -54,7 +54,7 @@ You can now add the following webhook to the """
         "mentioned above."
     )
     if "/" in service_name:
-        user_or_org, repo_name = service_name.split("/")
+        user_or_org = service_name.split("/")[0]
         print(
             f"Note that you can also add the webhook at the organization level (`{user_or_org}`), "
             "which will make it active for all the organization's repos. I would suggest doing "

@@ -82,7 +82,7 @@ async def db_user(client: AsyncClient, db_session: AsyncSession) -> AsyncGenerat
     For seeding the database with user
     """
     # Setup code to create the object in the database
-    user, is_created = await database.get_or_create(
+    user, _is_created = await database.get_or_create(
         db_session, User, name="mehmet"
     )  # Adjust fields as necessary
     await db_session.commit()
