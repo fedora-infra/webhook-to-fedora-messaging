@@ -108,7 +108,7 @@ async def process_repo(repo: str, gh: gidgethub.abc.GitHubAPI) -> None:
         request_headers = gidgethub.sansio.create_headers(
             gh.requester, accept=gidgethub.sansio.accept_format(), oauth_token=gh.oauth_token
         )
-        status_code, headers, content = await gh._request(
+        _status_code, headers, _content = await gh._request(
             "GET",
             gidgethub.sansio.format_url(f"/repos/{repo}", None, base_url=gh.base_url),
             request_headers,
