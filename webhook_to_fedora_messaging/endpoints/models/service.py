@@ -18,6 +18,7 @@ class ServiceType(str, Enum):
     github = "github"
     forgejo = "forgejo"
     gitlab = "gitlab"
+    discourse = "discourse"
 
 
 class ServiceBase(BaseModel, ABC):

@@ -8,8 +8,6 @@ import pytest
 from fedora_messaging.api import Message
 from fedora_messaging.exceptions import ConnectionException
 from httpx import AsyncClient
-from twisted.internet import defer
-from twisted.internet.defer import Deferred
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 from webhook_to_fedora_messaging_messages.github import GitHubMessageV1
 from webhook_to_fedora_messaging_messages.gitlab import GitLabMessageV1
@@ -102,23 +100,6 @@ def fasjson_client() -> Generator[FASJSONAsyncProxy, None]:
         finally:
             for patch in patches:
                 patch.stop()
-
-
-@pytest.fixture()
-def sent_messages() -> Generator[list[Message]]:
-    """
-    For confirming successful message dispatch
-    """
-    sent = []
-
-    def _add_and_return(message: Message, exchange: str | None = None) -> Deferred[None]:
-        sent.append(message)
-        return defer.succeed(None)
-
-    with mock.patch(
-        "webhook_to_fedora_messaging.publishing.api.twisted_publish", side_effect=_add_and_return
-    ):
-        yield sent
 
 
 async def test_message_create(

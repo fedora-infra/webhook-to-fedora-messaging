@@ -39,6 +39,7 @@ createRoot(document.getElementById("root")).render(
                 <Route element={<FactDocs bind="fogo" />} path="/forgejo" />
                 <Route element={<FactDocs bind="gthb" />} path="/github" />
                 <Route element={<FactDocs bind="gtlb" />} path="/gitlab" />
+                <Route element={<FactDocs bind="discourse" />} path="/discourse" />
                 <Route element={<Mistaken />} path="*" />
               </Routes>
             </div>
