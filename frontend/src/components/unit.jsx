@@ -120,6 +120,7 @@ function UnitCard({ data }) {
                 <option value="github">GitHub</option>
                 <option value="gitlab">GitLab</option>
                 <option value="forgejo">Forgejo</option>
+                <option value="discourse">Discourse</option>
               </Form.Select>
             </FloatingLabel>
           </div>
