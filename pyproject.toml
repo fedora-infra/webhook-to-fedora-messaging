@@ -81,6 +81,7 @@ pyright = "^1.1.402"
 types-authlib = "^1.5.0.20250608"
 sphinx-autodoc-typehints = "^3.2.0"
 oidc-register = "^0.2.1"
+towncrier = "^25.8.0"
 
 
 [tool.poetry.group.scripts.dependencies]
@@ -145,7 +146,7 @@ omit = [
 ]
 
 [tool.towncrier]
-package = "webhook-to-fedora-messaging"
+package = "webhook_to_fedora_messaging"
 filename = "docs/release_notes.md"
 directory = "changelog.d"
 start_string = "<!-- towncrier release notes start -->\n"
