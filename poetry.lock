@@ -3256,6 +3256,24 @@ files = [
 ]
 
 [[package]]
+name = "towncrier"
+version = "25.8.0"
+description = "Building newsfiles for your project."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "towncrier-25.8.0-py3-none-any.whl", hash = "sha256:b953d133d98f9aeae9084b56a3563fd2519dfc6ec33f61c9cd2c61ff243fb513"},
+    {file = "towncrier-25.8.0.tar.gz", hash = "sha256:eef16d29f831ad57abb3ae32a0565739866219f1ebfbdd297d32894eb9940eb1"},
+]
+
+[package.dependencies]
+click = "*"
+jinja2 = "*"
+
+[package.extras]
+dev = ["furo (>=2024.05.06)", "nox", "packaging", "sphinx (>=5)", "twisted"]
+
+[[package]]
 name = "twisted"
 version = "25.5.0"
 description = "An asynchronous networking framework written in Python"
@@ -3855,4 +3873,4 @@ deploy = ["asyncpg", "uvicorn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d0f714c6a9f3f8cc1a6c4ec52c298fb59ace7e25a4fc4615b4780fb64ad341c6"
+content-hash = "66bc843a09890956be002a7c3b47ca5f8136b695f3473e6b2b14567b89b1cead"
