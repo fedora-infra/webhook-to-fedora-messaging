@@ -17,6 +17,7 @@ BodyData: TypeAlias = bytes
 class BaseParser:
 
     message_class: type[Message] = Message
+    signature_header_name: str | None = None
 
     def __init__(self, token: str, request: Request):
         self._token = token
@@ -24,13 +25,15 @@ class BaseParser:
 
     async def get_headers_and_data(self) -> tuple[HeadersDict, bytes]:
         headers = {k.lower(): v for k, v in self._request.headers.items()}
-        if "x-hub-signature-256" not in headers:
-            raise KeyError("Signature not found")
         data = await self._request.body()
         return headers, data
 
     async def validate(self, headers: HeadersDict, data: bytes) -> None:
-        raise NotImplementedError
+        if not self.signature_header_name:
+            return
+        if self.signature_header_name not in headers:
+            raise KeyError("Signature not found")
+        self._validate_with_sig_header(headers[self.signature_header_name], data)
 
     def _get_topic(self, headers: HeadersDict, body: Body) -> str:
         raise NotImplementedError

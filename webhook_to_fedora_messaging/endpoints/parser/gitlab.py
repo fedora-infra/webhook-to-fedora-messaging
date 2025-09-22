@@ -1,25 +1,14 @@
 from webhook_to_fedora_messaging_messages.gitlab import GitLabMessageV1
 
 from ...fasjson import get_fasjson
-from .base import BaseParser, Body, BodyData, HeadersDict
+from .base import BaseParser, Body, HeadersDict
 
 
 class GitLabParser(BaseParser):
 
     message_class = GitLabMessageV1
-
-    async def get_headers_and_data(self) -> tuple[HeadersDict, bytes]:
-        headers = {k.lower(): v for k, v in self._request.headers.items()}
-        data = await self._request.body()
-        return headers, data
-
-    async def validate(self, headers: HeadersDict, data: BodyData) -> None:
-        """
-        Verify that the payload was sent from GitLab by validating SHA256.
-        """
-
-        # Gitlab does not provide a SHA256 header for validation
-        pass
+    # Gitlab does not provide a SHA256 header for validation
+    signature_header_name = None
 
     def _get_topic(self, headers: HeadersDict, body: Body) -> str:
         event = headers["x-gitlab-event"].replace(" Hook", "").replace(" ", "_").lower()
