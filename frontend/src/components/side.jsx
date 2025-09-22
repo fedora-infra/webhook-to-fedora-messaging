@@ -89,6 +89,10 @@ function SideMenu() {
           <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
           GitLab
         </ListGroup.Item>
+        <ListGroup.Item action className="small d-flex align-items-center ps-2 pe-2" as={Link} to="/discourse">
+          <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
+          Discourse
+        </ListGroup.Item>
       </ListGroup>
     </div>
   );
