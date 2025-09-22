@@ -2,6 +2,7 @@ export const typeName = {
   github: "GitHub",
   gitlab: "GitLab",
   forgejo: "Forgejo",
+  discourse: "Discourse",
 };
 
 export const flawText = [
