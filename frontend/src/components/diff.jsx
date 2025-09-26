@@ -1,6 +1,6 @@
 import ListGroup from "react-bootstrap/ListGroup";
 
-import { typeName } from "../config/data.js";
+import { ServiceTypes } from "../config/data.js";
 
 function DiffCard({ stat, data }) {
   return (
@@ -18,7 +18,7 @@ function DiffCard({ stat, data }) {
       </ListGroup.Item>
       <ListGroup.Item className="ps-2 pe-2 d-flex justify-content-between align-items-start">
         <span className="fw-bold">Type. </span>
-        <span className="text-truncate">{typeName[data.type]}</span>
+        <span className="text-truncate">{ServiceTypes[data.type].name}</span>
       </ListGroup.Item>
       <ListGroup.Item className="ps-2 pe-2 d-flex justify-content-between align-items-start">
         <span className="fw-bold">Owner. </span>

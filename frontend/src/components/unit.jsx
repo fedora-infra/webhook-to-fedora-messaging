@@ -4,6 +4,7 @@ import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } fro
 import Card from "react-bootstrap/Card";
 import { useDispatch, useSelector } from "react-redux";
 
+import { ServiceTypes } from "../config/data.js";
 import {
   failFlagStat,
   hideFlagArea,
@@ -117,10 +118,13 @@ function UnitCard({ data }) {
           <div className="col-md-6 col-12">
             <FloatingLabel className="small" controlId={`type-${data.uuid}`} label="Service">
               <Form.Select className="monoelem" defaultValue={data.type}>
-                <option value="github">GitHub</option>
-                <option value="gitlab">GitLab</option>
-                <option value="forgejo">Forgejo</option>
-                <option value="discourse">Discourse</option>
+                {Object.keys(ServiceTypes)
+                  .sort()
+                  .map((serviceType) => (
+                    <option key={serviceType} value={serviceType}>
+                      {ServiceTypes[serviceType].name}
+                    </option>
+                  ))}
               </Form.Select>
             </FloatingLabel>
           </div>

@@ -4,6 +4,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 
+import { ServiceTypes } from "../config/data";
 import {
   failFlagStat,
   hideCreation,
@@ -77,22 +78,20 @@ function SideMenu() {
           <Icon className="me-2" size={0.75} path={mdiWeb} />
           API
         </ListGroup.Item>
-        <ListGroup.Item action className="small d-flex align-items-center ps-2 pe-2" as={Link} to="/forgejo">
-          <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
-          Forgejo
-        </ListGroup.Item>
-        <ListGroup.Item action className="small d-flex align-items-center ps-2 pe-2" as={Link} to="/github">
-          <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
-          GitHub
-        </ListGroup.Item>
-        <ListGroup.Item action className="small d-flex align-items-center ps-2 pe-2" as={Link} to="/gitlab">
-          <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
-          GitLab
-        </ListGroup.Item>
-        <ListGroup.Item action className="small d-flex align-items-center ps-2 pe-2" as={Link} to="/discourse">
-          <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
-          Discourse
-        </ListGroup.Item>
+        {Object.keys(ServiceTypes)
+          .sort()
+          .map((serviceType) => (
+            <ListGroup.Item
+              key={serviceType}
+              action
+              className="small d-flex align-items-center ps-2 pe-2"
+              as={Link}
+              to={`/${serviceType}`}
+            >
+              <Icon className="me-2" size={0.75} path={mdiLinkCircleOutline} />
+              {ServiceTypes[serviceType].name}
+            </ListGroup.Item>
+          ))}
       </ListGroup>
     </div>
   );
