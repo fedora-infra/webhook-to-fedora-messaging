@@ -1,8 +1,20 @@
-export const typeName = {
-  github: "GitHub",
-  gitlab: "GitLab",
-  forgejo: "Forgejo",
-  discourse: "Discourse",
+export const ServiceTypes = {
+  github: {
+    name: "GitHub",
+    title: "GitHub repositories",
+  },
+  gitlab: {
+    name: "GitLab",
+    title: "GitLab repositories",
+  },
+  forgejo: {
+    name: "Forgejo",
+    title: "Forgejo repositories",
+  },
+  discourse: {
+    name: "Discourse",
+    title: "Discourse forums",
+  },
 };
 
 export const flawText = [
