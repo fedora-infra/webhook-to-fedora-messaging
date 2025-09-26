@@ -18,6 +18,7 @@ import ModeWrap from "./components/mode.jsx";
 import Navigation from "./components/navi.jsx";
 import SideMenu from "./components/side.jsx";
 import Revoking from "./components/wipe.jsx";
+import { ServiceTypes } from "./config/data.js";
 import { data } from "./features/data.jsx";
 
 createRoot(document.getElementById("root")).render(
@@ -36,10 +37,11 @@ createRoot(document.getElementById("root")).render(
               <Routes>
                 <Route element={<MainList />} path="/" />
                 <Route element={<Callback />} path="/callback" />
-                <Route element={<FactDocs bind="fogo" />} path="/forgejo" />
-                <Route element={<FactDocs bind="gthb" />} path="/github" />
-                <Route element={<FactDocs bind="gtlb" />} path="/gitlab" />
-                <Route element={<FactDocs bind="discourse" />} path="/discourse" />
+                {Object.keys(ServiceTypes)
+                  .sort()
+                  .map((serviceType) => (
+                    <Route key={serviceType} element={<FactDocs bind={serviceType} />} path={`/${serviceType}`} />
+                  ))}
                 <Route element={<Mistaken />} path="*" />
               </Routes>
             </div>
