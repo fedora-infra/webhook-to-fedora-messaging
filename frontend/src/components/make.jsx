@@ -6,6 +6,7 @@ import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { useDispatch, useSelector } from "react-redux";
 
+import { ServiceTypes } from "../config/data.js";
 import { apiCall } from "../features/api.js";
 import {
   failFlagStat,
@@ -110,10 +111,13 @@ function Creation() {
                 <div className="col-md-4 col-12">
                   <FloatingLabel className="small" controlId="type-make" label="Service">
                     <Form.Select className="monoelem">
-                      <option value="github">GitHub</option>
-                      <option value="gitlab">GitLab</option>
-                      <option value="forgejo">Forgejo</option>
-                      <option value="discourse">Discourse</option>
+                      {Object.keys(ServiceTypes)
+                        .sort()
+                        .map((serviceType) => (
+                          <option key={serviceType} value={serviceType}>
+                            {ServiceTypes[serviceType].name}
+                          </option>
+                        ))}
                     </Form.Select>
                   </FloatingLabel>
                 </div>
