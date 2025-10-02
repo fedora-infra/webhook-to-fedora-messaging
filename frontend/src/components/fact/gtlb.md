@@ -24,6 +24,6 @@ GitLab repository to be conveyed to the Fedora Messaging bus.
 
 8. Perform one of the following actions for triggering the events.
    1. Push (Events catalogued under the [`org.fedoraproject.prod.gitlab.push`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.push) topic)
-   2. Pull request (Events catalogued under the [`org.fedoraproject.prod.gitlab.pull_request`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.pull_request) topic)
-   3. Issue ticket (Events catalogued under the [`org.fedoraproject.prod.gitlab.issues`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.issues) topic)
-   4. Issue comment (Events catalogued under the [`org.fedoraproject.prod.gitlab.issue_comment`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.issue_comment) topic)
+   2. Pull request (Events catalogued under the [`org.fedoraproject.prod.gitlab.merge_request`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.merge_request) topic)
+   3. Issue ticket (Events catalogued under the [`org.fedoraproject.prod.gitlab.issue`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.issue) topic)
+   4. Issue comment (Events catalogued under the [`org.fedoraproject.prod.gitlab.note`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.gitlab.note) topic)
