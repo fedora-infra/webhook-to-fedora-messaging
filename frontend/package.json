@@ -25,6 +25,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "bootstrap": "^5.3.7",
     "crypto-js": "^4.2.0",
+    "lodash": "^4.17.21",
     "oidc-client": "^1.11.5",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",

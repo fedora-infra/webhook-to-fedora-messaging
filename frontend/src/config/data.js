@@ -2,18 +2,36 @@ export const ServiceTypes = {
   github: {
     name: "GitHub",
     title: "GitHub repositories",
+    helpText: {
+      name: "The full repository name, such as <tt>fedora-infra/bodhi</tt>",
+      general:
+        "Note that you can also add the webhook at the organization level, which will make it active for all the organization's repos. We suggest doing so to save some effort and automatically cover repos you may add in the future (make sure however than another teammate hasn't already added it).",
+    },
   },
   gitlab: {
     name: "GitLab",
     title: "GitLab repositories",
+    helpText: {
+      name: "The full repository name, such as <tt>fedora-infra/bodhi</tt>",
+      general:
+        "Note that you can also add the webhook at the group level, which will make it active for all the group's repos. We suggest doing so to save some effort and automatically cover repos you may add in the future (make sure however than another teammate hasn't already added it).",
+    },
   },
   forgejo: {
     name: "Forgejo",
     title: "Forgejo repositories",
+    helpText: {
+      name: "The instance and full repository name, such as <tt>codeberg.org/fedora-infra/bodhi</tt>",
+      general:
+        "Note that you can also add the webhook at the organization level, which will make it active for all the organization's repos. We suggest doing so to save some effort and automatically cover repos you may add in the future (make sure however than another teammate hasn't already added it).",
+    },
   },
   discourse: {
     name: "Discourse",
     title: "Discourse forums",
+    helpText: {
+      name: "The name of the Discourse instance",
+    },
   },
 };
 
