@@ -1,7 +1,7 @@
 import { mdiContentSave, mdiDelete } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useState } from "react";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Alert, Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import Offcanvas from "react-bootstrap/Offcanvas";
@@ -19,6 +19,7 @@ import {
   passFlagStat,
   showFlagArea,
 } from "../features/part.jsx";
+import MakeField from "./make-field.jsx";
 
 function Creation() {
   const show = useSelector((data) => data.area.creation);
@@ -113,16 +114,20 @@ function Creation() {
               </Card.Header>
               <Card.Body className="p-2">
                 <div className="row g-2">
-                  <div className="col-md-4 col-12">
-                    <FloatingLabel className="small" controlId="name-make" label="Name">
-                      <Form.Control className="monoelem" name="name" onChange={onChange} value={formData.name || ""} />
-                    </FloatingLabel>
-                  </div>
-                  <div className="col-md-4 col-12">
-                    <FloatingLabel className="small" controlId="desc-make" label="Description">
-                      <Form.Control className="monoelem" name="desc" onChange={onChange} value={formData.desc || ""} />
-                    </FloatingLabel>
-                  </div>
+                  <MakeField
+                    name="name"
+                    label="Name"
+                    value={formData.name}
+                    onChange={onChange}
+                    serviceType={formData.type}
+                  />
+                  <MakeField
+                    name="desc"
+                    label="Description"
+                    value={formData.desc}
+                    onChange={onChange}
+                    serviceType={formData.type}
+                  />
                   <div className="col-md-4 col-12">
                     <FloatingLabel className="small" controlId="type-make" label="Service">
                       <Form.Select className="monoelem" name="type" onChange={onChange} value={formData.type || ""}>
@@ -137,6 +142,15 @@ function Creation() {
                     </FloatingLabel>
                   </div>
                 </div>
+                {ServiceTypes[formData.type].helpText?.general && (
+                  <div className="row g-2 py-2 justify-content-center">
+                    <div className="col-auto">
+                      <Alert variant="info" className="mb-0">
+                        <span dangerouslySetInnerHTML={{ __html: ServiceTypes[formData.type].helpText.general }} />
+                      </Alert>
+                    </div>
+                  </div>
+                )}
               </Card.Body>
             </form>
           </Card>
