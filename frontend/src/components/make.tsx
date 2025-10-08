@@ -1,7 +1,7 @@
-import React from "react";
 import { mdiContentSave, mdiDelete } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
+import React from "react";
+import { Button, ButtonGroup, Card, Container, FloatingLabel, Form, Offcanvas,OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { ServiceTypes } from "../config/data.ts";

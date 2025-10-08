@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
+import type { AppDispatch, RootState } from "../features/data.ts";
 import { keepServices } from "../features/part.ts";
 import UnitCard from "./unit.jsx";
-import type { AppDispatch, RootState } from "../features/data.ts";
 
 function MainList() {
   const dispatch = useDispatch<AppDispatch>();

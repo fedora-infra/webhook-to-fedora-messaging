@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { apiCall } from "./api.js";
 import { ServiceTypes } from "../config/data.ts";
+import { apiCall } from "./api.js";
 
 export const keepServices = createAsyncThunk("area/keepServices", async (_, { rejectWithValue }) => {
   try {

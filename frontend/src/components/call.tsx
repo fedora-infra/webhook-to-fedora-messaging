@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../features/data.ts";
 import { useNavigate } from "react-router";
 
 import { userManager } from "../config/oidc.ts";
 import { loadUserData } from "../features/auth.ts";
+import type { AppDispatch } from "../features/data.ts";
 
 function Callback() {
   const navigate = useNavigate();

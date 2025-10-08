@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { MD5 as md5 } from "crypto-js";
+import type { Profile } from "oidc-client";
 
 import { userManager } from "../config/oidc.ts";
-import type { Profile } from "oidc-client";
 
 type AuthDataState = {
   user: Profile | null

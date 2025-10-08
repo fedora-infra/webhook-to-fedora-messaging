@@ -1,4 +1,4 @@
-interface ServiceTypes {
+interface ServiceTypesShape {
   github: {
     name: string;
     title: string;
@@ -17,7 +17,7 @@ interface ServiceTypes {
   };
 }
 
-export const ServiceTypes:ServiceTypes = {
+export const ServiceTypes: ServiceTypesShape = {
   github: {
     name: "GitHub",
     title: "GitHub repositories",

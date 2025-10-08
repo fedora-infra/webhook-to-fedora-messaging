@@ -1,10 +1,11 @@
-import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
+import React from "react";
+import { Button, ButtonGroup, Card, Container, Offcanvas,OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { apiCall } from "../features/api.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
 import {
   failFlagStat,
   hideFlagArea,
@@ -16,7 +17,6 @@ import {
   showFlagArea,
 } from "../features/part.ts";
 import DiffCard from "./diff.tsx";
-import type { AppDispatch, RootState } from "../features/data.ts";
 const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 
 async function editUnit(dispatch: AppDispatch, uuid: string) {

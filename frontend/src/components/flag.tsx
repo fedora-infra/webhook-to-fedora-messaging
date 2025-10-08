@@ -1,11 +1,11 @@
-import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
+import React from "react";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
+import type { AppDispatch,RootState } from "../features/data.ts";
 import { hideFlagArea } from "../features/part.ts";
-import type { RootState, AppDispatch } from "../features/data.ts";
 
 const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 

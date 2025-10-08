@@ -1,13 +1,13 @@
 import { mdiMemory, mdiPower, mdiWeatherNight, mdiWeatherSunny } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Container, Image, Navbar, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import { userManager } from "../config/oidc.ts";
 import { loadUserData, wipeUserData } from "../features/auth.ts";
-import { prepTintMode } from "../features/part.ts";
 import type { AppDispatch, RootState } from "../features/data.ts";
+import { prepTintMode } from "../features/part.ts";
 const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 
 function Navigation() {
