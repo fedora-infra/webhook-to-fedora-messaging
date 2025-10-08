@@ -1,42 +1,68 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { apiCall } from "./api.js";
+import { ServiceTypes } from "../config/data.ts";
 
 export const keepServices = createAsyncThunk("area/keepServices", async (_, { rejectWithValue }) => {
   try {
     return await apiCall({ method: "GET", path: "/services" });
-  } catch (err) {
+  } catch (err: any) {
     return rejectWithValue(err.toString());
   }
 });
 
+export interface PrevData {
+  name: string,
+  desc: string,
+  type: keyof typeof ServiceTypes,
+  user: string,
+};
+
+export interface AreaState {
+  services: any[],
+  creation: boolean,
+  flagarea: boolean,
+  flaghead: string,
+  flagbody: string,
+  flagstat: boolean,
+  revoking: boolean,
+  updating: boolean,
+  reviving: boolean,
+  binduuid: string,
+  prevdata: PrevData,
+  nextdata: PrevData,
+  tintmode: string,
+}
+
+const initialState: AreaState = {
+  services: [],
+  creation: false,
+  flagarea: false,
+  flaghead: "",
+  flagbody: "",
+  flagstat: false,
+  revoking: false,
+  updating: false,
+  reviving: false,
+  binduuid: "",
+  prevdata: {
+    name: "",
+    desc: "",
+    type: "github",
+    user: "",
+  },
+  nextdata: {
+    name: "",
+    desc: "",
+    type: "github",
+    user: "",
+  },
+  tintmode: "auto",
+};
+
 const makeunit = createSlice({
   name: "area",
-  initialState: {
-    services: [],
-    creation: false,
-    flagarea: false,
-    flaghead: "",
-    flagbody: "",
-    flagstat: false,
-    revoking: false,
-    updating: false,
-    reviving: false,
-    binduuid: "",
-    prevdata: {
-      name: "",
-      desc: "",
-      type: "",
-      user: "",
-    },
-    nextdata: {
-      name: "",
-      desc: "",
-      type: "",
-      user: "",
-    },
-    tintmode: "auto",
-  },
+  initialState: initialState,
   reducers: {
     keepFlagHead: (area, data) => {
       area.flaghead = data.payload;

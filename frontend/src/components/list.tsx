@@ -1,14 +1,16 @@
+import React from "react";
 import { useEffect } from "react";
-import ListGroup from "react-bootstrap/ListGroup";
+import { ListGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { keepServices } from "../features/part.jsx";
+import { keepServices } from "../features/part.ts";
 import UnitCard from "./unit.jsx";
+import type { AppDispatch, RootState } from "../features/data.ts";
 
 function MainList() {
-  const dispatch = useDispatch();
-  const list = useSelector((data) => data.area.services);
-  const user = useSelector((data) => data.auth.user);
+  const dispatch = useDispatch<AppDispatch>();
+  const list = useSelector((state: RootState) => state.area.services);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
     dispatch(keepServices());

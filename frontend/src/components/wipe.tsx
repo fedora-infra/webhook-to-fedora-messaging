@@ -1,12 +1,10 @@
+import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { apiCall } from "../features/api.js";
+import { apiCall } from "../features/api.ts";
 import {
   failFlagStat,
   hideFlagArea,
@@ -16,18 +14,21 @@ import {
   keepServices,
   passFlagStat,
   showFlagArea,
-} from "../features/part.jsx";
+} from "../features/part.ts";
 
-async function wipeUnit(dispatch, uuid) {
-  let data;
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
+
+async function wipeUnit(dispatch: import("../features/data.ts").AppDispatch, uuid: string) {
+  let data2;
   try {
-    data = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
-  } catch (error) {
+    data2 = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     dispatch(keepServices());
     dispatch(hideRevoking());
     dispatch(hideFlagArea());
     dispatch(keepFlagHead("Bind revocation failed"));
-    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during revocation`));
+    dispatch(keepFlagBody(`Encountered "${errMsg}" response during revocation`));
     dispatch(showFlagArea());
     dispatch(failFlagStat());
     return;
@@ -36,16 +37,16 @@ async function wipeUnit(dispatch, uuid) {
   }
   dispatch(hideRevoking());
   dispatch(hideFlagArea());
-  dispatch(keepFlagHead(`Bind #${data.uuid} revoked`));
+  dispatch(keepFlagHead(`Bind #${data2.uuid} revoked`));
   dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
   dispatch(showFlagArea());
   dispatch(passFlagStat());
 }
 
 function Revoking() {
-  const show = useSelector((data) => data.area.revoking);
-  const uuid = useSelector((data) => data.area.binduuid);
-  const dispatch = useDispatch();
+  const show = useSelector((state: import("../features/data.ts").RootState) => state.area.revoking);
+  const uuid = useSelector((state: import("../features/data.ts").RootState) => state.area.binduuid);
+  const dispatch = useDispatch<import("../features/data.ts").AppDispatch>();
 
   return (
     <Offcanvas
@@ -71,7 +72,7 @@ function Revoking() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => wipeUnit(dispatch, uuid)}
                     >
-                      <Icon path={mdiCheckCircle} size={0.75} />
+                      <IconComponent path={mdiCheckCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>DECLINE</Tooltip>}>
@@ -81,7 +82,7 @@ function Revoking() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => dispatch(hideRevoking())}
                     >
-                      <Icon path={mdiCloseCircle} size={0.75} />
+                      <IconComponent path={mdiCloseCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                 </ButtonGroup>

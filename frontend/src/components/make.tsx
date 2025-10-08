@@ -1,13 +1,13 @@
+import React from "react";
 import { mdiContentSave, mdiDelete } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ServiceTypes } from "../config/data.js";
-import { apiCall } from "../features/api.js";
+import { ServiceTypes } from "../config/data.ts";
+import { apiCall } from "../features/api.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string }>;
 import {
   failFlagStat,
   hideCreation,
@@ -17,9 +17,9 @@ import {
   keepServices,
   passFlagStat,
   showFlagArea,
-} from "../features/part.jsx";
+} from "../features/part.ts";
 
-async function saveUnit(dispatch) {
+async function saveUnit(dispatch: AppDispatch) {
   let data;
   try {
     data = await apiCall({
@@ -27,17 +27,18 @@ async function saveUnit(dispatch) {
       path: `/services`,
       body: {
         data: {
-          name: document.getElementById("name-make").value.trim(),
-          desc: document.getElementById("desc-make").value.trim(),
-          type: document.getElementById("type-make").value.trim(),
+          name: (document.getElementById("name-make") as HTMLInputElement | null)?.value.trim() ?? "",
+          desc: (document.getElementById("desc-make") as HTMLInputElement | null)?.value.trim() ?? "",
+          type: (document.getElementById("type-make") as HTMLSelectElement | null)?.value.trim() ?? "",
         },
       },
     });
   } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     dispatch(hideCreation());
     dispatch(hideFlagArea());
     dispatch(keepFlagHead("Bind creation failed"));
-    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during creation`));
+    dispatch(keepFlagBody(`Encountered "${errMsg}" response during creation`));
     dispatch(showFlagArea());
     dispatch(failFlagStat());
     return;
@@ -53,8 +54,8 @@ async function saveUnit(dispatch) {
 }
 
 function Creation() {
-  const show = useSelector((data) => data.area.creation);
-  const dispatch = useDispatch();
+  const show = useSelector((state: RootState) => state.area.creation);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Offcanvas
@@ -80,7 +81,7 @@ function Creation() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => saveUnit(dispatch)}
                     >
-                      <Icon path={mdiContentSave} size={0.75} />
+                      <IconComponent path={mdiContentSave} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>WIPE</Tooltip>}>
@@ -90,7 +91,7 @@ function Creation() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => dispatch(hideCreation())}
                     >
-                      <Icon path={mdiDelete} size={0.75} />
+                      <IconComponent path={mdiDelete} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                 </ButtonGroup>
@@ -111,13 +112,13 @@ function Creation() {
                 <div className="col-md-4 col-12">
                   <FloatingLabel className="small" controlId="type-make" label="Service">
                     <Form.Select className="monoelem">
-                      {Object.keys(ServiceTypes)
-                        .sort()
-                        .map((serviceType) => (
-                          <option key={serviceType} value={serviceType}>
-                            {ServiceTypes[serviceType].name}
-                          </option>
-                        ))}
+                      {(Object.keys(ServiceTypes) as Array<keyof typeof ServiceTypes>)
+                          .sort()
+                          .map((serviceType) => (
+                            <option key={serviceType} value={serviceType}>
+                              {ServiceTypes[serviceType].name}
+                            </option>
+                          ))}
                     </Form.Select>
                   </FloatingLabel>
                 </div>

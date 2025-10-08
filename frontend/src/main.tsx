@@ -1,27 +1,30 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/core.css";
 
-import Container from "react-bootstrap/Container";
+import { Container } from "react-bootstrap";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router";
 
-import Callback from "./components/call.jsx";
-import Reviving from "./components/code.jsx";
-import Updating from "./components/edit.jsx";
-import FactDocs from "./components/fact.jsx";
-import FlagArea from "./components/flag.jsx";
+import Callback from "./components/call.tsx";
+import Reviving from "./components/code.tsx";
+import Updating from "./components/edit.tsx";
+import FactDocs from "./components/fact.tsx";
+import FlagArea from "./components/flag.tsx";
 import Mistaken from "./components/flaw.jsx";
-import MainList from "./components/list.jsx";
-import Creation from "./components/make.jsx";
-import ModeWrap from "./components/mode.jsx";
-import Navigation from "./components/navi.jsx";
-import SideMenu from "./components/side.jsx";
-import Revoking from "./components/wipe.jsx";
-import { ServiceTypes } from "./config/data.js";
-import { data } from "./features/data.jsx";
+import MainList from "./components/list.tsx";
+import Creation from "./components/make.tsx";
+import ModeWrap from "./components/mode.tsx";
+import Navigation from "./components/navi.tsx";
+import SideMenu from "./components/side.tsx";
+import Revoking from "./components/wipe.tsx";
+import { ServiceTypes } from "./config/data.ts";
+import { data } from "./features/data.ts";
 
-createRoot(document.getElementById("root")).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element with id 'root' not found");
+
+createRoot(rootElement).render(
   <Provider store={data}>
     <ModeWrap>
       <BrowserRouter basename={import.meta.env.BASE_URL}>
@@ -37,7 +40,7 @@ createRoot(document.getElementById("root")).render(
               <Routes>
                 <Route element={<MainList />} path="/" />
                 <Route element={<Callback />} path="/callback" />
-                {Object.keys(ServiceTypes)
+                {(Object.keys(ServiceTypes) as Array<keyof typeof ServiceTypes>)
                   .sort()
                   .map((serviceType) => (
                     <Route key={serviceType} element={<FactDocs bind={serviceType} />} path={`/${serviceType}`} />

@@ -1,10 +1,12 @@
+import React from "react";
 import { mdiContentSave, mdiDelete, mdiRefreshCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
+import { Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip, Card } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ServiceTypes } from "../config/data.js";
+import { ServiceTypes } from "../config/data.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 import {
   failFlagStat,
   hideFlagArea,
@@ -17,11 +19,15 @@ import {
   showReviving,
   showRevoking,
   showUpdating,
-} from "../features/part.jsx";
+} from "../features/part.ts";
 
-function UnitCard({ data }) {
-  const dispatch = useDispatch();
-  const username = useSelector((data) => (data.auth.user ? data.auth.user.preferred_username : ""));
+interface UnitCardProps {
+  data: any;
+}
+
+function UnitCard({ data }: UnitCardProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const username = useSelector((state: RootState) => (state.auth.user ? state.auth.user.preferred_username : ""));
 
   return (
     <Card className="shadow-sm mb-3" border="tertiary" id={`card-${data.uuid}`}>
@@ -36,10 +42,10 @@ function UnitCard({ data }) {
                 className="d-flex justify-content-center align-items-center"
                 onClick={() => {
                   if (
-                    data.name === document.getElementById(`name-${data.uuid}`).value &&
-                    data.desc === document.getElementById(`desc-${data.uuid}`).value &&
-                    data.type === document.getElementById(`type-${data.uuid}`).value &&
-                    username === document.getElementById(`user-${data.uuid}`).value
+                    data.name === (document.getElementById(`name-${data.uuid}`) as HTMLInputElement | null)?.value &&
+                    data.desc === (document.getElementById(`desc-${data.uuid}`) as HTMLInputElement | null)?.value &&
+                    data.type === (document.getElementById(`type-${data.uuid}`) as HTMLSelectElement | null)?.value &&
+                    username === (document.getElementById(`user-${data.uuid}`) as HTMLInputElement | null)?.value
                   ) {
                     dispatch(hideFlagArea());
                     dispatch(keepFlagHead("Bind updating failed"));
@@ -50,10 +56,10 @@ function UnitCard({ data }) {
                     dispatch(prepPrevData({ name: data.name, desc: data.desc, type: data.type, user: username }));
                     dispatch(
                       prepNextData({
-                        name: document.getElementById(`name-${data.uuid}`).value,
-                        desc: document.getElementById(`desc-${data.uuid}`).value,
-                        type: document.getElementById(`type-${data.uuid}`).value,
-                        user: document.getElementById(`user-${data.uuid}`).value,
+                        name: (document.getElementById(`name-${data.uuid}`) as HTMLInputElement | null)?.value ?? "",
+                        desc: (document.getElementById(`desc-${data.uuid}`) as HTMLInputElement | null)?.value ?? "",
+                        type: (document.getElementById(`type-${data.uuid}`) as HTMLSelectElement | null)?.value ?? "",
+                        user: (document.getElementById(`user-${data.uuid}`) as HTMLInputElement | null)?.value ?? "",
                       })
                     );
                     dispatch(prepBindUuid(data.uuid));
@@ -61,7 +67,7 @@ function UnitCard({ data }) {
                   }
                 }}
               >
-                <Icon path={mdiContentSave} size={0.75} />
+                <IconComponent path={mdiContentSave} size={0.75} />
               </Button>
             </OverlayTrigger>
             <OverlayTrigger placement="bottom" overlay={<Tooltip>REGENERATE</Tooltip>}>
@@ -74,7 +80,7 @@ function UnitCard({ data }) {
                   dispatch(showReviving());
                 }}
               >
-                <Icon path={mdiRefreshCircle} size={0.75} />
+                <IconComponent path={mdiRefreshCircle} size={0.75} />
               </Button>
             </OverlayTrigger>
             <OverlayTrigger placement="bottom" overlay={<Tooltip>REVOKE</Tooltip>}>
@@ -87,7 +93,7 @@ function UnitCard({ data }) {
                   dispatch(showRevoking());
                 }}
               >
-                <Icon path={mdiDelete} size={0.75} />
+                <IconComponent path={mdiDelete} size={0.75} />
               </Button>
             </OverlayTrigger>
           </ButtonGroup>
@@ -118,7 +124,7 @@ function UnitCard({ data }) {
           <div className="col-md-6 col-12">
             <FloatingLabel className="small" controlId={`type-${data.uuid}`} label="Service">
               <Form.Select className="monoelem" defaultValue={data.type}>
-                {Object.keys(ServiceTypes)
+                {(Object.keys(ServiceTypes) as Array<keyof typeof ServiceTypes>)
                   .sort()
                   .map((serviceType) => (
                     <option key={serviceType} value={serviceType}>

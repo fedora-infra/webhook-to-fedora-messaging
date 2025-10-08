@@ -1,22 +1,21 @@
 import { mdiMemory, mdiPower, mdiWeatherNight, mdiWeatherSunny } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Image from "react-bootstrap/Image";
-import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import { Container, Image, Navbar, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { userManager } from "../config/oidc.js";
-import { loadUserData, wipeUserData } from "../features/auth.jsx";
-import { prepTintMode } from "../features/part.jsx";
+import { userManager } from "../config/oidc.ts";
+import { loadUserData, wipeUserData } from "../features/auth.ts";
+import { prepTintMode } from "../features/part.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 
 function Navigation() {
-  const dispatch = useDispatch();
-  const user = useSelector((data) => data.auth.user);
-  const disp = useSelector((data) => data.auth.disp);
-  const mode = useSelector((data) => data.area.tintmode);
-  const status = useSelector((data) => data.auth.status);
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const disp = useSelector((state: RootState) => state.auth.disp);
+  const mode = useSelector((state: RootState) => state.area.tintmode);
+  const status = useSelector((state: RootState) => state.auth.status);
 
   useEffect(() => {
     if (status === "idle") {
@@ -35,7 +34,7 @@ function Navigation() {
 
   return (
     <Navbar bg="body-secondary" className="shadow-sm fixed-top p-0">
-      <Container>
+  <Container>
         <Navbar.Brand className="d-flex align-items-center flex-grow-1">
           <img
             alt=""
@@ -48,9 +47,9 @@ function Navigation() {
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end">
           <Navbar.Text className="p-0">
-            <NavDropdown
+              <NavDropdown
               title={
-                <Icon
+                <IconComponent
                   path={mode === "lite" ? mdiWeatherSunny : mode === "dark" ? mdiWeatherNight : mdiMemory}
                   size={1}
                 />
@@ -63,7 +62,7 @@ function Navigation() {
                 onClick={() => dispatch(prepTintMode("auto"))}
                 className="small d-flex align-items-center p-1"
               >
-                <Icon className="me-1" size={0.75} path={mdiMemory} />
+                <IconComponent className="me-1" size={0.75} path={mdiMemory} />
                 System
               </NavDropdown.Item>
               <NavDropdown.Item
@@ -73,7 +72,7 @@ function Navigation() {
                 }}
                 className="small d-flex align-items-center p-1"
               >
-                <Icon className="me-1" size={0.75} path={mdiWeatherSunny} />
+                <IconComponent className="me-1" size={0.75} path={mdiWeatherSunny} />
                 Light
               </NavDropdown.Item>
               <NavDropdown.Item
@@ -83,7 +82,7 @@ function Navigation() {
                 }}
                 className="small d-flex align-items-center p-1"
               >
-                <Icon className="me-1" size={0.75} path={mdiWeatherNight} />
+                <IconComponent className="me-1" size={0.75} path={mdiWeatherNight} />
                 Dark
               </NavDropdown.Item>
             </NavDropdown>
@@ -92,12 +91,12 @@ function Navigation() {
             <NavDropdown title={<Image src={disp} rounded />} drop="down" align="end" className="p-0">
               {user ? (
                 <NavDropdown.Item onClick={handleSignout} className="small d-flex align-items-center p-1">
-                  <Icon className="me-1" size={0.75} path={mdiPower} />
+                  <IconComponent className="me-1" size={0.75} path={mdiPower} />
                   Sign out
                 </NavDropdown.Item>
               ) : (
                 <NavDropdown.Item onClick={handleSignin} className="small d-flex align-items-center p-1">
-                  <Icon className="me-1" size={0.75} path={mdiPower} />
+                  <IconComponent className="me-1" size={0.75} path={mdiPower} />
                   Sign in
                 </NavDropdown.Item>
               )}

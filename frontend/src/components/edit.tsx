@@ -1,12 +1,10 @@
+import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { apiCall } from "../features/api.js";
+import { apiCall } from "../features/api.ts";
 import {
   failFlagStat,
   hideFlagArea,
@@ -16,10 +14,12 @@ import {
   keepServices,
   passFlagStat,
   showFlagArea,
-} from "../features/part.jsx";
-import DiffCard from "./diff.jsx";
+} from "../features/part.ts";
+import DiffCard from "./diff.tsx";
+import type { AppDispatch, RootState } from "../features/data.ts";
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 
-async function editUnit(dispatch, uuid) {
+async function editUnit(dispatch: AppDispatch, uuid: string) {
   let data;
   try {
     data = await apiCall({
@@ -27,18 +27,19 @@ async function editUnit(dispatch, uuid) {
       path: `/services/${uuid}`,
       body: {
         data: {
-          name: document.getElementById(`name-${uuid}`).value,
-          type: document.getElementById(`type-${uuid}`).value,
-          desc: document.getElementById(`desc-${uuid}`).value,
-          username: document.getElementById(`user-${uuid}`).value,
+          name: ((document.getElementById(`name-${uuid}`) as HTMLInputElement) || { value: "" }).value,
+          type: ((document.getElementById(`type-${uuid}`) as HTMLSelectElement) || { value: "" }).value,
+          desc: ((document.getElementById(`desc-${uuid}`) as HTMLInputElement) || { value: "" }).value,
+          username: ((document.getElementById(`user-${uuid}`) as HTMLInputElement) || { value: "" }).value,
         },
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     dispatch(hideUpdating());
     dispatch(hideFlagArea());
     dispatch(keepFlagHead("Bind updating failed"));
-    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during updating`));
+    dispatch(keepFlagBody(`Encountered "${errMsg}" response during updating`));
     dispatch(showFlagArea());
     dispatch(failFlagStat());
     return;
@@ -54,12 +55,12 @@ async function editUnit(dispatch, uuid) {
 }
 
 function Updating() {
-  const show = useSelector((data) => data.area.updating);
-  const uuid = useSelector((data) => data.area.binduuid);
-  const prev = useSelector((data) => data.area.prevdata);
-  const next = useSelector((data) => data.area.nextdata);
+  const show = useSelector((state: RootState) => state.area.updating);
+  const uuid = useSelector((state: RootState) => state.area.binduuid);
+  const prev = useSelector((state: RootState) => state.area.prevdata);
+  const next = useSelector((state: RootState) => state.area.nextdata);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Offcanvas
@@ -85,7 +86,7 @@ function Updating() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => editUnit(dispatch, uuid)}
                     >
-                      <Icon path={mdiCheckCircle} size={0.75} />
+                      <IconComponent path={mdiCheckCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>DECLINE</Tooltip>}>
@@ -95,7 +96,7 @@ function Updating() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => dispatch(hideUpdating())}
                     >
-                      <Icon path={mdiCloseCircle} size={0.75} />
+                      <IconComponent path={mdiCloseCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                 </ButtonGroup>

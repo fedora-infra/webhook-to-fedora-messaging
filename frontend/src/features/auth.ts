@@ -1,7 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import md5 from "crypto-js/md5";
+import { MD5 as md5 } from "crypto-js";
 
-import { userManager } from "../config/oidc.js";
+import { userManager } from "../config/oidc.ts";
+import type { Profile } from "oidc-client";
+
+type AuthDataState = {
+  user: Profile | null
+  disp: string
+  status: string
+}
+
+const initialState: AuthDataState = {
+  user: null,
+  disp: "https://seccdn.libravatar.org/avatar/40f8d096a3777232204cb3f796c577b7?s=30",
+  status: "idle",
+}
 
 export const loadUserData = createAsyncThunk("auth/loadUserData", async () => {
   const user = await userManager.getUser();
@@ -10,13 +23,9 @@ export const loadUserData = createAsyncThunk("auth/loadUserData", async () => {
 
 const authData = createSlice({
   name: "auth",
-  initialState: {
-    user: null,
-    disp: "https://seccdn.libravatar.org/avatar/40f8d096a3777232204cb3f796c577b7?s=30",
-    status: "idle",
-  },
+  initialState: initialState,
   reducers: {
-    wipeUserData: (auth) => {
+    wipeUserData: (auth: AuthDataState) => {
       auth.user = null;
       auth.disp = "https://seccdn.libravatar.org/avatar/40f8d096a3777232204cb3f796c577b7?s=30";
       auth.status = "idle";
@@ -24,17 +33,17 @@ const authData = createSlice({
   },
   extraReducers: (plan) => {
     plan
-      .addCase(loadUserData.pending, (auth) => {
+      .addCase(loadUserData.pending, (auth: AuthDataState) => {
         auth.status = "load";
       })
-      .addCase(loadUserData.fulfilled, (auth, action) => {
+      .addCase(loadUserData.fulfilled, (auth: AuthDataState, action: { payload: Profile | null }) => {
         auth.user = action.payload;
-        auth.disp = action.payload
+        auth.disp = action.payload && action.payload.email
           ? `https://seccdn.libravatar.org/avatar/${md5(action.payload.email.trim().toLowerCase()).toString()}?s=30&d=retro`
           : "https://seccdn.libravatar.org/avatar/40f8d096a3777232204cb3f796c577b7?s=30";
         auth.status = "pass";
       })
-      .addCase(loadUserData.rejected, (auth) => {
+      .addCase(loadUserData.rejected, (auth: AuthDataState) => {
         auth.user = null;
         auth.disp = "https://seccdn.libravatar.org/avatar/40f8d096a3777232204cb3f796c577b7?s=30";
         auth.status = "fail";

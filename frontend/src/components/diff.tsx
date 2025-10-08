@@ -1,8 +1,20 @@
-import ListGroup from "react-bootstrap/ListGroup";
+import { ListGroup } from "react-bootstrap";
 
-import { ServiceTypes } from "../config/data.js";
+import { ServiceTypes } from "../config/data.ts";
 
-function DiffCard({ stat, data }) {
+interface DiffData {
+  name: string;
+  desc: string;
+  type: keyof typeof ServiceTypes;
+  user: string;
+}
+
+interface DiffCardProps {
+  stat: boolean;
+  data: DiffData;
+}
+
+function DiffCard({ stat, data }: DiffCardProps) {
   return (
     <ListGroup>
       <ListGroup.Item className="ps-2 fw-bold" variant={stat ? "success" : "danger"}>

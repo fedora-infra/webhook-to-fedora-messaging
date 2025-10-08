@@ -1,12 +1,10 @@
+import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import { Button, ButtonGroup, OverlayTrigger, Tooltip, Card, Container, Offcanvas } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { apiCall } from "../features/api.js";
+import { apiCall } from "../features/api.ts";
 import {
   failFlagStat,
   hideFlagArea,
@@ -16,13 +14,17 @@ import {
   keepServices,
   passFlagStat,
   showFlagArea,
-} from "../features/part.jsx";
+} from "../features/part.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
 
-async function codeUnit(dispatch, uuid) {
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string }>; 
+
+
+async function codeUnit(dispatch: AppDispatch, uuid: string) {
   let data;
   try {
     data = await apiCall({ method: "PUT", path: `/services/${uuid}/regenerate` });
-  } catch (error) {
+  } catch (error: any) {
     dispatch(hideReviving());
     dispatch(hideFlagArea());
     dispatch(keepFlagHead("Bind regeneration failed"));
@@ -42,9 +44,9 @@ async function codeUnit(dispatch, uuid) {
 }
 
 function Reviving() {
-  const show = useSelector((data) => data.area.reviving);
-  const uuid = useSelector((data) => data.area.binduuid);
-  const dispatch = useDispatch();
+  const show = useSelector((state: RootState) => state.area.reviving);
+  const uuid = useSelector((state: RootState) => state.area.binduuid);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Offcanvas
@@ -70,7 +72,7 @@ function Reviving() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => codeUnit(dispatch, uuid)}
                     >
-                      <Icon path={mdiCheckCircle} size={0.75} />
+                      <IconComponent path={mdiCheckCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>DECLINE</Tooltip>}>
@@ -80,7 +82,7 @@ function Reviving() {
                       className="d-flex justify-content-center align-items-center"
                       onClick={() => dispatch(hideReviving())}
                     >
-                      <Icon path={mdiCloseCircle} size={0.75} />
+                      <IconComponent path={mdiCloseCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                 </ButtonGroup>

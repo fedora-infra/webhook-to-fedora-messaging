@@ -1,4 +1,23 @@
-export const ServiceTypes = {
+interface ServiceTypes {
+  github: {
+    name: string;
+    title: string;
+  };
+  gitlab: {
+    name: string;
+    title: string;
+  };
+  forgejo: {
+    name: string;
+    title: string;
+  };
+  discourse: {
+    name: string;
+    title: string;
+  };
+}
+
+export const ServiceTypes:ServiceTypes = {
   github: {
     name: "GitHub",
     title: "GitHub repositories",
@@ -17,7 +36,7 @@ export const ServiceTypes = {
   },
 };
 
-export const flawText = [
+export const flawText:string[] = [
   "Flat tyre - You should be walking",
   "How about we explore the area ahead of us later?",
   "This is surely not what you were looking for",

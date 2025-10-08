@@ -1,16 +1,20 @@
+import React from "react";
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Toast, ToastContainer } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { hideFlagArea } from "../features/part.jsx";
+import { hideFlagArea } from "../features/part.ts";
+import type { RootState, AppDispatch } from "../features/data.ts";
+
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string; className?: string }>;
 
 function FlagArea() {
-  const show = useSelector((data) => data.area.flagarea);
-  const head = useSelector((data) => data.area.flaghead);
-  const body = useSelector((data) => data.area.flagbody);
-  const stat = useSelector((data) => data.area.flagstat);
-  const dispatch = useDispatch();
+  const show = useSelector((state: RootState) => state.area.flagarea);
+  const head = useSelector((state: RootState) => state.area.flaghead);
+  const body = useSelector((state: RootState) => state.area.flagbody);
+  const stat = useSelector((state: RootState) => state.area.flagstat);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <ToastContainer position="top-center" className="p-4" style={{ position: "fixed", zIndex: 2000 }}>
@@ -23,9 +27,9 @@ function FlagArea() {
       >
         <Toast.Header>
           {stat ? (
-            <Icon path={mdiCheckCircle} size={0.75} className="me-2" />
+            <IconComponent path={mdiCheckCircle} size={0.75} className="me-2" />
           ) : (
-            <Icon path={mdiCloseCircle} size={0.75} className="me-2" />
+            <IconComponent path={mdiCloseCircle} size={0.75} className="me-2" />
           )}
 
           <strong className="me-auto">{head}</strong>
