@@ -1,6 +1,12 @@
-import { userManager } from "../config/oidc.js";
+import { userManager } from "../config/oidc.ts";
 
-export async function apiCall({ method, path, body }) {
+interface ApiCallParams {
+  method: string | undefined
+  path: string
+  body?: Object
+}
+
+export async function apiCall({ method, path, body }: ApiCallParams) {
   const userdata = await userManager.getUser();
   if (!userdata || userdata.expired) {
     throw new Error("Unauthenticated", { cause: new Response(null, { status: 401, statusText: "Unauthenticated" }) });

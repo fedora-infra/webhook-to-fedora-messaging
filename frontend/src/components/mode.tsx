@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
+import type { RootState } from "../features/data.ts";
+
 function useSystemMode() {
-  const mode = useSelector((data) => data.area.tintmode);
+  const mode = useSelector((state: RootState) => state.area.tintmode);
 
   useEffect(() => {
     const updateMode = () => {
@@ -21,9 +23,9 @@ function useSystemMode() {
   }, [mode]);
 }
 
-function ModeWrap({ children }) {
+function ModeWrap({ children }: { children: React.ReactNode }) {
   useSystemMode();
-  return children;
+  return <>{children}</>;
 }
 
 export default ModeWrap;

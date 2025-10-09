@@ -1,58 +1,59 @@
 import { mdiCheckCircle, mdiCloseCircle } from "@mdi/js";
 import Icon from "@mdi/react";
-import { Button, ButtonGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Offcanvas from "react-bootstrap/Offcanvas";
+import React from "react";
+import { Button, ButtonGroup, Card, Container, Offcanvas,OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
-import { apiCall } from "../features/api.js";
+import { apiCall } from "../features/api.ts";
+import type { AppDispatch, RootState } from "../features/data.ts";
 import {
   failFlagStat,
   hideFlagArea,
-  hideRevoking,
+  hideReviving,
   keepFlagBody,
   keepFlagHead,
   keepServices,
   passFlagStat,
   showFlagArea,
-} from "../features/part.jsx";
+} from "../features/part.ts";
 
-async function wipeUnit(dispatch, uuid) {
+const IconComponent = Icon as unknown as React.ComponentType<{ path: string; size?: number | string }>; 
+
+
+async function codeUnit(dispatch: AppDispatch, uuid: string) {
   let data;
   try {
-    data = await apiCall({ method: "PUT", path: `/services/${uuid}/revoke` });
-  } catch (error) {
-    dispatch(keepServices());
-    dispatch(hideRevoking());
+    data = await apiCall({ method: "PUT", path: `/services/${uuid}/regenerate` });
+  } catch (error: any) {
+    dispatch(hideReviving());
     dispatch(hideFlagArea());
-    dispatch(keepFlagHead("Bind revocation failed"));
-    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during revocation`));
+    dispatch(keepFlagHead("Bind regeneration failed"));
+    dispatch(keepFlagBody(`Encountered "${error.toString()}" response during regeneration`));
     dispatch(showFlagArea());
     dispatch(failFlagStat());
     return;
   } finally {
     dispatch(keepServices());
   }
-  dispatch(hideRevoking());
+  dispatch(hideReviving());
   dispatch(hideFlagArea());
-  dispatch(keepFlagHead(`Bind #${data.uuid} revoked`));
+  dispatch(keepFlagHead(`Bind #${data.uuid} regenerated`));
   dispatch(keepFlagBody("Relevant information can be found on the dashboard"));
   dispatch(showFlagArea());
   dispatch(passFlagStat());
 }
 
-function Revoking() {
-  const show = useSelector((data) => data.area.revoking);
-  const uuid = useSelector((data) => data.area.binduuid);
-  const dispatch = useDispatch();
+function Reviving() {
+  const show = useSelector((state: RootState) => state.area.reviving);
+  const uuid = useSelector((state: RootState) => state.area.binduuid);
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <Offcanvas
       className="bg-body-tertiary shadow-sm"
       style={{ height: "fit-content" }}
       show={show}
-      onHide={() => dispatch(hideRevoking())}
+      onHide={() => dispatch(hideReviving())}
       placement="bottom"
       scroll={true}
       backdrop={true}
@@ -61,7 +62,7 @@ function Revoking() {
         <Offcanvas.Body>
           <Card className="shadow-sm" border="tertiary" id="card-wipe">
             <Card.Header className="d-flex justify-content-between align-items-center bg-body-secondary p-1">
-              <span className="monoelem fw-bold pt-1 ps-1">Revoke</span>
+              <span className="monoelem fw-bold pt-1 ps-1">Regenerate</span>
               <span className="pe-1">
                 <ButtonGroup size="sm">
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>ACCEPT</Tooltip>}>
@@ -69,9 +70,9 @@ function Revoking() {
                       size="sm"
                       variant="outline-success"
                       className="d-flex justify-content-center align-items-center"
-                      onClick={() => wipeUnit(dispatch, uuid)}
+                      onClick={() => codeUnit(dispatch, uuid)}
                     >
-                      <Icon path={mdiCheckCircle} size={0.75} />
+                      <IconComponent path={mdiCheckCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                   <OverlayTrigger placement="bottom" overlay={<Tooltip>DECLINE</Tooltip>}>
@@ -79,16 +80,21 @@ function Revoking() {
                       size="sm"
                       variant="outline-danger"
                       className="d-flex justify-content-center align-items-center"
-                      onClick={() => dispatch(hideRevoking())}
+                      onClick={() => dispatch(hideReviving())}
                     >
-                      <Icon path={mdiCloseCircle} size={0.75} />
+                      <IconComponent path={mdiCloseCircle} size={0.75} />
                     </Button>
                   </OverlayTrigger>
                 </ButtonGroup>
               </span>
             </Card.Header>
             <Card.Body className="p-2">
-              Are you certain that you wish to irreversibly revoke the bind #{uuid}?
+              <p className="mb-2">
+                Are you certain that you wish to irreversibly regenerate the token for the bind #{uuid}?
+              </p>
+              <p className="mb-0">
+                This action will disable all services using the existing token to access the endpoint.
+              </p>
             </Card.Body>
           </Card>
         </Offcanvas.Body>
@@ -97,4 +103,4 @@ function Revoking() {
   );
 }
 
-export default Revoking;
+export default Reviving;

@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
-import { userManager } from "../config/oidc.js";
-import { loadUserData } from "../features/auth.jsx";
+import { userManager } from "../config/oidc.ts";
+import { loadUserData } from "../features/auth.ts";
+import type { AppDispatch } from "../features/data.ts";
 
 function Callback() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     userManager

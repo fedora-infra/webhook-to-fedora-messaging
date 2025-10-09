@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 
-import { ServiceTypes } from "../config/data";
+import { ServiceTypes } from "../config/data.ts";
 
-function FactDocs({ bind }) {
+interface FactDocsProps {
+  bind: keyof typeof ServiceTypes;
+}
+
+function FactDocs({ bind }: FactDocsProps) {
   const [mdDoc, setMdDoc] = useState("");
   useEffect(() => {
     import(`./fact/${bind}.md?raw`).then((loadedDoc) => setMdDoc(loadedDoc.default));
