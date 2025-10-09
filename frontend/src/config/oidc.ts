@@ -1,4 +1,4 @@
-import { UserManager } from "oidc-client";
+import { UserManager } from "oidc-client-ts";
 
 const redirectUri:string = new URL(`${import.meta.env.BASE_URL}callback`, window.location.href).href;
 const oidcSettings = {
