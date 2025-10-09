@@ -27,3 +27,8 @@ Forgejo repository to be conveyed to the Fedora Messaging bus.
    2. Pull request (Events catalogued under the [`org.fedoraproject.prod.forgejo.pull_request`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.pull_request) topic)
    3. Issue ticket (Events catalogued under the [`org.fedoraproject.prod.forgejo.issues`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.issues) topic)
    4. Issue comment (Events catalogued under the [`org.fedoraproject.prod.forgejo.issue_comment`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.issue_comment) topic)
+   5. Action runs (Workflow executions)
+      - Success (Events catalogued under the [`org.fedoraproject.prod.forgejo.action_run_success`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.action_run_success) topic)
+      - Failure (Events catalogued under the [`org.fedoraproject.prod.forgejo.action_run_failure`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.action_run_failure) topic)
+      - Recover (Events catalogued under the [`org.fedoraproject.prod.forgejo.action_run_recover`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.action_run_recover) topic)
+      - Cancelled (Events catalogued under the [`org.fedoraproject.prod.forgejo.action_run_cancelled`](https://apps.fedoraproject.org/datagrepper/v2/search?topic=org.fedoraproject.prod.forgejo.action_run_cancelled) topic)
