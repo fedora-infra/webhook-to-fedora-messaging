@@ -5,7 +5,6 @@ from .base import BaseParser, Body, HeadersDict
 
 
 class GitLabParser(BaseParser):
-
     message_class = GitLabMessageV1
     # Gitlab does not provide a SHA256 header for validation
     signature_header_name = None

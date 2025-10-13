@@ -50,7 +50,7 @@ async def create_service(
         f"""Hi @{owner} !
 
 You can now add the following webhook to the """
-        f'{"repo" if "/" in service_name else "organization"} '
+        f"{'repo' if '/' in service_name else 'organization'} "
         "mentioned above."
     )
     if "/" in service_name:

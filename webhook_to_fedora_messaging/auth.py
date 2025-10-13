@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from authlib.integrations.starlette_client import OAuth
 from authlib.oidc.core import UserInfo
@@ -48,7 +47,7 @@ class OIDCUser(BaseModel):
 
 
 async def current_user(
-    token: Optional[str] = Depends(oidc),
+    token: str | None = Depends(oidc),
     session: AsyncSession = Depends(get_session),  # noqa : B008
 ) -> User:
     # Read the token

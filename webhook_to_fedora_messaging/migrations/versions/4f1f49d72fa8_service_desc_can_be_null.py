@@ -9,6 +9,7 @@ Revises: 6c01198723a8
 Create Date: 2024-08-22 11:29:19.880261
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy_helpers.manager import is_sqlite

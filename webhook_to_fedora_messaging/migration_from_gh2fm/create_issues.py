@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from typing import Optional
 
 import click
 import gidgethub
@@ -62,7 +61,7 @@ log = logging.getLogger(__name__)
 )
 @click.option("-d", "--debug", is_flag=True, help="Show more information")
 def main(
-    config_path: Optional[str],
+    config_path: str | None,
     github_username: str,
     github_token: str,
     github2fedmsg_db_url: str,

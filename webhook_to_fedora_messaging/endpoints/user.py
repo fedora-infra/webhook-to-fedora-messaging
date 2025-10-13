@@ -29,7 +29,8 @@ router = APIRouter(prefix="/users")
     "/search/{username}", status_code=HTTP_200_OK, response_model=UserManyResult, tags=["users"]
 )
 async def search_user(
-    username: str, session: AsyncSession = Depends(get_session)  # noqa : B008
+    username: str,
+    session: AsyncSession = Depends(get_session),  # noqa : B008
 ) -> SerializedModel:
     """
     Return the list of users matching the specified username

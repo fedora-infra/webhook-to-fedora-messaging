@@ -23,7 +23,8 @@ async def is_uuid_vacant(uuid: str) -> str:
 
 
 async def return_service_from_uuid(
-    uuid: str = Depends(is_uuid_vacant), session: AsyncSession = Depends(get_session)  # noqa : B008
+    uuid: str = Depends(is_uuid_vacant),
+    session: AsyncSession = Depends(get_session),  # noqa : B008
 ) -> Service:
     query = select(Service).filter_by(uuid=uuid).options(selectinload(Service.users))
     result = await session.execute(query)

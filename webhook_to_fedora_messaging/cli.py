@@ -2,7 +2,6 @@ import logging
 import logging.config
 import os
 from asyncio import run
-from typing import Optional
 
 import click
 import yaml
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
     default=None,
 )
 @click.version_option(version=__version__, prog_name="w2fm")
-def main(conf: Optional[str] = None) -> None:
+def main(conf: str | None = None) -> None:
     if conf:
         set_config_file(os.path.abspath(conf))
         get_db_manager.cache_clear()
@@ -52,7 +51,7 @@ def setup() -> None:
 @click.option("--type", "service_type", required=True)
 @click.option("--owner", required=True)
 @click.option("--description")
-def create(service: str, service_type: str, owner: str, description: Optional[str]) -> None:
+def create(service: str, service_type: str, owner: str, description: str | None) -> None:
     async def _main() -> None:
         async with with_db_session() as db_session:
             await create_service(
