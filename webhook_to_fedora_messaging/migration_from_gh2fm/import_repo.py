@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from functools import lru_cache
-from typing import Any, Optional
+from typing import Any
 
 import click
 from fasjson_client import Client as FasjsonClient
@@ -38,11 +38,11 @@ log = logging.getLogger(__name__)
 @click.argument("repo", required=True)
 @click.argument("fas_username", required=False)
 def main(
-    config_path: Optional[str],
+    config_path: str | None,
     github2fedmsg_db_url: str,
     debug: bool,
     repo: str,
-    fas_username: Optional[str],
+    fas_username: str | None,
 ) -> None:
     if config_path:
         set_config_file(config_path)
@@ -57,9 +57,7 @@ def main(
     asyncio.run(_main(repo, fas_username, github2fedmsg_db_url))
 
 
-async def _main(
-    repo_full_name: str, fas_username: Optional[str], github2fedmsg_db_url: str
-) -> None:
+async def _main(repo_full_name: str, fas_username: str | None, github2fedmsg_db_url: str) -> None:
     if "/" in repo_full_name:
         user_or_org, repo_name = repo_full_name.split("/")
     else:

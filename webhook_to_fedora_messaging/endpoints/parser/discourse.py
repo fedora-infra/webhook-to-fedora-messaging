@@ -8,7 +8,6 @@ from .base import BaseParser, Body, HeadersDict
 
 
 class DiscourseParser(BaseParser):
-
     message_class = DiscourseMessageV1
     signature_header_name = "x-discourse-event-signature"
 

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import UniqueConstraint
@@ -25,7 +25,7 @@ class Service(Base, UUIDCreatableMixin, CreatableMixin):
     token: Mapped[str] = mapped_column(unique=False, default=uuid4().hex)
     name: Mapped[str]
     type: Mapped[str]
-    desc: Mapped[Optional[str]]
+    desc: Mapped[str | None]
     disabled: Mapped[bool] = mapped_column(default=False)
     sent: Mapped[int] = mapped_column(default=0)
     users: Mapped[list["User"]] = relationship(secondary=owners_table, back_populates="services")

@@ -7,7 +7,6 @@
 Revision ID: initial
 """
 
-
 # revision identifiers, used by Alembic.
 revision = "initial"
 down_revision = None

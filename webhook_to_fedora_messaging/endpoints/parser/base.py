@@ -15,7 +15,6 @@ BodyData: TypeAlias = bytes
 
 
 class BaseParser:
-
     message_class: type[Message] = Message
     signature_header_name: str | None = None
 

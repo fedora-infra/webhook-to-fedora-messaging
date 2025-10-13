@@ -15,7 +15,6 @@ from starlette.types import Scope
 
 
 class StaticFilesWithFallback(StaticFiles):
-
     def __init__(self, *args: Any, fallback: str, **kwargs: Any):
         super().__init__(*args, **kwargs)
         self.fallback = fallback

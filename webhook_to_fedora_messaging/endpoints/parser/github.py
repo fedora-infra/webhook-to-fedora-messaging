@@ -5,7 +5,6 @@ from .base import BaseParser, Body, HeadersDict
 
 
 class GitHubParser(BaseParser):
-
     message_class = GitHubMessageV1
     signature_header_name = "x-hub-signature-256"
 

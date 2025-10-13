@@ -1,7 +1,7 @@
 from abc import ABC
 from datetime import datetime
 from enum import Enum
-from typing import Any, cast, Optional, Self
+from typing import Any, cast, Self
 
 from pydantic import (
     BaseModel,
@@ -55,7 +55,7 @@ class ServiceRequestMain(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str
     type: ServiceType
-    desc: Optional[str] = None
+    desc: str | None = None
 
 
 class ServiceRequest(BaseModel):
@@ -64,10 +64,10 @@ class ServiceRequest(BaseModel):
 
 class ServiceUpdateMain(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    name: Optional[str] = None
-    type: Optional[str] = None
-    desc: Optional[str] = None
-    username: Optional[str] = None
+    name: str | None = None
+    type: str | None = None
+    desc: str | None = None
+    username: str | None = None
 
 
 class ServiceUpdate(BaseModel):
