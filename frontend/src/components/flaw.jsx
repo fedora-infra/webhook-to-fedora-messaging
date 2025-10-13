@@ -1,8 +1,12 @@
+import { useState } from "react";
+
 import { flawText } from "../config/data.js";
 
 function Mistaken() {
-  const time = Math.floor(Date.now() / 1000);
-  const text = flawText[time % flawText.length];
+  const [text] = useState(() => {
+    const time = Math.floor(Date.now() / 1000);
+    return flawText[time % flawText.length];
+  });
 
   return (
     <>
