@@ -1,4 +1,4 @@
-import { mdiContentSave, mdiDelete } from "@mdi/js";
+import { mdiContentSave, mdiDelete, mdiInformation } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useState } from "react";
 import { Alert, Button, ButtonGroup, FloatingLabel, Form, OverlayTrigger, Tooltip } from "react-bootstrap";
@@ -145,8 +145,9 @@ function Creation() {
                 {ServiceTypes[formData.type].helpText?.general && (
                   <div className="row g-2 py-2 justify-content-center">
                     <div className="col-auto">
-                      <Alert variant="info" className="mb-0">
-                        <span dangerouslySetInnerHTML={{ __html: ServiceTypes[formData.type].helpText.general }} />
+                      <Alert variant="info" className="mb-0 d-flex align-items-center">
+                        <Icon path={mdiInformation} size={1} className="flex-shrink-0 me-2" />
+                        <div dangerouslySetInnerHTML={{ __html: ServiceTypes[formData.type].helpText.general }} />
                       </Alert>
                     </div>
                   </div>
