@@ -114,20 +114,6 @@ function Creation() {
               </Card.Header>
               <Card.Body className="p-2">
                 <div className="row g-2">
-                  <MakeField
-                    name="name"
-                    label="Name"
-                    value={formData.name}
-                    onChange={onChange}
-                    serviceType={formData.type}
-                  />
-                  <MakeField
-                    name="desc"
-                    label="Description"
-                    value={formData.desc}
-                    onChange={onChange}
-                    serviceType={formData.type}
-                  />
                   <div className="col-md-4 col-12">
                     <FloatingLabel className="small" controlId="type-make" label="Service">
                       <Form.Select className="monoelem" name="type" onChange={onChange} value={formData.type || ""}>
@@ -141,6 +127,20 @@ function Creation() {
                       </Form.Select>
                     </FloatingLabel>
                   </div>
+                  <MakeField
+                    name="name"
+                    label="Name"
+                    value={formData.name}
+                    onChange={onChange}
+                    serviceType={formData.type}
+                    />
+                  <MakeField
+                    name="desc"
+                    label="Description"
+                    value={formData.desc}
+                    onChange={onChange}
+                    serviceType={formData.type}
+                    />
                 </div>
                 {ServiceTypes[formData.type].helpText?.general && (
                   <div className="row g-2 py-2 justify-content-center">
