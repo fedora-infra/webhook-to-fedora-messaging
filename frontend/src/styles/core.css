@@ -100,3 +100,8 @@ a.dropdown-toggle {
   max-width: 100%;
   margin: 0.75rem auto;
 }
+
+.tooltip,
+.tooltip .tooltip-inner {
+  font-family: "Inter", sans-serif;
+}
