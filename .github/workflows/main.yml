@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y --setopt=install_weak_deps=false pre-commit git krb5-devel libpq-devel poetry python3-poetry-plugin-export npm
+          dnf install -y --setopt=install_weak_deps=false pre-commit git krb5-devel libpq-devel poetry python3-poetry-plugin-export npm libatomic
 
       - name: Mark the working directory as safe for Git
         run: git config --global --add safe.directory $PWD
@@ -65,7 +65,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          dnf install -y git krb5-devel libpq-devel poetry
+          dnf install -y git krb5-devel libpq-devel poetry libatomic
 
       - name: Run the types check
         run: tox -e types
