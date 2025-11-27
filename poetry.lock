@@ -919,13 +919,13 @@ cli = ["click (>=6.7,<9)", "cryptography (>=2.3)"]
 
 [[package]]
 name = "fastapi"
-version = "0.121.3"
+version = "0.122.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "fastapi-0.121.3-py3-none-any.whl", hash = "sha256:0c78fc87587fcd910ca1bbf5bc8ba37b80e119b388a7206b39f0ecc95ebf53e9"},
-    {file = "fastapi-0.121.3.tar.gz", hash = "sha256:0055bc24fe53e56a40e9e0ad1ae2baa81622c406e548e501e717634e2dfbc40b"},
+    {file = "fastapi-0.122.0-py3-none-any.whl", hash = "sha256:a456e8915dfc6c8914a50d9651133bd47ec96d331c5b44600baa635538a30d67"},
+    {file = "fastapi-0.122.0.tar.gz", hash = "sha256:cd9b5352031f93773228af8b4c443eedc2ac2aa74b27780387b853c3726fb94b"},
 ]
 
 [package.dependencies]
@@ -3996,4 +3996,4 @@ deploy = ["asyncpg", "uvicorn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9b789dd1174e159ee6e9f6ccb1e9ccd3956a03b6049b7f388c4353bb88ae1da4"
+content-hash = "e77ca1fdc32bfd5c29af89adf01852eb096ed0bae16e81a33e29656e0d1613bc"
