@@ -7,7 +7,7 @@
 
 STRATEGY_URL=https://raw.githubusercontent.com/fedora-infra/shared/main/liccheck-strategy.ini
 
-trap 'rm -f "$TMPFILE $STRATEGY_TMPFILE"' EXIT
+trap 'rm -f $TMPFILE $STRATEGY_TMPFILE' EXIT
 
 set -e
 set -x
@@ -18,6 +18,10 @@ STRATEGY_TMPFILE=$(mktemp -t liccheck-strategy-XXXXXX.ini)
 curl -o $STRATEGY_TMPFILE $STRATEGY_URL
 
 poetry export --with dev --without-hashes -f requirements.txt -o $TMPFILE
+
+# liccheck requires pkg_resources
+# https://github.com/dhatim/python-license-check/issues/114
+poetry run pip install setuptools
 
 # Use pip freeze instead of poetry when it fails
 # poetry run pip freeze --exclude-editable --isolated > $TMPFILE
