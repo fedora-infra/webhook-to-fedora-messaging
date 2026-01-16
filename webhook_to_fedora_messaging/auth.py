@@ -22,7 +22,7 @@ oidc = OpenIdConnect(
     openIdConnectUrl=metadata_url,
     scheme_name="OpenID Connect",
 )
-oauth = OAuth()  # type: ignore
+oauth = OAuth()
 oauth.register(
     "fedora",
     server_metadata_url=metadata_url,
