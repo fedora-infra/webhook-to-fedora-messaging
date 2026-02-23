@@ -24,7 +24,6 @@ from sqlalchemy_helpers.manager import SyncResult
 
 from .config import get_config
 
-
 __all__ = (
     "Base",
     "get_db_manager",

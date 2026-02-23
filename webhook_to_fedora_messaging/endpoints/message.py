@@ -12,7 +12,6 @@ from .models.message import MessageResult
 from .parser import parser
 from .util import return_service_from_uuid, SerializedModel
 
-
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/messages")

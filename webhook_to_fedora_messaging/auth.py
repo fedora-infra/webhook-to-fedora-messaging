@@ -12,7 +12,6 @@ from .config import get_config
 from .database import get_or_create, get_session
 from .models import User
 
-
 log = logging.getLogger(__name__)
 
 config = get_config()

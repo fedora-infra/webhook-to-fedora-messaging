@@ -9,7 +9,6 @@ from .forgejo import ForgejoParser
 from .github import GitHubParser
 from .gitlab import GitLabParser
 
-
 logger = logging.getLogger(__name__)
 
 

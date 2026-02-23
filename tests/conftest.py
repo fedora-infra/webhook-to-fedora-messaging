@@ -27,14 +27,12 @@ async def app_config(tmp_path: PosixPath) -> None:
     config_path = tmp_path.joinpath("app.cfg")
     database_url = f"sqlite:///{tmp_path.as_posix()}/w2fm.db"
     with open(config_path, "w") as fh:
-        fh.write(
-            f"""
+        fh.write(f"""
 DATABASE__SQLALCHEMY__URL = "{database_url}"
 LOGGING_CONFIG = "logging.yaml.example"
 FASJSON_URL = "http://fasjson.example.com"
 DATAGREPPER_URL = "http://datagrepper.example.com/"
-"""
-        )
+""")
     set_config_file(config_path.as_posix())
 
 

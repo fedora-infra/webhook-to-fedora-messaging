@@ -14,7 +14,6 @@ from ..database import get_session
 from ..models import Service, User
 from ..models.owners import owners_table
 
-
 format = "%d-%m-%Y %H:%M:%S"
 
 

@@ -2,7 +2,6 @@ from sqlalchemy import Column, ForeignKey, Table
 
 from ..database import Base
 
-
 # note for a Core table, we use the sqlalchemy.Column construct,
 # not sqlalchemy.orm.mapped_column
 owners_table = Table(

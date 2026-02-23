@@ -9,7 +9,6 @@ from httpx_gssapi import HTTPSPNEGOAuth
 
 from .config import get_config
 
-
 log = logging.getLogger(__name__)
 
 

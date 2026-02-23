@@ -25,7 +25,6 @@ from .models.service import (
 )
 from .util import authorized_service_from_uuid
 
-
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/services")
 

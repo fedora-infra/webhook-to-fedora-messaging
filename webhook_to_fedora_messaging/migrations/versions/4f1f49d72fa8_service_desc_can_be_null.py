@@ -14,7 +14,6 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy_helpers.manager import is_sqlite
 
-
 # revision identifiers, used by Alembic.
 revision = "4f1f49d72fa8"
 down_revision = "6c01198723a8"

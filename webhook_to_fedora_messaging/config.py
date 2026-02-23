@@ -11,7 +11,6 @@ from typing import Any
 from pydantic import BaseModel, DirectoryPath, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 DEFAULT_CONFIG_FILE = _config_file = os.getenv(
     "W2FM_CONFIG", "/etc/webhook-to-fedora-messaging/webhook-to-fedora-messaging.cfg"
 )

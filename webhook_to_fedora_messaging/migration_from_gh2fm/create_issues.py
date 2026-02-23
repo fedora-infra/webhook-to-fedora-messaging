@@ -11,7 +11,6 @@ from sqlalchemy import select
 from ..config import set_config_file
 from . import gh2fm
 
-
 DESC_PREFIX = "Migrated from GitHub2FedMsg."
 ISSUE_TITLE = "Migration Requested from Github2Fedmsg to Webhook To Fedora Messaging"
 ISSUE_BODY = """

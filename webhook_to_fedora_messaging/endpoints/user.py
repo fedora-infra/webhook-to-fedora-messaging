@@ -20,7 +20,6 @@ from .models.user import (
 )
 from .util import SerializedModel
 
-
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users")
 

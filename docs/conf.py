@@ -14,12 +14,10 @@ import os
 import re
 import sys
 
-
 topdir = os.path.abspath("../")
 sys.path.insert(0, topdir)
 
 import webhook_to_fedora_messaging  # NOQA
-
 
 # -- Project information -----------------------------------------------------
 

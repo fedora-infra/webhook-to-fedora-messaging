@@ -25,7 +25,6 @@ from .endpoints import message, service, user
 from .fasjson import get_fasjson
 from .ui import StaticFiles, StaticFilesWithFallback
 
-
 logger = logging.getLogger(__name__)
 
 desc = "Webhook To Fedora Messaging"

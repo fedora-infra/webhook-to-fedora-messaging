@@ -4,5 +4,4 @@
 
 import importlib.metadata
 
-
 __version__ = importlib.metadata.version("webhook_to_fedora_messaging")
