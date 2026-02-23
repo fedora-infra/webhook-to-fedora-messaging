@@ -10,7 +10,6 @@ from ..database import Base
 from .owners import owners_table
 from .util import CreatableMixin
 
-
 if TYPE_CHECKING:
     from .service import Service
 

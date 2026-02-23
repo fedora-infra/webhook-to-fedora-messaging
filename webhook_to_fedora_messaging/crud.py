@@ -11,7 +11,6 @@ from .main import create_app
 from .models import Service, User
 from .models.owners import owners_table
 
-
 log = logging.getLogger(__name__)
 
 
@@ -70,8 +69,7 @@ You can now add the following webhook to the """
         base_url = ""
     app = create_app()
     service_url = app.url_path_for("create_message", uuid=db_service.uuid)
-    print(
-        f"""
+    print(f"""
 ```
 Webhook URL: {base_url}{service_url}
 Secret: {db_service.token}
@@ -79,6 +77,5 @@ Webhook content-type: application/json
 ```
 
 Please tell us if there are any issues! Thanks!
-"""
-    )
+""")
     return db_service

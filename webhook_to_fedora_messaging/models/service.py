@@ -12,7 +12,6 @@ from ..database import Base
 from .owners import owners_table
 from .util import CreatableMixin, UUIDCreatableMixin
 
-
 if TYPE_CHECKING:
     from .user import User
 

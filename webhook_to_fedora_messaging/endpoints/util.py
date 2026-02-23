@@ -12,7 +12,6 @@ from ..database import get_session
 from ..models.service import Service
 from ..models.user import User
 
-
 SerializedModel: TypeAlias = dict[Literal["data"], Any]
 
 

@@ -8,7 +8,6 @@ from starlette.requests import Request
 
 from ...exceptions import SignatureMatchError
 
-
 HeadersDict: TypeAlias = dict[str, str]
 Body: TypeAlias = dict[str, Any]
 BodyData: TypeAlias = bytes

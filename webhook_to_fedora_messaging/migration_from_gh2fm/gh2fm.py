@@ -14,7 +14,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine
 
-
 metadata = MetaData()
 
 users = Table(

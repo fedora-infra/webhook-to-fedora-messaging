@@ -15,7 +15,6 @@ from ..crud import create_service
 from ..database import with_db_session
 from . import gh2fm
 
-
 log = logging.getLogger(__name__)
 
 

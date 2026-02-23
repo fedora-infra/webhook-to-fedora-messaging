@@ -5,5 +5,4 @@
 from .service import Service
 from .user import User
 
-
 __all__ = ("Service", "User")

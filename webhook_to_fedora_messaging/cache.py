@@ -4,7 +4,6 @@ from cashews import cache
 
 from .config import get_config
 
-
 log = logging.getLogger(__name__)
 
 

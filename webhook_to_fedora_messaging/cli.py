@@ -12,7 +12,6 @@ from .config import get_config, set_config_file
 from .crud import create_service
 from .database import get_db_manager, setup_database, with_db_session
 
-
 logger = logging.getLogger(__name__)
 
 

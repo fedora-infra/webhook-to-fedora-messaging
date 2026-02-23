@@ -8,7 +8,6 @@ from fastapi.concurrency import run_in_threadpool
 from fedora_messaging import api
 from fedora_messaging import exceptions as fm_exceptions
 
-
 log = logging.getLogger(__name__)
 
 

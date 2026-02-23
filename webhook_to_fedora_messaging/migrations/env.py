@@ -13,7 +13,6 @@ from webhook_to_fedora_messaging import models  # noqa: F401
 from webhook_to_fedora_messaging.config import get_config
 from webhook_to_fedora_messaging.database import Base
 
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 alembic_config = context.config
