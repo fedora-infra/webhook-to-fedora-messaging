@@ -31,7 +31,7 @@ def calc_sig(db_service: Service, data: dict[str, Any]) -> str:
     return get_payload_sig(json.dumps(data).encode(), db_service.token, "sha256")
 
 
-def assert_headers(message: DiscourseMessageV1, expected: dict[str, str]):
+def assert_headers(message: Message, expected: dict[str, str]) -> None:
     assert message.body["webhook_headers"] == {
         k: v for k, v in expected.items() if k.startswith("X-")
     }
