@@ -31,6 +31,12 @@ def calc_sig(db_service: Service, data: dict[str, Any]) -> str:
     return get_payload_sig(json.dumps(data).encode(), db_service.token, "sha256")
 
 
+def assert_headers(message: DiscourseMessageV1, expected: dict[str, str]):
+    assert message.body["webhook_headers"] == {
+        k: v for k, v in expected.items() if k.startswith("X-")
+    }
+
+
 async def test_discourse_ping(
     client: AsyncClient,
     db_service: Service,
@@ -38,6 +44,7 @@ async def test_discourse_ping(
 ) -> None:
     data = {"ping": "OK"}
     headers = {
+        "Content-Type": "application/json",
         "X-Discourse-Event-Signature": f"sha256={calc_sig(db_service, data)}",
         "X-Discourse-Event-Type": "ping",
         "X-Discourse-Event": "ping",
@@ -56,7 +63,7 @@ async def test_discourse_ping(
     assert sent_msg.topic == "discourse.ping.ping"
     assert sent_msg.agent_name is None
     assert sent_msg.body["webhook_body"] == data
-    assert sent_msg.body["webhook_headers"] == headers
+    assert_headers(sent_msg, headers)
     assert response.json() == {
         "data": {
             "message_id": sent_msg.id,
@@ -72,6 +79,7 @@ async def test_discourse_remove_cooked_raw(
 ) -> None:
     data = {"ping": "OK", "post": {"cooked": "yummy", "raw": "eeew", "post_number": 11}}
     headers = {
+        "Content-Type": "application/json",
         "X-Discourse-Event-Signature": f"sha256={calc_sig(db_service, data)}",
         "X-Discourse-Event-Type": "ping",
         "X-Discourse-Event": "ping",
@@ -87,7 +95,7 @@ async def test_discourse_remove_cooked_raw(
     sent_msg = sent_messages[0]
     # The body here should not have cooked or raw keys...
     assert sent_msg.body["webhook_body"] == {"ping": "OK", "post": {"post_number": 11}}
-    assert sent_msg.body["webhook_headers"] == headers
+    assert_headers(sent_msg, headers)
     assert response.json() == {
         "data": {
             "message_id": sent_msg.id,
@@ -102,7 +110,13 @@ async def test_discourse_missing_header(
     sent_messages: list[Message],
 ) -> None:
     data = {"test_data": "data"}
-    response = await client.post(f"/api/v1/messages/{db_service.uuid}", content=json.dumps(data))
+    response = await client.post(
+        f"/api/v1/messages/{db_service.uuid}",
+        content=json.dumps(data),
+        headers={
+            "Content-Type": "application/json",
+        },
+    )
 
     assert response.status_code == 400, response.text
     assert len(sent_messages) == 0
@@ -119,6 +133,7 @@ async def test_discourse_wrong_hash(
         f"/api/v1/messages/{db_service.uuid}",
         content=json.dumps(data),
         headers={
+            "Content-Type": "application/json",
             "X-Discourse-Event-Signature": calc_sig(db_service, data),
             "X-Discourse-Event-Type": "test_event",
         },
@@ -141,6 +156,7 @@ async def test_discourse_not_valid_sig(
         f"/api/v1/messages/{db_service.uuid}",
         content=json.dumps(data),
         headers={
+            "Content-Type": "application/json",
             "X-Discourse-Event-Signature": "sha256=dummy",
             "X-Discourse-Event-Type": "test_event",
         },
