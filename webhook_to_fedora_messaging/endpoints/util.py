@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_CONTENT
 
 from ..auth import current_user
 from ..database import get_session
@@ -17,7 +17,7 @@ SerializedModel: TypeAlias = dict[Literal["data"], Any]
 
 async def is_uuid_vacant(uuid: str) -> str:
     if uuid.strip() == "":
-        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No service UUID provided")
+        raise HTTPException(HTTP_422_UNPROCESSABLE_CONTENT, "No service UUID provided")
     return uuid.strip()
 
 

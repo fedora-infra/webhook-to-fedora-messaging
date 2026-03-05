@@ -11,7 +11,7 @@ from starlette.status import (
     HTTP_201_CREATED,
     HTTP_202_ACCEPTED,
     HTTP_409_CONFLICT,
-    HTTP_422_UNPROCESSABLE_ENTITY,
+    HTTP_422_UNPROCESSABLE_CONTENT,
 )
 
 from ..auth import current_user
@@ -122,7 +122,7 @@ async def update_service(
             user = result.scalar_one()
         except NoResultFound as expt:
             raise HTTPException(
-                HTTP_422_UNPROCESSABLE_ENTITY,
+                HTTP_422_UNPROCESSABLE_CONTENT,
                 "Service was attempted to be transferred to a non-existent user",
             ) from expt
         if user not in service.users:

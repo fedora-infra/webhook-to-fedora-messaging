@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 from starlette.status import (
     HTTP_200_OK,
     HTTP_404_NOT_FOUND,
-    HTTP_422_UNPROCESSABLE_ENTITY,
+    HTTP_422_UNPROCESSABLE_CONTENT,
 )
 
 from ..auth import current_user
@@ -35,7 +35,7 @@ async def search_user(
     Return the list of users matching the specified username
     """
     if username.strip() == "":
-        raise HTTPException(HTTP_422_UNPROCESSABLE_ENTITY, "No lookup string provided")
+        raise HTTPException(HTTP_422_UNPROCESSABLE_CONTENT, "No lookup string provided")
     query = select(User).where(User.name.like(f"%{username}%"))
     result = await session.execute(query)
     return {"data": result.scalars().all()}
