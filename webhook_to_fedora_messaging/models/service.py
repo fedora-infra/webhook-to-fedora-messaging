@@ -2,18 +2,15 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
+from . import user
 from .owners import owners_table
 from .util import CreatableMixin, UUIDCreatableMixin
-
-if TYPE_CHECKING:
-    from .user import User
 
 
 class Service(Base, UUIDCreatableMixin, CreatableMixin):
@@ -27,4 +24,6 @@ class Service(Base, UUIDCreatableMixin, CreatableMixin):
     desc: Mapped[str | None]
     disabled: Mapped[bool] = mapped_column(default=False)
     sent: Mapped[int] = mapped_column(default=0)
-    users: Mapped[list["User"]] = relationship(secondary=owners_table, back_populates="services")
+    users: Mapped[list["user.User"]] = relationship(
+        secondary=owners_table, back_populates="services"
+    )

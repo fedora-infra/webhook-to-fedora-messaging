@@ -111,6 +111,11 @@ intersphinx_mapping = {
 
 # -- Misc -----
 
+suppress_warnings = [
+    "sphinx_autodoc_typehints.forward_reference",
+    "sphinx_autodoc_typehints.guarded_import",
+]
+
 
 def run_apidoc(_):
     from sphinx.ext import apidoc
