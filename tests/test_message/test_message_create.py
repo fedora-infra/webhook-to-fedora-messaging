@@ -1,7 +1,6 @@
 import hmac
 import json
 import pathlib
-from collections.abc import Generator
 from unittest import mock
 
 import pytest
@@ -74,32 +73,6 @@ def expected_topic(service_type: str, event_type: str) -> str:
     if service_type == "gitlab" and event_type == "pull_request":
         event_type = "merge_request"
     return f"{service_type}.{event_type}"
-
-
-@pytest.fixture()
-def fasjson_client() -> Generator[FASJSONAsyncProxy, None]:
-    """
-    For resolving FAS usernames locally
-    """
-    client = FASJSONAsyncProxy("http://fasjson.example.com")
-    parser_names = ("github", "forgejo", "gitlab")
-    patches = (
-        mock.patch(
-            f"webhook_to_fedora_messaging.endpoints.parser.{name}.get_fasjson",
-            return_value=client,
-        )
-        for name in parser_names
-    )
-    with mock.patch.object(
-        client, "search_users", mock.AsyncMock(return_value=[{"username": "dummy-fas-username"}])
-    ):
-        for patch in patches:
-            patch.start()
-        try:
-            yield client
-        finally:
-            for patch in patches:
-                patch.stop()
 
 
 async def test_message_create(

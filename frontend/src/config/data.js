@@ -33,6 +33,13 @@ export const ServiceTypes = {
       name: "The name of the Discourse instance",
     },
   },
+  pretix: {
+    name: "Pretix",
+    title: "Pretix tickets",
+    helpText: {
+      name: "The name of the Pretix instance",
+    },
+  },
 };
 
 export const flawText = [

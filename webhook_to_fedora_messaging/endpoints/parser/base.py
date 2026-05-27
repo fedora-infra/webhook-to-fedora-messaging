@@ -38,6 +38,11 @@ class BaseParser:
 
     async def _get_agent(self, body: Body) -> str | None: ...
 
+    async def _get_message_body(
+        self, body: dict[str, Any], headers: HeadersDict, agent: str | None
+    ) -> dict[str, Any]:
+        return {"body": body, "headers": headers, "agent": agent}
+
     def _validate_with_sig_header(self, sig_header: str, data: BodyData) -> None:
         """
         Verify the payload by validating its signature.
@@ -54,9 +59,8 @@ class BaseParser:
         body = json.loads(data.decode("utf-8"))
         topic = self._get_topic(headers, body)
         agent = await self._get_agent(body)
-        return self.message_class(
-            topic=topic, body={"body": body, "headers": headers, "agent": agent}
-        )
+        message_body = await self._get_message_body(body, headers, agent)
+        return self.message_class(topic=topic, body=message_body)
 
 
 def get_payload_sig(data: BodyData, token: str, algorithm: str) -> str:
