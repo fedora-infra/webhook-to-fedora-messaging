@@ -1,3 +1,4 @@
 UPGRADE_PIP_TO_LATEST=true
 ENABLE_MICROPIPENV=true
-APP_SCRIPT=./.s2i/start.sh
+APP_MODULE=webhook_to_fedora_messaging.main:create_app()
+GUNICORN_CMD_ARGS=--bind=0.0.0.0:8080 --access-logfile=- --forwarded-allow-ips=* -k uvicorn_worker.UvicornWorker

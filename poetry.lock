@@ -1186,6 +1186,30 @@ files = [
 decorator = "*"
 
 [[package]]
+name = "gunicorn"
+version = "26.0.0"
+description = "WSGI HTTP Server for UNIX"
+optional = true
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "extra == \"deploy\""
+files = [
+    {file = "gunicorn-26.0.0-py3-none-any.whl", hash = "sha256:40233d26a5f0d1872916188c276e21641155111c2853f0c2cd55260aec0d24fc"},
+    {file = "gunicorn-26.0.0.tar.gz", hash = "sha256:ca9346f85e3a4aeeb64d491045c16b9a35647abd37ea15efe53080eb8b090baf"},
+]
+
+[package.dependencies]
+packaging = "*"
+
+[package.extras]
+fast = ["gunicorn_h1c (>=0.6.5)"]
+gevent = ["gevent (>=24.10.1)"]
+http2 = ["h2 (>=4.1.0)"]
+setproctitle = ["setproctitle"]
+testing = ["coverage", "gevent (>=24.10.1)", "h2 (>=4.1.0)", "httpx[http2]", "pytest", "pytest-asyncio", "pytest-cov", "uvloop (>=0.19.0)"]
+tornado = ["tornado (>=6.5.0)"]
+
+[[package]]
 name = "h11"
 version = "0.16.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
@@ -3827,6 +3851,23 @@ websockets = {version = ">=10.4", optional = true, markers = "extra == \"standar
 standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)", "python-dotenv (>=0.13)", "pyyaml (>=5.1)", "uvloop (>=0.15.1) ; sys_platform != \"win32\" and sys_platform != \"cygwin\" and platform_python_implementation != \"PyPy\"", "watchfiles (>=0.20)", "websockets (>=10.4)"]
 
 [[package]]
+name = "uvicorn-worker"
+version = "0.4.0"
+description = "Uvicorn worker for Gunicorn! ✨"
+optional = true
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "extra == \"deploy\""
+files = [
+    {file = "uvicorn_worker-0.4.0-py3-none-any.whl", hash = "sha256:e2ed952cef976f5e9e429d7269640bbcafbd36c80aa80f1003c8c77a6797abde"},
+    {file = "uvicorn_worker-0.4.0.tar.gz", hash = "sha256:8ee5306070d8f38dce124adce488c3c0b50f20cf0c0222b12c66188da7214493"},
+]
+
+[package.dependencies]
+gunicorn = ">=21.0.0"
+uvicorn = ">=0.36.0"
+
+[[package]]
 name = "uvloop"
 version = "0.22.1"
 description = "Fast implementation of asyncio event loop on top of libuv"
@@ -4265,9 +4306,9 @@ test = ["coverage[toml]", "zope.event", "zope.testing"]
 testing = ["coverage[toml]", "zope.event", "zope.testing"]
 
 [extras]
-deploy = ["asyncpg", "uvicorn"]
+deploy = ["asyncpg", "gunicorn", "uvicorn", "uvicorn-worker"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "76541fcb2bf94b9fec224099e810044c957e918e5bc5011c17c0a75e4f9a066a"
+content-hash = "0eace2a9f1c391c82839bf1f3421223e1090b63bc429592404701f3b9f6d4e40"

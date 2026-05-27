@@ -4,7 +4,7 @@
 /usr/libexec/s2i/assemble
 
 # Set the version in an environment variable for the frontend to pickup
-VITE_VERSION=$(poetry version | cut -d' ' -f2)
+VITE_VERSION=$(pip show webhook-to-fedora-messaging | awk '/^Version:/ { print $2 }')
 if [ -n "${OPENSHIFT_BUILD_COMMIT}" -a -n "${OPENSHIFT_BUILD_REFERENCE}" ]; then
     VITE_VERSION="${VITE_VERSION} (${OPENSHIFT_BUILD_REFERENCE}:${OPENSHIFT_BUILD_COMMIT:0:7})"
 fi
