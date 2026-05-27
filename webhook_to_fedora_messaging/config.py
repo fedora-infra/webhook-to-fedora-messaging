@@ -56,6 +56,12 @@ def url_no_trailing_slash(url: str) -> str:
     return url.rstrip("/")
 
 
+class PretixConfig(BaseModel):
+    url: str = "https://rsvp.fedoraproject.org"
+    token: str = ""
+    _normalize_url = field_validator("url")(url_no_trailing_slash)
+
+
 class Config(BaseSettings):
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
@@ -65,6 +71,7 @@ class Config(BaseSettings):
     logging_config: Path = Path("/etc/webhook-to-fedora-messaging/logging.yaml")
     oidc: OIDCModel = OIDCModel()
     cache: CacheModel = CacheModel()
+    pretix: PretixConfig = PretixConfig()
     # It's fine if it changes on each startup: it's only used to temporarily store auth sessions
     session_secret: str = token_urlsafe(42)
 

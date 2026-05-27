@@ -78,7 +78,7 @@ version = "4.12.1"
 description = "High-level concurrency and networking framework on top of asyncio or Trio"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "anyio-4.12.1-py3-none-any.whl", hash = "sha256:d405828884fc140aa80a3c667b8beed277f1dfedec42ba031bd6ac3db606ab6c"},
     {file = "anyio-4.12.1.tar.gz", hash = "sha256:41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703"},
@@ -1215,7 +1215,7 @@ version = "0.16.0"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86"},
     {file = "h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1"},
@@ -1227,7 +1227,7 @@ version = "1.0.9"
 description = "A minimal low-level HTTP client."
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "httpcore-1.0.9-py3-none-any.whl", hash = "sha256:2d400746a40668fc9dec9810239072b40b4484b640a8c38fd654a024c7a1bf55"},
     {file = "httpcore-1.0.9.tar.gz", hash = "sha256:6e34463af53fd2ab5d807f399a9b45ea31c3dfa2276f15a2c3f00afff6e176e8"},
@@ -1318,7 +1318,7 @@ version = "0.27.2"
 description = "The next generation HTTP client."
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "httpx-0.27.2-py3-none-any.whl", hash = "sha256:7bb2708e112d8fdd7829cd4243970f0c223274051cb35ee80c03301ee29a3df0"},
     {file = "httpx-0.27.2.tar.gz", hash = "sha256:f7c2be1d2f3c3c3160d441802406b206c2b76f5947b11115e6df10c6c65e66c2"},
@@ -2855,6 +2855,21 @@ requests = ">=1.1.0"
 dev = ["black (==24.2.0)", "isort (==5.13.2)", "pytest", "tox (>=4.0.0)"]
 
 [[package]]
+name = "respx"
+version = "0.23.1"
+description = "A utility for mocking out the Python HTTPX and HTTP Core libraries."
+optional = false
+python-versions = ">=3.8"
+groups = ["dev"]
+files = [
+    {file = "respx-0.23.1-py2.py3-none-any.whl", hash = "sha256:b18004b029935384bccfa6d7d9d74b4ec9af73a081cc28600fffc0447f4b8c1a"},
+    {file = "respx-0.23.1.tar.gz", hash = "sha256:242dcc6ce6b5b9bf621f5870c82a63997e8e82bc7c947f9ffe272b8f3dd5a780"},
+]
+
+[package.dependencies]
+httpx = ">=0.25.0"
+
+[[package]]
 name = "rfc3339-validator"
 version = "0.1.4"
 description = "A pure python RFC3339 validator"
@@ -3243,7 +3258,7 @@ version = "1.3.1"
 description = "Sniff out which async library your code is running under"
 optional = false
 python-versions = ">=3.7"
-groups = ["main"]
+groups = ["main", "dev"]
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
@@ -4087,14 +4102,14 @@ files = [
 
 [[package]]
 name = "webhook-to-fedora-messaging-messages"
-version = "1.4.1"
+version = "1.5.0"
 description = "A schema package for messages sent by Webhook To Fedora Messaging"
 optional = false
 python-versions = "<4.0,>=3.9"
 groups = ["main"]
 files = [
-    {file = "webhook_to_fedora_messaging_messages-1.4.1-py3-none-any.whl", hash = "sha256:786fd2e14983853ceb1e19d459808dd6e1edf0da2d090c2ec545592a269c8d0e"},
-    {file = "webhook_to_fedora_messaging_messages-1.4.1.tar.gz", hash = "sha256:f933e3d65d02a727c49f40caed1ab325338d74681d1501ab1c5183a553489208"},
+    {file = "webhook_to_fedora_messaging_messages-1.5.0-py3-none-any.whl", hash = "sha256:40c02f9545dfa00a38f000c7eb687a8db7fcec366827913f17acda7d82fd1f5a"},
+    {file = "webhook_to_fedora_messaging_messages-1.5.0.tar.gz", hash = "sha256:ce4bfbb38642e00f0ce5fcff389f5806f91db0b0f9a7a3944525d4c445ee69c2"},
 ]
 
 [package.dependencies]
@@ -4311,4 +4326,4 @@ deploy = ["asyncpg", "gunicorn", "uvicorn", "uvicorn-worker"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "0eace2a9f1c391c82839bf1f3421223e1090b63bc429592404701f3b9f6d4e40"
+content-hash = "6765de6f90be00e9f18e251fafc223e2b4aac665c8c713f8f2ddf1c72d8eb8c0"

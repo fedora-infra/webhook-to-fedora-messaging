@@ -25,8 +25,11 @@ class MessageExternal(MessageBase):
 
     @model_validator(mode="after")
     def build_url(self) -> Self:
-        base_url = get_config().datagrepper_url
-        self.url = HttpUrl(f"{base_url}/v2/id?id={self.message_id}&is_raw=true&size=extra-large")
+        if self.message_id is not None:
+            base_url = get_config().datagrepper_url
+            self.url = HttpUrl(
+                f"{base_url}/v2/id?id={self.message_id}&is_raw=true&size=extra-large"
+            )
         return self
 
 

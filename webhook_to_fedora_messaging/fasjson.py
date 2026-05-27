@@ -62,6 +62,9 @@ class FASJSONAsyncProxy:
         key = f"{service}_username"
         return await self._search_user(**{key: username})
 
+    async def get_username_from_email(self, email: str) -> str | None:
+        return await self._search_user(email=email)
+
 
 @ft_cache
 def get_fasjson() -> FASJSONAsyncProxy:

@@ -32,6 +32,8 @@ DATABASE__SQLALCHEMY__URL = "{database_url}"
 LOGGING_CONFIG = "logging.yaml.example"
 FASJSON_URL = "http://fasjson.example.com"
 DATAGREPPER_URL = "http://datagrepper.example.com/"
+PRETIX__URL = "http://pretix.example.com"
+PRETIX__TOKEN = "dummy-token"
 """)
     set_config_file(config_path.as_posix())
 
