@@ -59,6 +59,7 @@ def url_no_trailing_slash(url: str) -> str:
 class PretixConfig(BaseModel):
     url: str = "https://rsvp.fedoraproject.org"
     token: str = ""
+    email_domain: str = "fedoraproject.org"
     _normalize_url = field_validator("url")(url_no_trailing_slash)
 
 

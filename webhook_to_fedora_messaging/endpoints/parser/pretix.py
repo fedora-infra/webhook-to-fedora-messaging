@@ -61,10 +61,11 @@ class PretixParser(BaseParser):
             return None
         return Attendee(name=name, email=email)
 
-    async def _get_agent(self, body: Body) -> str | None:
-        attendee = await self._get_attendee(body)
+    async def _get_agent_from_attendee(self, attendee: Attendee | None) -> str | None:
         if not attendee:
             return None
+        if attendee.email.endswith(f"@{self._config.email_domain}"):
+            return attendee.email.split("@", 1)[0]
         return await get_fasjson().get_username_from_email(attendee.email)
 
     async def _get_message_body(
@@ -74,8 +75,7 @@ class PretixParser(BaseParser):
         message_body["body"]["instance_url"] = self._config.url
         # Attendee & agent
         attendee = await self._get_attendee(body)
-        if attendee:
-            message_body["agent"] = await get_fasjson().get_username_from_email(attendee.email)
+        message_body["agent"] = await self._get_agent_from_attendee(attendee)
         message_body["body"]["attendee_name"] = attendee.name if attendee else None
         # Filter useless infra headers
         message_body["headers"] = {
