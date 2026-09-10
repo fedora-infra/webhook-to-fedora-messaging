@@ -17,9 +17,15 @@ class FASJSONAsyncProxy:
 
     API_VERSION = "v1"
 
-    def __init__(self, base_url: str) -> None:
+    def __init__(self, base_url: str, timeout: float | None = None) -> None:
         self.base_url = base_url
-        self.client = httpx.AsyncClient(base_url=self.api_url, auth=HTTPSPNEGOAuth())
+        if timeout is None:
+            timeout = get_config().fasjson_timeout
+        self.client = httpx.AsyncClient(
+            base_url=self.api_url,
+            auth=HTTPSPNEGOAuth(),
+            timeout=timeout,
+        )
 
     @ft_cached_property
     def api_url(self) -> str:
@@ -43,7 +49,7 @@ class FASJSONAsyncProxy:
         try:
             users = await self.search_users(**filters)
         except httpx.TimeoutException:
-            log.exception("Timeout fetching the FAS user with %r", filters)
+            log.warning("Timeout fetching the FAS user with %r", filters)
             return None
         if len(users) == 1:
             return cast(str, users[0]["username"])

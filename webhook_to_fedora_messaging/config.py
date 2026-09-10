@@ -68,6 +68,7 @@ class Config(BaseSettings):
 
     database: DBModel = DBModel()
     fasjson_url: str = "https://fasjson.fedoraproject.org"
+    fasjson_timeout: float = 30.0
     datagrepper_url: str = "https://apps.fedoraproject.org/datagrepper"
     logging_config: Path = Path("/etc/webhook-to-fedora-messaging/logging.yaml")
     oidc: OIDCModel = OIDCModel()
