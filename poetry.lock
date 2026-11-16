@@ -4877,4 +4877,4 @@ deploy = ["asyncpg", "gunicorn", "uvicorn", "uvicorn-worker"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "a95807c4d1ff041afdff1e0c4bacdb8252acae36e89c9aa021983a42a412ff26"
+content-hash = "53065f8b2ce05266ab472cd14df07ea31d3562b529c42c5689a41ce90cbcd1f4"
