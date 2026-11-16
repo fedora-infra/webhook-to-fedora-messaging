@@ -3,9 +3,28 @@
 # These are development defaults: the application logger is set to DEBUG and
 # everything goes to stdout. For production, set the level in
 # [logger_webhook_to_fedora_messaging] to INFO.
+#
+# This file is used in two different ways, and each run mode ignores about half
+# of it:
+#
+# - Under Gunicorn (see gunicorn.conf.py.example), Gunicorn applies this file
+#   after installing its own handlers, so naming the gunicorn.* loggers
+#   replaces them. The Uvicorn worker then copies those handlers onto
+#   uvicorn.error and uvicorn.access and sets propagate=0 on them, which
+#   overrides whatever the uvicorn.* sections below say. Configuring the
+#   gunicorn.* loggers is therefore what keeps every log line in a single
+#   format there.
+#
+# - When Uvicorn is run directly (`uvicorn --log-config`, as the development VM
+#   does) or when the w2fm CLI loads this file, there is no gunicorn.* logger
+#   at all. The uvicorn.* sections are then what gives uvicorn.error a handler
+#   (by propagation from uvicorn.error up to the uvicorn logger) and
+#   uvicorn.access its access formatter and its own level.
+#
+# Keep both sets: each one is dead weight in the other mode.
 
 [loggers]
-keys=root,uvicorn,uvicorn_access,alembic,webhook_to_fedora_messaging
+keys=root,gunicorn_error,gunicorn_access,uvicorn,uvicorn_access,alembic,webhook_to_fedora_messaging
 
 [handlers]
 keys=console,access
@@ -17,6 +36,22 @@ keys=standard,access
 level=INFO
 handlers=console
 
+[logger_gunicorn_error]
+qualname=gunicorn.error
+level=INFO
+handlers=console
+propagate=0
+
+# Under the Uvicorn worker Gunicorn never emits access records itself: this
+# section exists so that the worker hands this handler to uvicorn.access.
+[logger_gunicorn_access]
+qualname=gunicorn.access
+level=INFO
+handlers=access
+propagate=0
+
+# The two sections below are what configure Uvicorn's output when it runs
+# without Gunicorn; under the Gunicorn worker they are overwritten (see above).
 [logger_uvicorn]
 qualname=uvicorn
 level=INFO

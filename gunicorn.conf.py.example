@@ -1,0 +1,18 @@
+bind = ["0.0.0.0:8080"]
+accesslog = "-"
+errorlog = "-"
+forwarded_allow_ips = "*"
+worker_class = "uvicorn_worker.UvicornWorker"
+# Gunicorn applies this *after* installing its own handlers on the
+# gunicorn.error and gunicorn.access loggers, so naming those two loggers in
+# logging.ini replaces Gunicorn's handlers with the ones configured there.
+#
+# That ordering matters for Uvicorn too: the Uvicorn worker copies the
+# gunicorn.error and gunicorn.access handlers onto uvicorn.error and
+# uvicorn.access when it starts, and sets propagate=0 on them. Anything
+# logging.ini says about the uvicorn loggers themselves is therefore ignored
+# under Gunicorn -- configuring the gunicorn.* loggers is what gives the
+# application, Uvicorn and access logs a single consistent format. The
+# uvicorn.* sections in logging.ini are kept for the other way the file is
+# used: running Uvicorn directly with --log-config, as the development VM does.
+logconfig = "/etc/webhook-to-fedora-messaging/logging.ini"
