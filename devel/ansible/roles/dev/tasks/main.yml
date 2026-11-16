@@ -65,8 +65,8 @@
 - name: copy the logging config file
   copy:
     remote_src: true
-    src: /home/vagrant/webhook-to-fedora-messaging/logging.yaml.example
-    dest: /home/vagrant/logging.yaml
+    src: /home/vagrant/webhook-to-fedora-messaging/logging.ini.example
+    dest: /home/vagrant/logging.ini
     mode: 0644
     owner: vagrant
     group: vagrant

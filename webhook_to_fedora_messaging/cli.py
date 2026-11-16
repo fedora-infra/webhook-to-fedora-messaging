@@ -4,7 +4,6 @@ import os
 from asyncio import run
 
 import click
-import yaml
 from sqlalchemy_helpers.manager import SyncResult
 
 from . import __version__
@@ -30,8 +29,7 @@ def main(conf: str | None = None) -> None:
         set_config_file(os.path.abspath(conf))
         get_db_manager.cache_clear()
     config = get_config()
-    with open(config.logging_config) as fh:
-        logging.config.dictConfig(yaml.safe_load(fh))
+    logging.config.fileConfig(config.logging_config, disable_existing_loggers=False)
 
 
 @main.command(name="setup", help="Setup the database schema in the specified environment")

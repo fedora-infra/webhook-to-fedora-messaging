@@ -70,7 +70,7 @@ class Config(BaseSettings):
     fasjson_url: str = "https://fasjson.fedoraproject.org"
     fasjson_timeout: float = 30.0
     datagrepper_url: str = "https://apps.fedoraproject.org/datagrepper"
-    logging_config: Path = Path("/etc/webhook-to-fedora-messaging/logging.yaml")
+    logging_config: Path = Path("/etc/webhook-to-fedora-messaging/logging.ini")
     oidc: OIDCModel = OIDCModel()
     cache: CacheModel = CacheModel()
     pretix: PretixConfig = PretixConfig()

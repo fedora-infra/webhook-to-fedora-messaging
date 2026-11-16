@@ -29,7 +29,7 @@ async def app_config(tmp_path: PosixPath) -> None:
     with open(config_path, "w") as fh:
         fh.write(f"""
 DATABASE__SQLALCHEMY__URL = "{database_url}"
-LOGGING_CONFIG = "logging.yaml.example"
+LOGGING_CONFIG = "logging.ini.example"
 FASJSON_URL = "http://fasjson.example.com"
 DATAGREPPER_URL = "http://datagrepper.example.com/"
 PRETIX__URL = "http://pretix.example.com"
