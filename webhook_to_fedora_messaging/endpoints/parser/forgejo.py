@@ -1,3 +1,5 @@
+from typing import Any
+
 from webhook_to_fedora_messaging_messages.forgejo import ForgejoMessageV1
 
 from ...fasjson import get_fasjson
@@ -16,3 +18,9 @@ class ForgejoParser(BaseParser):
         if "run" in body and "trigger_user" in body["run"]:
             return await get_fasjson().get_username("forgejo", body["run"]["trigger_user"]["login"])
         return await get_fasjson().get_username("forgejo", body["sender"]["login"])
+
+    async def _get_message_body(
+        self, body: dict[str, Any], headers: HeadersDict, agent: str | None
+    ) -> dict[str, Any]:
+        filtered = {k: v for k, v in headers.items() if k != "authorization"}
+        return {"body": body, "headers": filtered, "agent": agent}
